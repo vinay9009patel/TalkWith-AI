@@ -1,0 +1,12 @@
+name = "ai-talk"
+main = "worker.js"
+compatibility_date = "2025-04-01"
+account_id = "ac0b12b71469a0589e998a9587b21e9a"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# Uncomment below if you want to use KV for persistent storage
+# [[kv_namespaces]]
+# binding = "LIMITS_KV"
+# id = "your-kv-id"
