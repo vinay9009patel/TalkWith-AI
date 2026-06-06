@@ -1500,7 +1500,6 @@ async function startChat(){
   startBtn.disabled = true;
   startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Starting...';
 
-  const isPractice = chatMode === "practice";
   const greeting = getInitialGreeting(role, bio, isPractice);
   addMessage("ai", greeting, detectMood(greeting, role));
   setTimeout(() => speakText(greeting, chatGender), 300);
