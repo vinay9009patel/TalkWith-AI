@@ -466,18 +466,20 @@ a { color: inherit; text-decoration: none; }
 }
 .scenario-text {
   font-family: var(--font-sexy);
-  font-style: italic;
-  color: #ffffff;
-  line-height: 1.8;
-  font-size: 15.5px;
-  background: rgba(139, 92, 246, 0.08);
-  padding: 14px 18px;
+  color: #f1f5f9;
+  line-height: 1.7;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
   border-radius: 12px;
   border-left: 3px solid var(--primary);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  margin: 8px 0;
-  letter-spacing: 0.2px;
-  opacity: 1;
+  margin: 6px 0;
+  letter-spacing: 0.1px;
+}
+.briefing-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.2), transparent);
+  margin: 16px 0;
 }
 .msg-action {
   display: block; margin-bottom: 6px;
@@ -1726,7 +1728,7 @@ async function startChat(){
       5. ERROR TOLERANCE: Intelligently handle typos.
       6. NAMES: Use single FIRST NAMES only.
 
-      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Describe the VERY FIRST location and immediate tension clearly","goal":"The ultimate task user must eventually achieve","reward":"Huge incentive"}`;
+      Return JSON ONLY: {"aiName":"Name","userName":"Name","userRole":"Brief role description (e.g., A delivery rider, A top engineer)","scenario":"Describe the VERY FIRST location and immediate tension clearly","goal":"The ultimate task user must eventually achieve","reward":"Huge incentive"}`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
     let storyProcessed = false;
@@ -1991,24 +1993,31 @@ function addBriefing(data){
   div.innerHTML = `
     <div class="briefing-card">
       <div class="briefing-header">Mission Briefing</div>
+      
       <div class="briefing-item">
         <div class="briefing-label">Your Identity</div>
-        <div class="briefing-value"><strong>${data.userName}</strong></div>
+        <div class="briefing-value"><strong>${data.userName}</strong> <span style="opacity:0.6; font-weight:400; font-size:12px; margin-left:4px;">— ${data.userRole || 'The Protagonist'}</span></div>
       </div>
+
       <div class="briefing-item">
         <div class="briefing-label">Companion</div>
-        <div class="briefing-value"><strong>${data.aiName}</strong> - ${chatRole}</div>
+        <div class="briefing-value"><strong>${data.aiName}</strong> <span style="opacity:0.6; font-weight:400; font-size:12px; margin-left:4px;">— ${chatRole}</span></div>
       </div>
+
+      <div class="briefing-divider"></div>
+
       <div class="briefing-item">
         <div class="briefing-label">The Scenario</div>
-        <div class="briefing-value scenario-text">${data.scenario}</div>
+        <div class="scenario-text">${data.scenario}</div>
       </div>
+
       <div class="briefing-item">
         <div class="briefing-label">The Goal</div>
-        <div class="briefing-value"><strong>${data.goal}</strong></div>
+        <div class="briefing-value" style="color:var(--primary-light);"><strong>${data.goal}</strong></div>
       </div>
+
       <div class="briefing-reward">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
         Reward: ${data.reward}
       </div>
     </div>
