@@ -173,8 +173,10 @@ a { color: inherit; text-decoration: none; }
   #avatarGridItems img { width: 70px !important; height: 70px !important; }
 
   /* Chat fullscreen */
-  .main.chat-open { padding: 0; display: flex; flex-direction: column; overflow-x: hidden; }
-  .main.chat-open .bottom-nav,
+  .main.chat-open { 
+    padding: 0; display: flex; flex-direction: column; overflow-x: hidden; 
+    position: fixed; inset: 0; height: 100vh; height: 100dvh; z-index: 100;
+  }
   .main.chat-open .page:not(#chat) { display: none; }
   .main.chat-open #chat.page.active { display: flex; }
   .main.chat-open #chat .card { border-radius: 0; border: none; min-height: 0; }
@@ -1157,22 +1159,52 @@ function selectAvatar(el, url){
 function speakText(text, gender){
   if(!window.speechSynthesis || !text) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text.replace(/<[^>]*>/g, ""));
+  
+  // Clean text from actions in asterisks for cleaner speech
+  const cleanText = text.replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
+  if(!cleanText) return;
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = "en-US";
-  utterance.rate = 0.95;
-  utterance.pitch = gender === "female" ? 1.15 : 0.7;
+  utterance.rate = 1.0; // Normal speed is usually better
+  utterance.pitch = gender === "female" ? 1.1 : 1.0; // Balanced pitch
+  
   let voices = speechSynthesis.getVoices();
-  if(!voices.length){ speechSynthesis.getVoices(); voices = speechSynthesis.getVoices(); }
-  if(gender === "female"){
-    utterance.voice = voices.find(v=>/female/i.test(v.name)) ||
-      voices.find(v=>/zira|samantha|google us english/i.test(v.name)) ||
-      voices.find(v=>v.lang.startsWith("en") && !/male|david|mark/i.test(v.name));
-  } else {
-    utterance.voice = voices.find(v=>/male/i.test(v.name)) ||
-      voices.find(v=>/david|google uk english male|microsoft mark/i.test(v.name)) ||
-      voices.find(v=>v.lang.startsWith("en") && !/female|zira|samantha/i.test(v.name));
+  // Ensure voices are loaded
+  if(!voices.length){
+    speechSynthesis.onvoiceschanged = () => speakText(text, gender);
+    return;
   }
-  if(!utterance.voice) utterance.voice = voices.find(v=>v.lang.startsWith("en")) || voices[0];
+
+  const findVoice = (patterns) => {
+    for (const pattern of patterns) {
+      const v = voices.find(v => v.lang.startsWith("en") && pattern.test(v.name));
+      if (v) return v;
+    }
+    return null;
+  };
+
+  if(gender === "female"){
+    utterance.voice = findVoice([
+      /google.*natural/i, 
+      /google.*female/i,
+      /samantha/i,
+      /zira/i,
+      /female/i
+    ]);
+  } else {
+    utterance.voice = findVoice([
+      /google.*natural/i,
+      /google.*male/i,
+      /david/i,
+      /microsoft mark/i,
+      /male/i
+    ]);
+  }
+
+  // Fallback to any English voice
+  if(!utterance.voice) utterance.voice = voices.find(v => v.lang.startsWith("en"));
+  
   speechSynthesis.speak(utterance);
 }
 

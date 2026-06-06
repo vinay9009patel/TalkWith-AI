@@ -5,8 +5,15 @@ account_id = "ac0b12b71469a0589e998a9587b21e9a"
 
 [env.production]
 vars = { ENVIRONMENT = "production" }
+kv_namespaces = [
+  { binding = "LIMITS_KV", id = "a877b77f0fd6456cb2494a1167e3a881" },
+  { binding = "SIGNUP_KV", id = "7f89491e92ff4c0da67bf254baf9832d" }
+]
 
-# Uncomment below if you want to use KV for persistent storage
-# [[kv_namespaces]]
-# binding = "LIMITS_KV"
-# id = "your-kv-id"
+[[kv_namespaces]]
+binding = "LIMITS_KV"
+id = "a877b77f0fd6456cb2494a1167e3a881"
+
+[[kv_namespaces]]
+binding = "SIGNUP_KV"
+id = "7f89491e92ff4c0da67bf254baf9832d"
