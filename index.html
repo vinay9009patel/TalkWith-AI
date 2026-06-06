@@ -478,17 +478,19 @@ a { color: inherit; text-decoration: none; }
 .briefing-value { font-size: 14px; color: var(--text); line-height: 1.5; }
 .briefing-value strong { color: var(--primary-light); }
 .briefing-reward {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px dashed rgba(16, 185, 129, 0.3);
-  padding: 10px;
-  border-radius: 10px;
-  color: #4ade80;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: 12px;
+  border-radius: 12px;
+  color: var(--primary-light);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
 }
+.briefing-reward svg { color: var(--primary); }
 
 .typing-indicator {
   display: flex; align-items: center; gap: 4px;
@@ -1601,14 +1603,13 @@ async function startChat(){
       User Gender: ${userGender}. 
       User Input (Context): ${bio || "Random high-drama story"}. 
       MANDATORY: 
-      1. Give a UNIQUE and realistic name to the AI character (must be ${chatGender}). 
-      2. Give a UNIQUE and realistic name to the User character (must be ${userGender}).
-      3. Create a vivid, dramatic background for the user (e.g., struggling rider, secret agent).
-      4. Create a specific, high-stakes scenario.
-      5. Create a clear goal and an exciting reward (e.g., new sports car, 10 Crores).
-      Return JSON ONLY: {"aiName":"CharacterName","userName":"UserIdentityName","scenario":"Vivid drama setup","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
-    
-    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on high-stakes human drama and immersive naming.", 600);
+      1. Give a SINGLE realistic FIRST NAME to the AI (must be ${chatGender}, e.g., Priya). 
+      2. Give a SINGLE realistic FIRST NAME to the User (must be ${userGender}, e.g., Rohan). Do NOT add titles like 'The Phoenix'.
+      3. Create a vivid, dramatic scene setup (e.g., inside a car in heavy rain, in a tense office).
+      4. Create a clear goal and an exciting reward.
+      Return JSON ONLY: {"aiName":"FirstName","userName":"FirstName","scenario":"Vivid drama setup","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
+
+    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on realistic naming and high-stakes cinematic drama.", 600);
     if(storyResult){
       try {
         const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
@@ -1617,7 +1618,20 @@ async function startChat(){
           document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
           chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}.`;
           addBriefing(data);
-          bio = ""; // Clear bio for greeting
+
+          // Generate an immersive first message instead of generic greeting
+          showTyping();
+          const firstMsgPrompt = `Start the roleplay scene. Scene: ${data.scenario}. You are ${data.aiName} (${role}). Act out your first reaction. Use *vivid actions* and "Dialogue". Be strictly in character. If angry, be angry. Respond in 2-3 immersive sentences.`;
+          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " Stay 100% in the scene. No technical intros.", 500);
+          hideTyping();
+          if(firstMsg){
+            addMessage("ai", firstMsg, detectMood(firstMsg, role));
+            chatHistory.push({ role: "assistant", content: firstMsg });
+            setTimeout(() => speakText(firstMsg, chatGender), 300);
+            startBtn.disabled = false;
+            startBtn.innerHTML = originalBtnText;
+            return; // Exit as first message is sent
+          }
         }
       } catch(e) { console.error("Story gen error", e); }
     }
