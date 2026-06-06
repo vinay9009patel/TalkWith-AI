@@ -102,6 +102,12 @@ a { color: inherit; text-decoration: none; }
 .card h2 { color: var(--text); font-weight: 700; font-size: 20px; }
 .card p { color: var(--text-muted); }
 
+.section-title { font-size: 32px; font-weight: 900; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+@media (max-width: 768px) {
+  .section-title { font-size: 22px; margin-bottom: 16px; }
+  .section-title svg { width: 22px; height: 22px; }
+}
+
 .input {
   width: 100%; padding: 12px 16px; border-radius: 10px; border: none;
   background: #1f1f1f; color: var(--text); font-size: 14px;
@@ -161,6 +167,8 @@ a { color: inherit; text-decoration: none; }
 
   .topbar { margin-bottom: 20px; padding-bottom: 12px; }
   .topbar h1 { font-size: 18px; }
+  #profileName { font-size: 24px !important; }
+  #welcomeText { font-size: 20px !important; }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .stats .card { padding: 14px; }
   .stat-title { font-size: 11px; }
@@ -204,6 +212,7 @@ a { color: inherit; text-decoration: none; }
   .main.chat-open .chat-btn { width: 36px; height: 36px; }
 }
 @media (max-width: 480px) {
+  .profile-box { justify-content: center; text-align: center; }
   .auth-box { padding: 24px 16px; margin: 10px 8px; }
   .auth-box h1 { font-size: 24px; }
   .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -645,14 +654,14 @@ Logout
 </div>
 
 <div class="card" id="dailyUsageCard" style="display:none;">
-<h2 style="font-size:32px;font-weight:900;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+<h2 class="section-title">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 Daily Usage</h2>
 <div id="dailyUsageContent"></div>
 </div>
 
 <div class="card">
-<h2 style="font-size:32px;font-weight:900;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+<h2 class="section-title">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
 Achievements</h2>
 <div id="badgesContainer">No badges yet.</div>
@@ -791,7 +800,7 @@ Start Talking
 <img id="profilePic" src="https://ui-avatars.com/api/?name=User&background=7c3aed&color=fff">
 <input type="file" id="profileUpload" class="input" accept="image/*" onchange="uploadProfile(event)">
 <div>
-<h2 id="profileName" style="font-size:36px;font-weight:900;margin-bottom:10px;">User</h2>
+<h2 id="profileName" class="section-title" style="margin-bottom:10px;">User</h2>
 <p id="profileEmail" style="color:#94a3b8;margin-bottom:10px;">email
 <span id="profileAdminBadge" style="display:none;font-size:11px;padding:2px 10px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:white;font-weight:700;margin-left:6px;">Admin</span>
 </p>
@@ -806,7 +815,7 @@ Start Talking
 <!-- SETTINGS -->
 <div id="settings" class="page">
 <div class="card">
-<h2 style="font-size:34px;font-weight:900;margin-bottom:20px;">Settings</h2>
+<h2 class="section-title">Settings</h2>
 <button class="btn primary" onclick="toggleTheme()">Toggle Theme</button>
 </div>
 </div>
