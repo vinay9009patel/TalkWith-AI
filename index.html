@@ -423,6 +423,19 @@ a { color: inherit; text-decoration: none; }
   user-select: text; cursor: default; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
+.scenario-text {
+  font-family: var(--font-sexy);
+  font-style: italic;
+  color: #f8fafc;
+  line-height: 1.6;
+  font-size: 15px;
+  background: rgba(139, 92, 246, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+  border-left: 2px solid var(--primary);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+  margin: 4px 0;
+}
 .msg-action {
   display: block; margin-bottom: 6px;
   color: #c4b5fd;
@@ -1636,14 +1649,14 @@ async function startChat(){
       USER GENDER: ${userGender}.
 
       INSTRUCTIONS:
-      1. REFINE & IMPROVE: If the user gave a partial story, expand it. Add cinematic tension and 'filmy' drama.
-      2. ERROR TOLERANCE: Intelligently guess the user's intent even if they have spelling mistakes or typos in their role or story (e.g., 'boos' = 'boss', 'lft' = 'lift').
-      3. GENERATE: If only a topic is given, create a high-stakes 3-stage mission.
-      4. STARTING POINT: Identify the VERY FIRST moment of the drama.
-      5. NAMES: Give a single realistic FIRST NAME to the AI (${chatGender}) and a FIRST NAME to the User (${userGender}).
-      6. MISSION: Set a clear, difficult goal and a huge reward.
+      1. REFINE & IMPROVE: Expand the user's idea into a high-drama 'filmy' scene.
+      2. TWISTS: Add 1-2 UNEXPECTED PLOT TWISTS (e.g., hidden secrets, sudden betrayals).
+      3. CONCISE: Keep the scenario description intense but short (max 2-3 sentences).
+      4. ERROR TOLERANCE: Intelligently handle typos.
+      5. NAMES: Use single FIRST NAMES only. 
+      6. MISSION: Set a clear goal and a huge reward.
 
-      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Vivid, cinematic scene setup starting at the beginning","goal":"The difficult task user must do","reward":"The huge incentive for success"}`;
+      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Intense cinematic setup","goal":"User task","reward":"Big incentive"}`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
     let storyProcessed = false;
@@ -1917,7 +1930,7 @@ function addBriefing(data){
       </div>
       <div class="briefing-item">
         <div class="briefing-label">The Scenario</div>
-        <div class="briefing-value">${data.scenario}</div>
+        <div class="briefing-value scenario-text">${data.scenario}</div>
       </div>
       <div class="briefing-item">
         <div class="briefing-label">The Goal</div>
