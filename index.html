@@ -1719,14 +1719,14 @@ async function startChat(){
       USER GENDER: ${userGender}.
 
       INSTRUCTIONS:
-      1. REFINE & IMPROVE: Expand the user's idea into a high-drama 'filmy' scene.
-      2. TWISTS: Add 1-2 UNEXPECTED PLOT TWISTS (e.g., hidden secrets, sudden betrayals).
-      3. CONCISE: Keep the scenario description intense but short (max 2-3 sentences).
-      4. ERROR TOLERANCE: Intelligently handle typos.
-      5. NAMES: Use single FIRST NAMES only. 
-      6. MISSION: Set a clear goal and a huge reward.
+      1. CHRONOLOGICAL START: Identify the VERY FIRST MOMENT of the user's story (e.g., if they mention a lift encounter before an office meeting, you MUST start inside the lift). Never skip ahead.
+      2. REFINE & IMPROVE: Expand the idea into a high-drama 'filmy' scene, but stay true to the starting point.
+      3. TWISTS: Add 1-2 unexpected plot twists mid-story.
+      4. CONCISE: Keep the setup short (max 2-3 sentences).
+      5. ERROR TOLERANCE: Intelligently handle typos.
+      6. NAMES: Use single FIRST NAMES only.
 
-      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Intense cinematic setup","goal":"User task","reward":"Big incentive"}`;
+      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Describe the VERY FIRST location and immediate tension clearly","goal":"The ultimate task user must eventually achieve","reward":"Huge incentive"}`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
     let storyProcessed = false;
@@ -1740,9 +1740,10 @@ async function startChat(){
           addBriefing(data);
 
           showTyping();
-          const firstMsgPrompt = `The scene begins: ${data.scenario}. You are ${data.aiName} (${role}). 
-            Respond with a DYNAMIC first reaction. Use 1 sentence of deep internal feeling/action in *asterisks* and 1-2 lines of sharp, character-driven dialogue. 
-            DON'T BE NICE. BE THE CHARACTER. If the user insulted you in the scenario, react to that tension NOW. Stay 100% in the scene.`;
+          const firstMsgPrompt = `The scene begins at the VERY START: ${data.scenario}. You are ${data.aiName} (${role}). 
+            Respond with a DYNAMIC first reaction to the user's presence at THIS FIRST LOCATION. 
+            Do NOT mention future events (like being the boss) if the current scene is at the start (like the lift).
+            Use 1 sentence of internal feeling in *asterisks* and 1-2 lines of sharp dialogue. SIMPLE English.`;
           const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
           hideTyping();
           if(firstMsg){
