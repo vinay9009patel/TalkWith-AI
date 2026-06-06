@@ -1519,6 +1519,24 @@ function selectMode(mode){
   if(btn) btn.classList.add("active");
   var picker = document.getElementById("durationPicker");
   if(picker) picker.style.display = mode === "practice" ? "block" : "none";
+
+  // Full reset of setup UI state when switching modes
+  document.getElementById("avatarGrid").style.display = "none";
+  document.getElementById("userGenderSelection").style.display = "none";
+  document.getElementById("chatInputs").style.display = "none";
+  document.getElementById("chatAvatarSetup").src = "";
+  selectedAvatar = "";
+  
+  // Re-enable original gender buttons opacity/transform
+  const maleBtn = document.getElementById("genderMaleBtn");
+  const femaleBtn = document.getElementById("genderFemaleBtn");
+  if(maleBtn && femaleBtn) {
+    [maleBtn, femaleBtn].forEach(b => { 
+      b.style.opacity = "1"; 
+      b.style.transform = "scale(1)"; 
+      b.style.boxShadow = "none"; 
+    });
+  }
 }
 
 function selectDuration(min){
@@ -1688,21 +1706,23 @@ function endChat(){
   if(recognition){ try{ recognition.stop(); }catch(e){} isRecording = false; updateMicBtn(); }
 
   appData.chatsDone++;
-  awardXP(20); // 20 XP bonus for completing a chat
+  awardXP(20);
 
-  selectMode(chatMode);
-
-  document.getElementById("chatSetup").style.display = "block";
+  // Full UI Reset for a clean start
+  document.getElementById("chatSetup").style.display = "flex";
   document.getElementById("chatScreen").style.display = "none";
   document.getElementById("chatMessages").innerHTML = "";
   document.getElementById("chatRole").value = "";
   document.getElementById("chatBio").value = "";
   document.getElementById("chatInputs").style.display = "none";
   document.getElementById("avatarGrid").style.display = "none";
+  document.getElementById("userGenderSelection").style.display = "none";
   document.getElementById("chatAvatarSetup").src = "";
   document.getElementById("timerDisplay").style.display = "none";
   selectedAvatar = "";
 
+  // Force reset back to the base mode view
+  selectMode(chatMode);
   updateUI();
 
   if(chatMode === "practice" && chatHistory.length >= 2){
