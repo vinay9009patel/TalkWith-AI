@@ -1507,6 +1507,7 @@ function endChat(){
   if(recognition){ try{ recognition.stop(); }catch(e){} isRecording = false; updateMicBtn(); }
 
   appData.chatsDone++;
+  awardXP(20); // 20 XP bonus for completing a chat
 
   selectMode(chatMode);
 
@@ -1605,6 +1606,8 @@ async function sendMessage(){
   chatHistory.push({ role: "user", content: text });
 
   appData.totalMessages++;
+  updateStreakAndXP();
+  awardXP(2); // 2 XP per message
 
   showTyping();
 
@@ -2090,6 +2093,28 @@ function renderBadges(){
       ${escapeHtml(badge)}
     </span>
   `).join("");
+}
+
+function updateStreakAndXP(){
+  const today = getTodayKey();
+  if(appData.lastActiveDate === today) return;
+
+  if(!appData.lastActiveDate){
+    appData.streak = 1;
+  } else {
+    const last = new Date(appData.lastActiveDate);
+    const now = new Date(today);
+    const diff = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+    if(diff === 1) appData.streak++;
+    else if(diff > 1) appData.streak = 1;
+  }
+  appData.lastActiveDate = today;
+  updateUI();
+}
+
+function awardXP(amount){
+  appData.xp += amount;
+  updateUI();
 }
 
 function updateUI(){
