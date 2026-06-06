@@ -1740,22 +1740,22 @@ async function startChat(){
       USER GENDER: ${userGender}.
 
       INSTRUCTIONS:
-      1. CHRONOLOGICAL START: Identify the VERY FIRST MOMENT of the user's story (e.g., if they mention a lift encounter before an office meeting, you MUST start inside the lift). Never skip ahead.
-      2. REFINE & IMPROVE: Expand the idea into a high-drama 'filmy' scene, but stay true to the starting point.
-      3. TWISTS: Add 1-2 unexpected plot twists mid-story.
-      4. CONCISE: Keep the setup short (max 2-3 sentences).
-      5. ERROR TOLERANCE: Intelligently handle typos.
-      6. NAMES: Use single FIRST NAMES only.
+      1. CHRONOLOGICAL STAGES: Break the story into logical stages (e.g., Stage 1: The Lift, Stage 2: The Office). 
+      2. SEQUENTIAL START: You MUST start at Stage 1. Never skip ahead. 
+      3. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1 (e.g., she is a 'stranger' in a lift), DO NOT reveal she is the Boss yet. Act 100% as the stranger. 
+      4. NATURAL FLOW: React only to what is happening NOW. Let the user drive the transition to the next stage.
+      5. ERROR TOLERANCE: Intelligently handle typos. 
+      6. TWISTS: Add 1-2 unexpected plot twists mid-story.
 
       Return JSON ONLY: {
         "aiName":"FirstName",
-        "aiRoleLabel":"Short Role (e.g. Angry Son, Stern Boss)",
+        "aiRoleLabel":"Initial Role (e.g. Beautiful Stranger)",
         "userName":"FirstName",
-        "userRoleLabel":"Short Role (e.g. Dad, New Employee)",
-        "userDynamic":"Short relationship context (e.g. son tries to trick you, she doesn't know you are the boss)",
-        "scenario":"Describe the VERY FIRST location and immediate tension clearly",
-        "goal":"The ultimate task user must eventually achieve",
-        "reward":"Huge incentive"
+        "userRoleLabel":"Short Role (e.g. New Employee)",
+        "userDynamic":"Current dynamic (e.g. you don't know who she is yet)",
+        "scenario":"Describe ONLY Stage 1 (The starting location and immediate tension)",
+        "goal":"The immediate task (e.g. charm the stranger)",
+        "reward":"Exciting incentive"
       }`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
@@ -1770,10 +1770,11 @@ async function startChat(){
           addBriefing(data);
 
           showTyping();
-          const firstMsgPrompt = `The scene begins at the VERY START: ${data.scenario}. You are ${data.aiName} (${role}). 
-            Respond with a DYNAMIC first reaction to the user's presence at THIS FIRST LOCATION. 
-            Do NOT mention future events (like being the boss) if the current scene is at the start (like the lift).
-            Use 1 sentence of internal feeling in *asterisks* and 1-2 lines of sharp dialogue. SIMPLE English.`;
+          const firstMsgPrompt = `The roleplay begins at STAGE 1: ${data.scenario}. 
+            You are ${data.aiName}. You MUST hide your true identity/role if the scenario says the user doesn't know you yet. 
+            Respond only to the user's presence or actions in this first location. 
+            DO NOT mention being the boss, the office, or future events. 
+            Use *vivid actions* and "Dialogue". Be mysterious or reactive. SIMPLE English. 2 sentences.`;
           const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
           hideTyping();
           if(firstMsg){
