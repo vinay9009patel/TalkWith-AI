@@ -169,12 +169,14 @@ a { color: inherit; text-decoration: none; }
   .bottom-nav { display: flex; }
   .bottom-nav button { font-size: 24px; padding: 8px 18px; }
 
-  .chat-setup { padding: 60px 12px 30px; }
+  .chat-setup .ai-avatar { width: 80px; height: 80px; margin-bottom: 12px; }
+  .chat-setup h2 { font-size: 20px; }
+  .chat-setup p { font-size: 13px; margin-bottom: 16px; }
   .chat-setup .back-btn { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; }
   .chat-setup .input { max-width: none; font-size: 15px; }
   .chat-setup textarea.input { min-height: 60px; }
-  #avatarGridItems > div { width: 70px !important; height: 70px !important; }
-  #avatarGridItems img { width: 70px !important; height: 70px !important; }
+  #avatarGridItems > div { width: auto !important; height: auto !important; }
+  #avatarGridItems img { width: 100% !important; height: 100% !important; }
 
   /* Chat fullscreen */
   .main.chat-open { 
@@ -669,12 +671,12 @@ Achievements</h2>
 <h2>AI Talk</h2>
 <p>Choose your AI companion and start a conversation</p>
 
-<div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;">
-<button id="genderMaleBtn" class="btn" style="background:rgba(59,130,246,0.15);color:#60a5fa;border:2px solid rgba(59,130,246,0.3);padding:10px 22px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;" onclick="setChatGender('male')">
+<div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;">
+<button id="genderMaleBtn" class="btn" style="flex:1;min-width:120px;background:rgba(59,130,246,0.15);color:#60a5fa;border:2px solid rgba(59,130,246,0.3);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="setChatGender('male')">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
 Male
 </button>
-<button id="genderFemaleBtn" class="btn" style="background:rgba(236,72,153,0.15);color:#f472b6;border:2px solid rgba(236,72,153,0.3);padding:10px 22px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;" onclick="setChatGender('female')">
+<button id="genderFemaleBtn" class="btn" style="flex:1;min-width:120px;background:rgba(236,72,153,0.15);color:#f472b6;border:2px solid rgba(236,72,153,0.3);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="setChatGender('female')">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
 Female
 </button>
@@ -687,18 +689,18 @@ Female
 
 <div id="durationPicker" style="display:none;margin-bottom:14px;">
 <p style="color:var(--text-muted);font-size:13px;margin-bottom:8px;">⏱️ Talk duration:</p>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="dur-btn" data-min="10" onclick="selectDuration(10)">10 min</button>
-<button class="dur-btn" data-min="20" onclick="selectDuration(20)">20 min</button>
-<button class="dur-btn active" data-min="30" onclick="selectDuration(30)">30 min</button>
-<button class="dur-btn" data-min="60" onclick="selectDuration(60)">60 min</button>
+<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+<button class="dur-btn" data-min="10" onclick="selectDuration(10)" style="padding:6px 12px; font-size:12px;">10 min</button>
+<button class="dur-btn" data-min="20" onclick="selectDuration(20)" style="padding:6px 12px; font-size:12px;">20 min</button>
+<button class="dur-btn active" data-min="30" onclick="selectDuration(30)" style="padding:6px 12px; font-size:12px;">30 min</button>
+<button class="dur-btn" data-min="60" onclick="selectDuration(60)" style="padding:6px 12px; font-size:12px;">60 min</button>
 </div>
 </div>
 
 <!-- Avatar Selection Grid -->
-<div id="avatarGrid" style="display:none;margin-bottom:18px;">
+<div id="avatarGrid" style="display:none;margin-bottom:18px; width:100%;">
 <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px;">Choose your AI companion's look:</p>
-<div id="avatarGridItems" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"></div>
+<div id="avatarGridItems" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(70px, 1fr));gap:8px;justify-content:center;max-width:320px;margin:0 auto;"></div>
 </div>
 
 <div id="chatInputs" style="display:none;">
@@ -1140,7 +1142,7 @@ function setChatGender(gender){
   const pool = gender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
   const grid = document.getElementById("avatarGridItems");
   grid.innerHTML = pool.map((url, i) => `
-    <div onclick="selectAvatar(this, '${url}')" style="width:80px;height:80px;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all 0.25s;${i === 0 ? 'border-color:rgba(124,58,237,0.4);' : ''}">
+    <div onclick="selectAvatar(this, '${url}')" style="aspect-ratio:1/1;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all 0.25s;${i === 0 ? 'border-color:rgba(124,58,237,0.4);' : ''}">
       <img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'" loading="lazy">
     </div>
   `).join("");
