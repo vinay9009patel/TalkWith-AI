@@ -413,6 +413,47 @@ a { color: inherit; text-decoration: none; }
 }
 .msg.user .msg-avatar { display: none; }
 
+.msg.sub-scenario {
+  align-self: center;
+  max-width: 85%;
+  margin: 12px 0;
+  animation: subIn 0.5s ease-out;
+}
+@keyframes subIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.sub-scenario-card {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  margin: 10px 0;
+  text-align: left;
+}
+.sub-label {
+  font-size: 10px;
+  font-weight: 900;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sub-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(245,158,11,0.3), transparent); }
+.sub-content {
+  font-family: var(--font-sexy);
+  font-style: italic;
+  color: #fef3c7;
+  font-size: 15px;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
 .msg-bubble {
   padding: 12px 18px; border-radius: 20px;
   line-height: 1.6; font-size: 16px;
@@ -1473,11 +1514,13 @@ function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   return [
     "STRICTLY stay in the role: " + role + ". You are a REAL HUMAN. Use SIMPLE English.",
+    "DYNAMIC WORLD: You are the Director. Introduce SIDE CHARACTERS mid-story if needed (rivals, friends, strangers). Use distinct names and personalities.",
+    "SUB-SCENARIOS: When a new character enters or the scene changes (e.g., you arrive at the office), start your message with: [SUB-SCENARIO: Describe the new person or shift in 1 sentence].",
+    "MULTI-VOICE: You can handle dialogue for side characters. Format: *Action.* \"Dialogue.\"",
     "ERROR TOLERANCE: Intelligently handle spelling mistakes (e.g., 'boos' = 'boss'). Infer meaning from context and stay in character.",
     "CONCISE DIALOGUE: Keep spoken dialogue short and punchy (1-2 sentences).",
-    "DEEP COMPREHENSION: Understand hidden intent and 'double-meanings' in any language.",
     "REAL DRAMA: Use 1-2 sentences of vivid actions and internal thoughts in *asterisks*.",
-    "FORMAT: *Detailed action/feeling.* \"Short, simple dialogue.\""
+    "FORMAT: [SUB-SCENARIO: Optional] *Action.* \"Dialogue.\""
   ].join(" ");
 }
 
@@ -1490,9 +1533,11 @@ function buildChatSystemPrompt(){
 
   return "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
-    "MISSION GOAL: The user must achieve a specific outcome (e.g., gain forgiveness, win a deal, survive the situation). " +
+    "MISSION GOAL: The user must achieve a specific outcome. " +
     getRelationshipRules(chatRole) + " " +
-    "SITUATIONAL AWARENESS: Actively reference the environment (rain, noise, location). Your responses should be 100% immersive and human-like.";
+    "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
+    "When a new person enters or the scene shifts significantly, you MUST start your message with: [SUB-SCENARIO: Description of the shift]. " +
+    "Your responses should be 100% immersive and human-like.";
 }
 
 function cleanAIResponse(text){
@@ -1950,11 +1995,33 @@ function addBriefing(data){
 
 function addMessage(role, text, mood){
   const messages = document.getElementById("chatMessages");
+  
+  // Detect and extract SUB-SCENARIO tags
+  const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
+  let match;
+  while ((match = subRegex.exec(text)) !== null) {
+    const subDiv = document.createElement("div");
+    subDiv.className = "msg sub-scenario";
+    subDiv.innerHTML = `
+      <div class="sub-scenario-card">
+        <div class="sub-label">Plot Shift / New Entry</div>
+        <div class="sub-content">${match[1]}</div>
+      </div>
+    `;
+    messages.appendChild(subDiv);
+  }
+
+  const cleanText = text.replace(subRegex, "").trim();
+  if(!cleanText) {
+    messages.scrollTop = messages.scrollHeight;
+    return;
+  }
+
   const div = document.createElement("div");
   div.className = "msg " + role + (mood ? " mood-" + mood : "");
 
   const moodEmoji = role === "ai" ? `<div class="msg-reaction"><span class="msg-mood">${getMoodEmoji(mood)}</span></div>` : "";
-  const bubbleHtml = `<div class="msg-bubble">${formatMessageText(text)}</div>
+  const bubbleHtml = `<div class="msg-bubble">${formatMessageText(cleanText)}</div>
     ${moodEmoji}
     <div class="msg-time">${getTimeStr()}</div>`;
 
@@ -1970,12 +2037,12 @@ function addMessage(role, text, mood){
   if(bubble){
     bubble.addEventListener("contextmenu", function(e){
       e.preventDefault();
-      showMsgMenu(e, text);
+      showMsgMenu(e, cleanText);
     });
     bubble.addEventListener("touchstart", function(e){
       _pressTimer = setTimeout(function(){
         _pressTimer = null;
-        showMsgMenu(e, text);
+        showMsgMenu(e, cleanText);
       }, 500);
     });
     bubble.addEventListener("touchend", function(){
