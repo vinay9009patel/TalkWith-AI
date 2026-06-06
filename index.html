@@ -1367,12 +1367,35 @@ function speakText(text, gender){
   const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = "en-US";
   
+  const role = (chatRole || "").toLowerCase();
+  
+  // Base settings by gender
   if(gender === "female"){
-    utterance.rate = 0.85; // Slightly slower for seductive/polite tone
-    utterance.pitch = 1.0; 
+    utterance.rate = 0.9;
+    utterance.pitch = 1.05;
+    // Seductive/Soft roles
+    if(/girlfriend|lover|sweet|wife|crush/.test(role)){
+      utterance.rate = 0.82;
+      utterance.pitch = 1.0;
+    }
+    // Strict/Angry roles
+    if(/angry|boss|strict|tough/.test(role)){
+      utterance.rate = 1.0;
+      utterance.pitch = 1.1;
+    }
   } else {
-    utterance.rate = 0.95; 
-    utterance.pitch = 0.85; // Lower pitch for deeper, dominating male voice
+    utterance.rate = 0.95;
+    utterance.pitch = 0.9;
+    // Dominating/Tough roles
+    if(/angry|boss|strict|tough|dominating/.test(role)){
+      utterance.rate = 0.9;
+      utterance.pitch = 0.82; // Deeper bass
+    }
+    // Friendly/Soft male
+    if(/friend|husband|boyfriend|mentor/.test(role)){
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+    }
   }
   
   let voices = speechSynthesis.getVoices();
@@ -1390,9 +1413,9 @@ function speakText(text, gender){
   };
 
   if(gender === "female"){
-    utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /female/i]);
+    utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /female/i, /victoria/i]);
   } else {
-    utterance.voice = findVoice([/google.*natural/i, /google.*male/i, /david/i, /microsoft mark/i, /male/i]);
+    utterance.voice = findVoice([/google.*natural/i, /google.*male/i, /david/i, /microsoft mark/i, /male/i, /premium/i]);
   }
 
   if(!utterance.voice) utterance.voice = voices.find(v => v.lang.startsWith("en"));
