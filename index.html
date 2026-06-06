@@ -1601,12 +1601,15 @@ async function startChat(){
   const isPractice = chatMode === "practice";
 
   if (isPractice || !isUserAdmin) {
+    // Practice mode or Normal user gets limited time
     const duration = isPractice ? chatDurationMin : 10;
     chatEndTime = Date.now() + duration * 60 * 1000;
     document.getElementById("timerDisplay").style.display = "flex";
     startTimer();
   } else {
+    // Admin in Chat mode gets unlimited time
     document.getElementById("timerDisplay").style.display = "none";
+    if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   }
 
   document.getElementById("chatAvatarSetup").src = selectedAvatar;
