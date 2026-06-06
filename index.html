@@ -1995,29 +1995,29 @@ function addBriefing(data){
       <div class="briefing-header">Mission Briefing</div>
       
       <div class="briefing-item">
-        <div class="briefing-label">Your Identity</div>
-        <div class="briefing-value"><strong>${data.userName}</strong> <span style="opacity:0.6; font-weight:400; font-size:12px; margin-left:4px;">— ${data.userRole || 'The Protagonist'}</span></div>
+        <div class="briefing-label" style="color:var(--primary-light); font-weight:900;">👤 YOU ARE:</div>
+        <div class="briefing-value"><span style="font-size:18px; color:#ffffff;"><strong>${data.userName}</strong></span> <span style="display:block; font-size:13px; color:#c4b5fd; margin-top:2px;">Role: ${data.userRole || 'The Protagonist'}</span></div>
       </div>
 
-      <div class="briefing-item">
-        <div class="briefing-label">Companion</div>
-        <div class="briefing-value"><strong>${data.aiName}</strong> <span style="opacity:0.6; font-weight:400; font-size:12px; margin-left:4px;">— ${chatRole}</span></div>
+      <div class="briefing-item" style="margin-top:16px;">
+        <div class="briefing-label" style="color:var(--accent); font-weight:900;">🎭 THE CHARACTER IS:</div>
+        <div class="briefing-value"><span style="font-size:18px; color:#ffffff;"><strong>${data.aiName}</strong></span> <span style="display:block; font-size:13px; color:#f9a8d4; margin-top:2px;">Role: ${chatRole}</span></div>
       </div>
 
       <div class="briefing-divider"></div>
 
       <div class="briefing-item">
-        <div class="briefing-label">The Scenario</div>
+        <div class="briefing-label">THE SCENARIO</div>
         <div class="scenario-text">${data.scenario}</div>
       </div>
 
       <div class="briefing-item">
-        <div class="briefing-label">The Goal</div>
-        <div class="briefing-value" style="color:var(--primary-light);"><strong>${data.goal}</strong></div>
+        <div class="briefing-label">THE GOAL</div>
+        <div class="briefing-value" style="color:var(--primary-light); font-weight:600;">${data.goal}</div>
       </div>
 
       <div class="briefing-reward">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
         Reward: ${data.reward}
       </div>
     </div>
