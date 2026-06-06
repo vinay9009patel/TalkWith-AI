@@ -1838,9 +1838,10 @@ function initSpeechRecognition(){
     console.log("Speech error:", event.error);
     if(event.error === "not-allowed"){
       alert("Microphone access denied. Please allow microphone access for voice input.");
+      isRecording = false;
+      updateMicBtn();
     }
-    isRecording = false;
-    updateMicBtn();
+    // Ignore other errors like 'no-speech' to keep the mic persistent
   };
 
   recognition.onend = function(){
