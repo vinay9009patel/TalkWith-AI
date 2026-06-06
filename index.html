@@ -1360,9 +1360,9 @@ function buildChatSystemPrompt(){
   }
 
   return "You are " + chatRole + " in a roleplay. " +
-    (chatBio ? "STORY / CONTEXT: " + chatBio + ". " : "") +
+    (chatBio ? "STRICT STORY / SCENARIO: " + chatBio + ". " : "") +
     getRelationshipRules(chatRole) + " " +
-    "Act according to the context provided. If there is a story or goal, focus on that.";
+    "SITUATIONAL AWARENESS: You must actively reference the current environment, objects, and goals mentioned in the 'STORY / SCENARIO'. If it's raining, mention the rain or the wet windows. If you're in a car, react to the driving or the traffic. Your answers must be 100% driven by the details of the situation.";
 }
 
 function cleanAIResponse(text){
