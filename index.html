@@ -42,6 +42,8 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 
+.app { display: flex; min-height: 100vh; }
+
 .sidebar {
   position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
   background: var(--surface);
@@ -127,7 +129,8 @@ a { color: inherit; text-decoration: none; }
 .auth-box .input:focus { box-shadow: inset 0 0 0 1px var(--primary); }
 #authScreen {
   display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; background: var(--bg); padding: 20px;
+  min-height: 100dvh; background: var(--bg); padding: 20px;
+  overflow-y: auto;
 }
 
 .profile-box { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
@@ -149,8 +152,8 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 768px) {
   .sidebar { display: none; }
-  .app { flex-direction: column; }
-  .main { margin-left: 0; padding: 12px 10px 80px; }
+  .app { flex-direction: column; min-height: 100dvh; }
+  .main { margin-left: 0; padding: 12px 10px 80px; min-height: 100dvh; display: flex; flex-direction: column; }
 
   .auth-box { padding: 32px 20px; margin: 20px 10px; max-width: none; }
   .auth-box h1 { font-size: 28px; }
@@ -166,7 +169,8 @@ a { color: inherit; text-decoration: none; }
   .bottom-nav { display: flex; }
   .bottom-nav button { font-size: 24px; padding: 8px 18px; }
 
-  .chat-setup { padding: 20px 12px; }
+  .chat-setup { padding: 60px 12px 30px; }
+  .chat-setup .back-btn { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; }
   .chat-setup .input { max-width: none; font-size: 15px; }
   .chat-setup textarea.input { min-height: 60px; }
   #avatarGridItems > div { width: 70px !important; height: 70px !important; }
@@ -175,8 +179,9 @@ a { color: inherit; text-decoration: none; }
   /* Chat fullscreen */
   .main.chat-open { 
     padding: 0; display: flex; flex-direction: column; overflow-x: hidden; 
-    position: fixed; inset: 0; height: 100vh; height: 100dvh; z-index: 100;
+    position: fixed; inset: 0; height: 100vh; height: 100svh; height: 100dvh; z-index: 100;
   }
+
   .main.chat-open .page:not(#chat) { display: none; }
   .main.chat-open #chat.page.active { display: flex; }
   .main.chat-open #chat .card { border-radius: 0; border: none; min-height: 0; }
@@ -192,7 +197,7 @@ a { color: inherit; text-decoration: none; }
   .main.chat-open .msg { max-width: 92%; }
   .main.chat-open .msg.ai .msg-bubble { font-size: 14px; padding: 8px 14px; }
   .main.chat-open .msg.user .msg-bubble { font-size: 14px; padding: 8px 14px; }
-  .main.chat-open .chat-input-area { padding: 6px 8px; gap: 6px; }
+  .main.chat-open .chat-input-area { padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); gap: 6px; }
   .main.chat-open .chat-input { padding: 8px 14px; font-size: 15px; min-height: 36px; }
   .main.chat-open .chat-btn { width: 36px; height: 36px; }
 }
@@ -231,7 +236,8 @@ a { color: inherit; text-decoration: none; }
 .chat-setup {
   text-align: center; padding: 40px 20px;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; flex: 1;
+  justify-content: flex-start; flex: 1;
+  overflow-y: auto; max-height: 100%;
 }
 .chat-setup .ai-avatar {
   width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
@@ -658,6 +664,7 @@ Achievements</h2>
 
 <!-- Setup Screen -->
 <div id="chatSetup" class="chat-setup">
+<button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" style="position:absolute;top:10px;left:10px;display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;">←</button>
 <img class="ai-avatar" id="chatAvatarSetup" src="" alt="AI">
 <h2>AI Talk</h2>
 <p>Choose your AI companion and start a conversation</p>
@@ -1216,6 +1223,8 @@ function showPage(pageId, navEl){
   document.querySelector(".main")?.classList.toggle("chat-open", pageId === "chat");
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   if(navEl) navEl.classList.add("active");
+  var bottomNav = document.querySelector(".bottom-nav");
+  if(bottomNav) bottomNav.style.display = pageId === "chat" ? "none" : "";
   document.querySelectorAll(".bottom-nav button").forEach((btn, i) => {
     btn.classList.remove("active");
     if(navEl && document.querySelectorAll(".nav-item")[i] === navEl) btn.classList.add("active");
@@ -2120,6 +2129,23 @@ const savedProfilePic = localStorage.getItem("profilePic");
 if(savedProfilePic){
   document.getElementById("profilePic").src = savedProfilePic;
 }
+
+// Mobile keyboard: adjust chat height when keyboard opens
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize", function(){
+    var main = document.querySelector(".main.chat-open");
+    if(main){
+      main.style.height = window.visualViewport.height + "px";
+    }
+  });
+}
+
+// Prevent body scroll when chat is open
+var origShowPage = window.showPage;
+window.showPage = function(pageId, navEl){
+  origShowPage(pageId, navEl);
+  document.body.style.overflow = pageId === "chat" ? "hidden" : "";
+};
 
 // Auto-resize textarea
 document.addEventListener("input", function(e){
