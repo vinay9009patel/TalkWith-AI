@@ -515,11 +515,11 @@ a { color: inherit; text-decoration: none; }
   margin: 10px 0;
 }
 .briefing-card {
-  background: linear-gradient(135deg, #1e1e24, #121217);
+  background: linear-gradient(135deg, #1e1e24, #0f0f12);
   border: 1px solid rgba(124,58,237,0.3);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   animation: briefingIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 @keyframes briefingIn {
@@ -532,7 +532,7 @@ a { color: inherit; text-decoration: none; }
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -543,22 +543,41 @@ a { color: inherit; text-decoration: none; }
   height: 1px;
   background: linear-gradient(90deg, rgba(124,58,237,0.3), transparent);
 }
-.briefing-item { margin-bottom: 14px; }
-.briefing-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-.briefing-value { font-size: 14px; color: var(--text); line-height: 1.5; }
-.briefing-value strong { color: var(--primary-light); }
+.briefing-item { margin-bottom: 20px; }
+.briefing-label { font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+.briefing-value { font-size: 15px; color: #f8fafc; line-height: 1.5; }
+.briefing-value strong { color: #ffffff; }
+
+.scenario-text {
+  font-family: var(--font-sexy);
+  color: #f8fafc;
+  line-height: 1.8;
+  font-size: 15.5px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+  border-radius: 14px;
+  border-left: 3px solid var(--primary);
+  margin: 10px 0;
+  letter-spacing: 0.2px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+}
+.briefing-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.3), transparent);
+  margin: 20px 0;
+}
 .briefing-reward {
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid rgba(139, 92, 246, 0.2);
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
   color: var(--primary-light);
   font-size: 13px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+  gap: 12px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
 }
 .briefing-reward svg { color: var(--primary); }
 
@@ -1728,7 +1747,16 @@ async function startChat(){
       5. ERROR TOLERANCE: Intelligently handle typos.
       6. NAMES: Use single FIRST NAMES only.
 
-      Return JSON ONLY: {"aiName":"Name","userName":"Name","userRole":"Brief role description (e.g., A delivery rider, A top engineer)","scenario":"Describe the VERY FIRST location and immediate tension clearly","goal":"The ultimate task user must eventually achieve","reward":"Huge incentive"}`;
+      Return JSON ONLY: {
+        "aiName":"FirstName",
+        "aiRoleLabel":"Short Role (e.g. Angry Son, Stern Boss)",
+        "userName":"FirstName",
+        "userRoleLabel":"Short Role (e.g. Dad, New Employee)",
+        "userDynamic":"Short relationship context (e.g. son tries to trick you, she doesn't know you are the boss)",
+        "scenario":"Describe the VERY FIRST location and immediate tension clearly",
+        "goal":"The ultimate task user must eventually achieve",
+        "reward":"Huge incentive"
+      }`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
     let storyProcessed = false;
@@ -1993,15 +2021,22 @@ function addBriefing(data){
   div.innerHTML = `
     <div class="briefing-card">
       <div class="briefing-header">Mission Briefing</div>
-      
+
       <div class="briefing-item">
         <div class="briefing-label" style="color:var(--primary-light); font-weight:900;">👤 YOU ARE:</div>
-        <div class="briefing-value"><span style="font-size:18px; color:#ffffff;"><strong>${data.userName}</strong></span> <span style="display:block; font-size:13px; color:#c4b5fd; margin-top:2px;">Role: ${data.userRole || 'The Protagonist'}</span></div>
+        <div class="briefing-value">
+          <span style="font-size:18px; color:#ffffff;"><strong>${data.userName}</strong></span> 
+          <span style="color:#c4b5fd; font-weight:700; font-size:15px; margin-left:4px;">— ${data.userRoleLabel || 'The Protagonist'}</span>
+          ${data.userDynamic ? `<div style="font-size:13px; color:#94a3b8; font-style:italic; margin-top:4px; line-height:1.4;">(${data.userDynamic})</div>` : ''}
+        </div>
       </div>
 
       <div class="briefing-item" style="margin-top:16px;">
         <div class="briefing-label" style="color:var(--accent); font-weight:900;">🎭 THE CHARACTER IS:</div>
-        <div class="briefing-value"><span style="font-size:18px; color:#ffffff;"><strong>${data.aiName}</strong></span> <span style="display:block; font-size:13px; color:#f9a8d4; margin-top:2px;">Role: ${chatRole}</span></div>
+        <div class="briefing-value">
+          <span style="font-size:18px; color:#ffffff;"><strong>${data.aiName}</strong></span> 
+          <span style="color:#f9a8d4; font-weight:700; font-size:15px; margin-left:4px;">— ${data.aiRoleLabel || chatRole}</span>
+        </div>
       </div>
 
       <div class="briefing-divider"></div>
