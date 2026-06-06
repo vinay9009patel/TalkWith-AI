@@ -1594,20 +1594,23 @@ async function startChat(){
   startBtn.disabled = true;
   startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Starting Mission...';
 
-  // SCENARIO GENERATION
+  // SCENARIO GENERATION (The "Creative Brain")
   if(!isPractice){
-    const storyPrompt = `Create a high-stakes, dramatic cinematic story scenario. 
-      AI Role: ${role} (Gender: ${chatGender}). 
-      User Gender: ${userGender}. 
-      User Input (Context): ${bio || "Random high-drama story"}. 
-      MANDATORY: 
-      1. Give a SINGLE realistic FIRST NAME to the AI (must be ${chatGender}). 
-      2. Give a SINGLE realistic FIRST NAME to the User (must be ${userGender}).
-      3. Create a MULTI-STAGE SCENE: Start from the VERY BEGINNING of the user's input (e.g., inside the lift). 
-      4. Set a clear goal and an exciting reward.
-      Return JSON ONLY: {"aiName":"FirstName","userName":"FirstName","scenario":"Describe the STARTING scene clearly (e.g., You are in the lift with a beautiful stranger, not knowing she is the boss).","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
+    const storyPrompt = `Act as a Master Storyteller and Roleplay Director. 
+      USER INPUT: ${bio || "Surprise me with a high-drama story"}.
+      AI ROLE: ${role} (${chatGender}).
+      USER GENDER: ${userGender}.
 
-    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on starting from the very first moment of the story. Stay 100% immersive.", 600);
+      INSTRUCTIONS:
+      1. REFINE & IMPROVE: If the user gave a partial story, expand it. Add cinematic tension, emotional weight, and 'filmy' drama. Make it much more exciting than the original input.
+      2. GENERATE: If the user only gave a topic (e.g., 'Angry Boss'), create a complete, high-stakes 3-stage mission from scratch.
+      3. STARTING POINT: Identify the VERY FIRST moment of the drama (e.g., 'Inside the lift', 'At the rainy gate').
+      4. NAMES: Give a single realistic FIRST NAME to the AI (${chatGender}) and a FIRST NAME to the User (${userGender}).
+      5. MISSION: Set a clear, difficult goal and a huge, exciting reward.
+
+      Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Vivid, cinematic scene setup starting at the beginning","goal":"The difficult task user must do","reward":"The huge incentive for success"}`;
+
+    const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
     if(storyResult){
       try {
         const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
@@ -1617,10 +1620,12 @@ async function startChat(){
           chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}.`;
           addBriefing(data);
 
-          // Generate an immersive first message starting at the VERY BEGINNING
+          // Generate a truly DYNAMIC first response
           showTyping();
-          const firstMsgPrompt = `Start the roleplay at the VERY BEGINNING of the scenario: ${data.scenario}. You are ${data.aiName}. You don't know the user well yet. Use *vivid actions* and "Dialogue". Be in character. Simple English. Respond in 2 sentences.`;
-          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " Start from the very first moment. No technical intros.", 500);
+          const firstMsgPrompt = `The scene begins: ${data.scenario}. You are ${data.aiName} (${role}). 
+            Respond with a DYNAMIC first reaction. Use 1 sentence of deep internal feeling/action in *asterisks* and 1-2 lines of sharp, character-driven dialogue. 
+            DON'T BE NICE. BE THE CHARACTER. If the user insulted you in the scenario, react to that tension NOW.`;
+          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " You are in the scene. No technical intros. Direct action only.", 500);
           hideTyping();
           if(firstMsg){
             addMessage("ai", firstMsg, detectMood(firstMsg, role));
@@ -1628,7 +1633,7 @@ async function startChat(){
             setTimeout(() => speakText(firstMsg, chatGender), 300);
             startBtn.disabled = false;
             startBtn.innerHTML = originalBtnText;
-            return; // Exit as first message is sent
+            return;
           }
         }
       } catch(e) { console.error("Story gen error", e); }
