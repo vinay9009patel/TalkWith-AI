@@ -1797,23 +1797,16 @@ function initSpeechRecognition(){
 
   recognition.onresult = function(event){
     let interim = "";
-    let newFinal = "";
     for(let i = event.resultIndex; i < event.results.length; i++){
       const result = event.results[i];
       if(result.isFinal){
-        const t = result[0].transcript.trim();
-        if(t && speechFinalTranscript.indexOf(t) === -1 && newFinal.indexOf(t) === -1){
-          newFinal += (newFinal ? " " : "") + t;
-        }
+        speechFinalTranscript += result[0].transcript;
       } else {
-        interim = result[0].transcript;
+        interim += result[0].transcript;
       }
     }
-    if(newFinal){
-      speechFinalTranscript += (speechFinalTranscript ? " " : "") + newFinal;
-    }
     const input = document.getElementById("chatInput");
-    input.value = speechFinalTranscript + (interim ? " " + interim : "");
+    input.value = (speechFinalTranscript + interim).trim();
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 120) + "px";
   };
