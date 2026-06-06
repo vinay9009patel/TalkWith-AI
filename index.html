@@ -30,10 +30,10 @@
   --accent: #3b82f6;
   --success: #22c55e;
   --danger: #ef4444;
-  --wa-bg: #0b141a;
-  --wa-user: #005c4b;
-  --wa-other: #202c33;
-  --wa-header: #202c33;
+  --wa-bg: var(--bg);
+  --wa-user: #7c3aed;
+  --wa-other: #1a1a1a;
+  --wa-header: var(--surface);
 }
 body {
   font-family: var(--font);
@@ -173,7 +173,7 @@ a { color: inherit; text-decoration: none; }
   #avatarGridItems img { width: 70px !important; height: 70px !important; }
 
   /* Chat fullscreen */
-  .main.chat-open { padding: 0; display: flex; flex-direction: column; }
+  .main.chat-open { padding: 0; display: flex; flex-direction: column; overflow-x: hidden; }
   .main.chat-open .bottom-nav,
   .main.chat-open .page:not(#chat) { display: none; }
   .main.chat-open #chat.page.active { display: flex; }
@@ -221,9 +221,10 @@ a { color: inherit; text-decoration: none; }
   flex: 1; min-height: 0;
 }
 #chat.page.active .card { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding: 0; }
-.chat-screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
-.chat-messages { flex: 1; min-height: 0; overflow-y: auto; }
+.chat-screen { display: none; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.chat-messages { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 .chat-input-area { flex-shrink: 0; }
+
 
 .chat-setup {
   text-align: center; padding: 40px 20px;
@@ -340,9 +341,6 @@ a { color: inherit; text-decoration: none; }
   justify-content: center; border-radius: 50%; width: 36px; height: 36px;
 }
 .chat-header .back-btn:hover { background: rgba(255,255,255,0.06); }
-  content: ''; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--success); display: inline-block;
-}
 .chat-messages {
   flex: 1; overflow-y: auto; padding: 16px;
   display: flex; flex-direction: column; gap: 6px;
@@ -464,10 +462,10 @@ a { color: inherit; text-decoration: none; }
   --text-muted: #667781;
   --success: #22c55e;
   --danger: #ef4444;
-  --wa-bg: #efeae2;
-  --wa-user: #d9fdd3;
-  --wa-other: #ffffff;
-  --wa-header: #f0f2f5;
+  --wa-bg: var(--bg);
+  --wa-user: #7c3aed;
+  --wa-other: var(--card);
+  --wa-header: var(--surface);
 }
 .light-mode .sidebar { background: var(--surface); border-right-color: var(--border); }
 .light-mode .sidebar .nav-item { color: var(--text-muted); }
@@ -495,7 +493,7 @@ a { color: inherit; text-decoration: none; }
 .light-mode .chat-input::placeholder { color: #667781; }
 .light-mode .chat-messages { background: var(--wa-bg); }
 .light-mode .msg.ai .msg-bubble { background: var(--wa-other); color: var(--text); }
-.light-mode .msg.user .msg-bubble { background: var(--wa-user); color: var(--text); }
+.light-mode .msg.user .msg-bubble { background: var(--wa-user); color: white; }
 .light-mode .msg-action {
   color: #667781;
   opacity: 0.8;
@@ -1745,7 +1743,7 @@ function initSpeechRecognition(){
       const result = event.results[i];
       if(result.isFinal){
         const t = result[0].transcript.trim();
-        if(t && !speechFinalTranscript.endsWith(t)){
+        if(t && speechFinalTranscript.indexOf(t) === -1 && newFinal.indexOf(t) === -1){
           newFinal += (newFinal ? " " : "") + t;
         }
       } else {
@@ -1783,16 +1781,17 @@ function toggleMic(){
   if(isRecording){
     try{ recognition.stop(); }catch(e){}
     isRecording = false;
-  } else {
-    speechFinalTranscript = "";
-  } else {
-    try{
-      recognition.start();
-      isRecording = true;
-    }catch(e){
-      console.log("Mic start error:", e);
-      alert("Could not start microphone. Make sure you've allowed microphone access.");
-    }
+    updateMicBtn();
+    return;
+  }
+  
+  speechFinalTranscript = "";
+  try{
+    recognition.start();
+    isRecording = true;
+  }catch(e){
+    console.log("Mic start error:", e);
+    alert("Could not start microphone. Make sure you've allowed microphone access.");
   }
   updateMicBtn();
 }
@@ -2295,18 +2294,19 @@ onAuthStateChanged(auth, (user) => {
       email: user.email,
       photo: user.photoURL || ""
     }));
-    document.getElementById("authScreen").style.display = "none";
-    document.querySelector(".app").style.display = "block";
-    document.getElementById("welcomeText").innerText = "Welcome Back, " + (user.displayName || user.email.split("@")[0]);
-    document.getElementById("profileName").innerText = user.displayName || user.email.split("@")[0];
-    document.getElementById("profileEmail").innerText = user.email;
+    var el;
+    (el = document.getElementById("authScreen")) && (el.style.display = "none");
+    (el = document.querySelector(".app")) && (el.style.display = "block");
+    (el = document.getElementById("welcomeText")) && (el.innerText = "Welcome Back, " + (user.displayName || user.email.split("@")[0]));
+    (el = document.getElementById("profileName")) && (el.innerText = user.displayName || user.email.split("@")[0]);
+    (el = document.getElementById("profileEmail")) && (el.innerText = user.email);
     if(user.email === ADMIN_EMAIL){
-      document.getElementById("welcomeText").innerHTML = "Welcome Back, " + (user.displayName || user.email.split("@")[0]) + " — Admin";
-      document.getElementById("adminBadge").style.display = "inline-block";
-      document.getElementById("profileAdminBadge").style.display = "inline";
+      (el = document.getElementById("welcomeText")) && (el.innerHTML = "Welcome Back, " + (user.displayName || user.email.split("@")[0]) + " — Admin");
+      (el = document.getElementById("adminBadge")) && (el.style.display = "inline-block");
+      (el = document.getElementById("profileAdminBadge")) && (el.style.display = "inline");
     }
     if(user.photoURL){
-      document.getElementById("profilePic").src = user.photoURL;
+      (el = document.getElementById("profilePic")) && (el.src = user.photoURL);
     }
     initSecureStore(user.uid);
   }
