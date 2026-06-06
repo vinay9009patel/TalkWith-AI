@@ -276,7 +276,7 @@ a { color: inherit; text-decoration: none; }
 .chat-setup h2 { font-size: 22px; font-weight: 800; color: var(--primary-light); margin-bottom: 4px; letter-spacing: -0.5px; }
 .chat-setup p { color: var(--text-muted); margin-bottom: 16px; font-size: 13px; line-height: 1.4; }
 .chat-setup .input { max-width: 400px; margin: 0 auto 10px; text-align: center; border-radius: 12px; border: 1px solid var(--border); }
-.chat-setup textarea.input { text-align: left; resize: none; min-height: 80px; }
+.chat-setup textarea.input { text-align: left; resize: none; min-height: 140px; }
 .chat-setup .btn { margin-top: 4px; padding: 12px 32px; }
 .mode-btn {
   padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
@@ -1717,7 +1717,8 @@ function endChat(){
   document.getElementById("chatInputs").style.display = "none";
   document.getElementById("avatarGrid").style.display = "none";
   document.getElementById("userGenderSelection").style.display = "none";
-  document.getElementById("chatAvatarSetup").src = "";
+  // Reset avatar to empty but prevent broken image icon
+  document.getElementById("chatAvatarSetup").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
   document.getElementById("timerDisplay").style.display = "none";
   selectedAvatar = "";
 
