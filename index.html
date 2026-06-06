@@ -775,7 +775,7 @@ Achievements</h2>
 <!-- Setup Screen -->
 <div id="chatSetup" class="chat-setup">
 <button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" style="position:absolute;top:10px;left:10px;display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;">←</button>
-<img class="ai-avatar" id="chatAvatarSetup" src="" alt="AI">
+<img class="ai-avatar" id="chatAvatarSetup" src="" alt="AI" style="display:none;">
 <h2>AI Talk</h2>
 <p>Choose your AI companion and start a conversation</p>
 
@@ -1249,11 +1249,12 @@ function getRandomAvatar(gender){
   const pool = gender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
   return pool[Math.floor(Math.random() * pool.length)];
 }
-
 function setChatGender(gender){
   chatGender = gender;
   selectedAvatar = "";
+  document.getElementById("chatAvatarSetup").style.display = "none";
   const maleBtn = document.getElementById("genderMaleBtn");
+...
   const femaleBtn = document.getElementById("genderFemaleBtn");
   [maleBtn, femaleBtn].forEach(b => { b.style.opacity = "0.5"; b.style.transform = "scale(0.95)"; b.style.boxShadow = "none"; });
   const active = gender === "male" ? maleBtn : femaleBtn;
@@ -1283,7 +1284,9 @@ function selectAvatar(el, url){
   document.querySelectorAll("#avatarGridItems > div").forEach(d => d.style.borderColor = "transparent");
   el.style.borderColor = "#7c3aed";
   el.style.boxShadow = "0 0 20px rgba(124,58,237,0.3)";
-  document.getElementById("chatAvatarSetup").src = url;
+  const setupImg = document.getElementById("chatAvatarSetup");
+  setupImg.src = url;
+  setupImg.style.display = "block";
   document.getElementById("userGenderSelection").style.display = "block";
   document.getElementById("chatInputs").style.display = "block";
   setUserGender("male"); // Default
@@ -1717,8 +1720,9 @@ function endChat(){
   document.getElementById("chatInputs").style.display = "none";
   document.getElementById("avatarGrid").style.display = "none";
   document.getElementById("userGenderSelection").style.display = "none";
-  // Reset avatar to empty but prevent broken image icon
-  document.getElementById("chatAvatarSetup").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  const setupImg = document.getElementById("chatAvatarSetup");
+  setupImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  setupImg.style.display = "none";
   document.getElementById("timerDisplay").style.display = "none";
   selectedAvatar = "";
 
