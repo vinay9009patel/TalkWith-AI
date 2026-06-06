@@ -1217,15 +1217,13 @@ function getRoleAddressMap(role){
 function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   return [
-    "Stay strictly in the role: " + role + ".",
+    "Stay strictly in the role: " + role + ". Never act like a parent — no scolding, no calling them child/beta/bete/baccha, no caretaker tone.",
     getAddressRules(role),
     "Before replying, check whether every address word fits the relationship. If it does not fit, replace it with " + (getCorrectAddressWord(role) || "no address word") + ".",
     "Do not mix relationship categories. A partner should not speak like a parent, sibling, teacher, or stranger. A mentor should not speak like a partner or parent. A friend should not use romantic or family terms.",
     "Use common sense about the scene. Do not teleport, disappear, touch the user, hug, run, or claim physical actions unless the user has clearly placed you there.",
     "Actions in *asterisks* should be short, realistic, and emotional only.",
     "Do not invent big plot twists, money, violence, revenge, guards, countdowns, or new named characters unless the user introduced them.",
-    "No emojis in the AI text.",
-    "Use natural Hinglish when the user uses Hinglish; otherwise use English.",
     "Keep emotion warm and believable, not filmy or overdramatic.",
     romantic ? "For romantic roles, sound like a caring partner. Be affectionate but respectful and age-appropriate." : "Match the relationship implied by the role.",
     "Reply in this format when roleplay is active: one *short action line* followed by spoken dialogue in double quotes.",
@@ -1237,7 +1235,7 @@ function buildChatSystemPrompt(){
   if(chatMode === "practice"){
     return "You are an English tutor acting as " + chatRole + ". " +
       (chatBio ? "Student: " + chatBio + ". " : "") +
-      "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. No emojis. Keep replies very short (1-2 sentences).";
+      "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. Keep replies very short (1-2 sentences).";
   }
 
   return "You are " + chatRole + " in a roleplay. " +
@@ -1250,7 +1248,6 @@ function cleanAIResponse(text){
   const addressMap = getRoleAddressMap(chatRole);
   const addressRegex = new RegExp("\\b(" + addressMap.pattern + ")\\b", "gi");
   return String(text || "")
-    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "")
     .replace(addressRegex, function(){
       return addressMap.replacement;
     })
@@ -1374,7 +1371,7 @@ async function startChat(){
       ? "The student says: " + bio + "\n\nStart an English practice conversation as their " + role + " tutor. Ask a question."
       : "The user's bio: " + bio + "\n\nStart a roleplay as their " + role + ". Respond naturally to the user's bio. Keep it grounded, caring, and realistic.";
     var startSystem = isPractice
-      ? "You are an English conversation tutor acting as " + role + ". Be friendly. Ask questions. No emojis. Keep it short (1-2 sentences)."
+      ? "You are an English conversation tutor acting as " + role + ". Be friendly. Ask questions. Keep it short (1-2 sentences)."
       : "You are " + role + " in a roleplay. " + getRelationshipRules(role);
     const response = await askAI(startPrompt, startSystem, 400);
     hideTyping();
@@ -1557,48 +1554,18 @@ function detectMood(text, role){
 }
 
 function getMoodEmoji(mood){
-  const reactions = {
-    happy: ["\u{1F60A}", "\u{1F603}", "\u{1F970}", "\u{1F31E}"],
-    romantic: ["\u{1F497}", "\u{1F496}", "\u{1F618}", "\u{1F60D}"],
-    sad: ["\u{1F97A}", "\u{1F614}", "\u{1F622}", "\u{1F90D}"],
-    excited: ["\u2728", "\u{1F929}", "\u{1F389}", "\u{1F31F}"],
-    funny: ["\u{1F604}", "\u{1F606}", "\u{1F923}", "\u{1F61C}"],
-    angry: ["\u{1F624}", "\u{1F620}", "\u{1F621}", "\u{1F525}"],
-    shy: ["\u{1F633}", "\u{1F92D}", "\u{1FAF6}", "\u{1F60A}"],
-    caring: ["\u{1F970}", "\u{1F917}", "\u{1F49E}", "\u{1FA77}"],
-    thinking: ["\u{1F914}", "\u{1F9D0}", "\u{1F4AD}", "\u{1F50D}"],
-    confused: ["\u{1F615}", "\u{1F928}", "\u{1F635}", "\u2753"],
-    surprised: ["\u{1F62E}", "\u{1F632}", "\u{1F631}", "\u203C\uFE0F"],
-    sleepy: ["\u{1F634}", "\u{1F971}", "\u{1F319}", "\u{1F4A4}"],
-    proud: ["\u{1F4AA}", "\u{1F60E}", "\u{1F3C6}", "\u{1F44F}"],
-    worried: ["\u{1F62C}", "\u{1F630}", "\u{1F625}", "\u{1F6E1}\uFE0F"],
-    calm: ["\u{1F60C}", "\u{1F343}", "\u{1F9D8}", "\u{1F54A}\uFE0F"],
-    grateful: ["\u{1F64F}", "\u{1F49C}", "\u{1F90D}", "\u2728"],
-    greeting: ["\u{1F44B}", "\u{1F917}", "\u{1F60A}", "\u2728"],
-    apology: ["\u{1F97A}", "\u{1F64F}", "\u{1F614}", "\u{1FAF6}"],
-    playful: ["\u{1F61C}", "\u{1F609}", "\u{1F388}", "\u{1F3AF}"],
-    teasing: ["\u{1F92D}", "\u{1F60F}", "\u{1F61B}", "\u{1F609}"],
-    curious: ["\u{1F440}", "\u{1F914}", "\u{1F50D}", "\u2754"],
-    hopeful: ["\u{1F31F}", "\u{1F331}", "\u2728", "\u{1F64C}"],
-    serious: ["\u{1F610}", "\u{1F9D0}", "\u{1F4DD}", "\u{1F6A6}"],
-    bored: ["\u{1F611}", "\u{1F971}", "\u{1F634}", "\u{1F4A4}"],
-    embarrassed: ["\u{1F605}", "\u{1F633}", "\u{1F92D}", "\u{1F648}"],
-    jealous: ["\u{1F928}", "\u{1F62C}", "\u{1F49A}", "\u{1F440}"],
-    encouraging: ["\u{1F44F}", "\u{1F4AA}", "\u{1F31F}", "\u{1F64C}"]
-  };
-  const choices = reactions[mood] || ["\u{1F642}", "\u{1F60A}", "\u2728", "\u{1F44B}"];
-  return choices[Math.floor(Math.random() * choices.length)];
-
   const map = {
-    happy: "😊",
-    romantic: "💗",
-    sad: "🥺",
-    excited: "✨",
-    funny: "😄",
-    angry: "😤"
+    happy: "😊", romantic: "💗", sad: "🥺", excited: "✨",
+    funny: "😄", angry: "😤", shy: "😳", caring: "🥰",
+    thinking: "🤔", confused: "😕", surprised: "😮", sleepy: "😴",
+    proud: "💪", worried: "😰", calm: "😌", grateful: "🙏",
+    greeting: "👋", apology: "🥺", playful: "😜", teasing: "😏",
+    curious: "🤨", hopeful: "🌟", serious: "😐", bored: "😑",
+    embarrassed: "😅", jealous: "😒", encouraging: "👏"
   };
   return map[mood] || "🙂";
 }
+
 
 let _menuMsgText = "";
 let _pressTimer = null;
