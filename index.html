@@ -1844,13 +1844,13 @@ function toggleMic(){
   if(!recognition) return;
 
   if(isRecording){
-    try{ recognition.stop(); }catch(e){}
     isRecording = false;
+    try{ recognition.stop(); }catch(e){}
     updateMicBtn();
     return;
   }
   
-  speechFinalTranscript = "";
+  speechFinalTranscript = document.getElementById("chatInput").value ? document.getElementById("chatInput").value + " " : "";
   try{
     recognition.start();
     isRecording = true;
