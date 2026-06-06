@@ -716,9 +716,9 @@ Female
 </div>
 
 <div id="chatInputs" style="display:none;">
-<input type="text" id="chatRole" class="input" placeholder="Enter role — e.g. career coach, mentor, coding tutor, language partner, therapist..." style="font-weight:600;">
+<input type="text" id="chatRole" class="input" placeholder="Role: e.g. Angry Girlfriend, Career Coach, Boss, Pirate..." style="font-weight:600;">
 
-<textarea id="chatBio" class="input" rows="3" placeholder="Tell AI about yourself — your interests, mood, what you want to talk about..."></textarea>
+<textarea id="chatBio" class="input" rows="4" placeholder="Situation / Story: Describe the scene, names, and what is happening... (e.g. It's raining, we're in a car, I need to drop you at the office to win a sports car!)"></textarea>
 
 <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
 <button class="btn primary" onclick="startChat()" style="padding:14px 36px;font-size:16px;">
@@ -1353,14 +1353,14 @@ function getRelationshipRules(role){
 function buildChatSystemPrompt(){
   if(chatMode === "practice"){
     return "You are an English tutor acting as " + chatRole + ". " +
-      (chatBio ? "Student: " + chatBio + ". " : "") +
+      (chatBio ? "Scenario: " + chatBio + ". " : "") +
       "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. Keep replies very short (1-2 sentences).";
   }
 
   return "You are " + chatRole + " in a roleplay. " +
-    (chatBio ? "Know the person: " + chatBio + ". " : "") +
+    (chatBio ? "STORY / CONTEXT: " + chatBio + ". " : "") +
     getRelationshipRules(chatRole) + " " +
-    "Write like this structure: *A brief visible action or expression.* \"Spoken dialogue goes here.\"";
+    "Act according to the context provided. If there is a story or goal, focus on that.";
 }
 
 function cleanAIResponse(text){
