@@ -1820,8 +1820,11 @@ function initSpeechRecognition(){
   };
 
   recognition.onend = function(){
-    isRecording = false;
-    updateMicBtn();
+    if (isRecording) {
+      try { recognition.start(); } catch (e) { console.log("Restart error:", e); }
+    } else {
+      updateMicBtn();
+    }
   };
 }
 
