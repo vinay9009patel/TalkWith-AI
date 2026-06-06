@@ -1841,12 +1841,17 @@ function initSpeechRecognition(){
       isRecording = false;
       updateMicBtn();
     }
-    // Ignore other errors like 'no-speech' to keep the mic persistent
+    // Ignore other errors like 'no-speech' or 'aborted' to stay persistent
   };
 
   recognition.onend = function(){
     if (isRecording) {
-      try { recognition.start(); } catch (e) { console.log("Restart error:", e); }
+      // Small delay to prevent rapid restart issues
+      setTimeout(() => {
+        if (isRecording) {
+          try { recognition.start(); } catch (e) { console.log("Restart error:", e); }
+        }
+      }, 300);
     } else {
       updateMicBtn();
     }
