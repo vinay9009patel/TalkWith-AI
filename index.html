@@ -1457,12 +1457,11 @@ function getRoleAddressMap(role){
 function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   return [
-    "STRICTLY stay in the role: " + role + ". You are a REAL HUMAN, not a dictionary. Use SIMPLE, NATURAL English that is easy to understand.",
-    "NO COMPLEX WORDS: Avoid difficult or high-level vocabulary. Use words that common people use in daily life.",
-    "CONCISE DIALOGUE: Keep your spoken dialogue short and punchy (1-2 impactful sentences). Don't give long, lengthy speeches.",
-    "DEEP COMPREHENSION: Understand every hidden intent and 'double-meaning' in Hinglish/English, but reply in SIMPLE English.",
-    "REAL DRAMA: Use 1-2 sentences of physical actions and internal thoughts in *asterisks*. Focus on the 'vibe' rather than long descriptions.",
-    "REACTION: If 'Angry', be short and cold. If 'Romantic', be sweet and simple. Stay human.",
+    "STRICTLY stay in the role: " + role + ". You are a REAL HUMAN. Use SIMPLE English.",
+    "ERROR TOLERANCE: Intelligently handle spelling mistakes (e.g., 'boos' = 'boss'). Infer meaning from context and stay in character.",
+    "CONCISE DIALOGUE: Keep spoken dialogue short and punchy (1-2 sentences).",
+    "DEEP COMPREHENSION: Understand hidden intent and 'double-meanings' in any language.",
+    "REAL DRAMA: Use 1-2 sentences of vivid actions and internal thoughts in *asterisks*.",
     "FORMAT: *Detailed action/feeling.* \"Short, simple dialogue.\""
   ].join(" ");
 }
@@ -1634,11 +1633,12 @@ async function startChat(){
       USER GENDER: ${userGender}.
 
       INSTRUCTIONS:
-      1. REFINE & IMPROVE: If the user gave a partial story, expand it. Add cinematic tension, emotional weight, and 'filmy' drama. Make it much more exciting than the original input.
-      2. GENERATE: If the user only gave a topic (e.g., 'Angry Boss'), create a complete, high-stakes 3-stage mission from scratch.
-      3. STARTING POINT: Identify the VERY FIRST moment of the drama (e.g., 'Inside the lift', 'At the rainy gate').
-      4. NAMES: Give a single realistic FIRST NAME to the AI (${chatGender}) and a FIRST NAME to the User (${userGender}).
-      5. MISSION: Set a clear, difficult goal and a huge, exciting reward.
+      1. REFINE & IMPROVE: If the user gave a partial story, expand it. Add cinematic tension and 'filmy' drama.
+      2. ERROR TOLERANCE: Intelligently guess the user's intent even if they have spelling mistakes or typos in their role or story (e.g., 'boos' = 'boss', 'lft' = 'lift').
+      3. GENERATE: If only a topic is given, create a high-stakes 3-stage mission.
+      4. STARTING POINT: Identify the VERY FIRST moment of the drama.
+      5. NAMES: Give a single realistic FIRST NAME to the AI (${chatGender}) and a FIRST NAME to the User (${userGender}).
+      6. MISSION: Set a clear, difficult goal and a huge reward.
 
       Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Vivid, cinematic scene setup starting at the beginning","goal":"The difficult task user must do","reward":"The huge incentive for success"}`;
 
