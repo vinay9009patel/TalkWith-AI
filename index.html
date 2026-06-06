@@ -20,26 +20,27 @@ html { scroll-behavior: smooth; }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
   --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --bg: #0a0a0a;
-  --surface: #111111;
-  --card: #1a1a1a;
-  --border: rgba(255,255,255,0.06);
-  --text: #e9edef;
+  --bg: #050505;
+  --surface: #0f0f12;
+  --card: #16161a;
+  --border: rgba(124,58,237,0.1);
+  --text: #f8fafc;
   --text-muted: #94a3b8;
-  --primary: #7c3aed;
-  --primary-light: #a78bfa;
-  --accent: #3b82f6;
+  --primary: #8b5cf6;
+  --primary-light: #c4b5fd;
+  --accent: #d946ef;
   --success: #10b981;
   --danger: #ef4444;
-  --wa-bg: #0b141a;
-  --wa-user: #005c4b;
-  --wa-other: #202c33;
-  --wa-header: #202c33;
+  --wa-bg: #08080a;
+  --wa-user: #6d28d9;
+  --wa-other: #1e1e24;
+  --wa-header: #121217;
 }
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
+  background-image: radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 50%);
 }
 a { color: inherit; text-decoration: none; }
 
@@ -55,6 +56,7 @@ a { color: inherit; text-decoration: none; }
 .sidebar .logo {
   padding: 8px 24px 24px; font-size: 20px; font-weight: 900;
   color: var(--primary-light);
+  letter-spacing: -1px;
 }
 .nav-item {
   display: flex; align-items: center; gap: 12px;
@@ -62,50 +64,54 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-muted); font-weight: 500; font-size: 14px;
   transition: all 0.2s; border-right: 2px solid transparent;
 }
-.nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+.nav-item:hover { background: rgba(124,58,237,0.05); color: var(--text); }
 .nav-item.active {
-  background: rgba(124,58,237,0.08);
+  background: rgba(124,58,237,0.12);
   color: var(--primary-light);
   border-right-color: var(--primary);
 }
 
-.main { margin-left: 220px; min-height: 100vh; padding: 24px 32px 100px; display: flex; flex-direction: column; }
-.page { display: none; animation: fadeIn 0.4s ease-out; }
+.main { margin-left: 220px; min-height: 100vh; height: 100vh; padding: 24px 32px 100px; display: flex; flex-direction: column; overflow: hidden; }
+.main.chat-open { padding-bottom: 0; }
+.page { display: none; animation: fadeIn 0.4s ease-out; height: 100%; overflow: hidden; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .page.active { display: block; flex: 1; }
-#chat.page.active { display: flex; flex-direction: column; min-height: 0; }
+#chat.page.active { display: flex; flex-direction: column; min-height: 0; height: 100%; }
 .topbar {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 32px; padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 .topbar h1 { font-size: 22px; font-weight: 700; }
 .topbar h1 span { color: var(--primary-light); }
 .topbar p { color: var(--text-muted); margin-top: 2px; font-size: 14px; }
 
 .btn {
-  padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer;
+  padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer;
   font-weight: 600; font-size: 14px; transition: all 0.2s;
   display: inline-flex; align-items: center; gap: 8px;
 }
 .btn.primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), #6d28d9);
   color: white;
+  box-shadow: 0 4px 15px rgba(124,58,237,0.3);
 }
-.btn.primary:hover { background: #6d28d9; }
+.btn.primary:hover { background: linear-gradient(135deg, #7c3aed, #5b21b6); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
 .btn.dark { background: #1f2937; color: var(--text); }
 .btn.dark:hover { background: #252f3f; }
 
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px; padding: 24px;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+  border-radius: 16px; padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px -5px rgba(0,0,0,0.5);
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(124,58,237,0.2); }
+.card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(124,58,237,0.25); border-color: rgba(124,58,237,0.3); }
 .card h2 { color: var(--text); font-weight: 700; font-size: 20px; }
 .card p { color: var(--text-muted); }
 
@@ -166,7 +172,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .app { flex-direction: column; min-height: 100dvh; }
-  .main { margin-left: 0; padding: 12px 10px 80px; min-height: 100dvh; display: flex; flex-direction: column; }
+  .main { margin-left: 0; padding: 12px 10px 80px; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
 
   .auth-box { padding: 32px 20px; margin: 20px 10px; max-width: none; }
   .auth-box h1 { font-size: 28px; }
@@ -184,12 +190,13 @@ a { color: inherit; text-decoration: none; }
   .bottom-nav { display: flex; }
   .bottom-nav button { font-size: 24px; padding: 8px 18px; }
 
-  .chat-setup .ai-avatar { width: 80px; height: 80px; margin-bottom: 12px; }
-  .chat-setup h2 { font-size: 20px; }
-  .chat-setup p { font-size: 13px; margin-bottom: 16px; }
+  .chat-setup .ai-avatar { width: 60px; height: 60px; margin-bottom: 10px; }
+  .chat-setup h2 { font-size: 18px; }
+  .chat-setup p { font-size: 12px; margin-bottom: 12px; }
   .chat-setup .back-btn { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; }
-  .chat-setup .input { max-width: none; font-size: 15px; }
+  .chat-setup .input { max-width: none; font-size: 14px; margin-bottom: 8px; }
   .chat-setup textarea.input { min-height: 60px; }
+  .chat-setup .btn { width: 100%; padding: 12px; }
   #avatarGridItems > div { width: auto !important; height: auto !important; }
   #avatarGridItems img { width: 100% !important; height: 100% !important; }
 
@@ -252,20 +259,25 @@ a { color: inherit; text-decoration: none; }
 
 
 .chat-setup {
-  text-align: center; padding: 40px 20px;
+  text-align: center; padding: 20px;
   display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start; flex: 1;
   overflow-y: auto; max-height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124,58,237,0.2) transparent;
 }
+.chat-setup::-webkit-scrollbar { width: 6px; }
+.chat-setup::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.2); border-radius: 10px; }
 .chat-setup .ai-avatar {
-  width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
   object-fit: cover; border: 2px solid rgba(124,58,237,0.3);
+  box-shadow: 0 0 20px rgba(124,58,237,0.2);
 }
-.chat-setup h2 { font-size: 24px; font-weight: 700; color: var(--primary-light); margin-bottom: 6px; }
-.chat-setup p { color: var(--text-muted); margin-bottom: 20px; font-size: 14px; }
-.chat-setup .input { max-width: 440px; margin: 0 auto 12px; text-align: center; }
-.chat-setup textarea.input { text-align: left; resize: vertical; min-height: 70px; }
-.chat-setup .btn { margin-top: 8px; }
+.chat-setup h2 { font-size: 22px; font-weight: 800; color: var(--primary-light); margin-bottom: 4px; letter-spacing: -0.5px; }
+.chat-setup p { color: var(--text-muted); margin-bottom: 16px; font-size: 13px; line-height: 1.4; }
+.chat-setup .input { max-width: 400px; margin: 0 auto 10px; text-align: center; border-radius: 12px; border: 1px solid var(--border); }
+.chat-setup textarea.input { text-align: left; resize: none; min-height: 80px; }
+.chat-setup .btn { margin-top: 4px; padding: 12px 32px; }
 .mode-btn {
   padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
   background: var(--card); color: var(--text-muted); font-size: 13px;
@@ -348,6 +360,8 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; gap: 12px;
   padding: 10px 16px;
   background: var(--wa-header);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
 }
 .chat-header .ai-avatar-sm {
   width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
@@ -415,26 +429,82 @@ a { color: inherit; text-decoration: none; }
   background: var(--wa-other);
   border-bottom-left-radius: 4px;
   color: var(--text);
+  border: 1px solid rgba(255,255,255,0.03);
 }
 .msg.user .msg-bubble {
-  background: var(--wa-user);
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
   border-bottom-right-radius: 4px;
-  color: #e9edef;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
 }
 .msg-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; opacity: 0.7; }
-.msg.user .msg-time { text-align: right; }
+.msg.briefing {
+  align-self: center;
+  max-width: 90%;
+  width: 100%;
+  margin: 10px 0;
+}
+.briefing-card {
+  background: linear-gradient(135deg, #1e1e24, #121217);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: briefingIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes briefingIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.briefing-header {
+  color: var(--primary-light);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.briefing-header::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(124,58,237,0.3), transparent);
+}
+.briefing-item { margin-bottom: 14px; }
+.briefing-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.briefing-value { font-size: 14px; color: var(--text); line-height: 1.5; }
+.briefing-value strong { color: var(--primary-light); }
+.briefing-reward {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px dashed rgba(16, 185, 129, 0.3);
+  padding: 10px;
+  border-radius: 10px;
+  color: #4ade80;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .typing-indicator {
   display: flex; align-items: center; gap: 4px;
-  padding: 12px 16px;
-  background: var(--card);
-  border-radius: 8px; border-bottom-left-radius: 2px;
-  max-width: 70px; align-self: flex-start;
+  padding: 10px 16px;
+  background: var(--wa-other);
+  border-radius: 16px; border-bottom-left-radius: 4px;
+  max-width: 60px; align-self: flex-start;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .typing-indicator span {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  animation: typingBounce 1.2s ease-in-out infinite;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--primary-light);
+  opacity: 0.6;
+  animation: typingBounce 1.4s ease-in-out infinite;
 }
 .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
 .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
@@ -447,15 +517,23 @@ a { color: inherit; text-decoration: none; }
   display: flex; gap: 8px; align-items: center;
   padding: 8px 12px;
   background: var(--wa-header);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
 }
 .chat-input {
-  flex: 1; padding: 9px 16px; border-radius: 8px; border: none;
-  background: #2a3942; color: var(--text); font-size: 14px;
+  flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid rgba(124,58,237,0.1);
+  background: rgba(0,0,0,0.3); color: var(--text); font-size: 15px;
   outline: none; resize: none; font-family: inherit;
-  max-height: 100px; min-height: 20px; line-height: 1.4;
+  max-height: 120px; min-height: 20px; line-height: 1.4;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
-.chat-input::placeholder { color: #667781; }
-.chat-input:focus { background: #2a3942; }
+.chat-input::placeholder { color: #8e8e93; opacity: 0.6; }
+.chat-input:focus { 
+  background: rgba(0,0,0,0.4); 
+  border-color: rgba(124,58,237,0.4);
+  box-shadow: 0 0 15px rgba(124,58,237,0.1), inset 0 2px 4px rgba(0,0,0,0.2);
+}
 
 .chat-btn {
   width: 42px; height: 42px; border-radius: 50%; border: none;
@@ -688,13 +766,13 @@ Achievements</h2>
 <h2>AI Talk</h2>
 <p>Choose your AI companion and start a conversation</p>
 
-<div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;">
-<button id="genderMaleBtn" class="btn" style="flex:1;min-width:120px;background:rgba(59,130,246,0.15);color:#60a5fa;border:2px solid rgba(59,130,246,0.3);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="setChatGender('male')">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+<div style="display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:nowrap;width:100%;max-width:340px;">
+<button id="genderMaleBtn" class="btn" style="flex:1;background:rgba(59,130,246,0.15);color:#60a5fa;border:2px solid rgba(59,130,246,0.3);padding:10px 8px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;" onclick="setChatGender('male')">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
 Male
 </button>
-<button id="genderFemaleBtn" class="btn" style="flex:1;min-width:120px;background:rgba(236,72,153,0.15);color:#f472b6;border:2px solid rgba(236,72,153,0.3);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="setChatGender('female')">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+<button id="genderFemaleBtn" class="btn" style="flex:1;background:rgba(236,72,153,0.15);color:#f472b6;border:2px solid rgba(236,72,153,0.3);padding:10px 8px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;" onclick="setChatGender('female')">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
 Female
 </button>
 </div>
@@ -718,6 +796,21 @@ Female
 <div id="avatarGrid" style="display:none;margin-bottom:18px; width:100%;">
 <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px;">Choose your AI companion's look:</p>
 <div id="avatarGridItems" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(70px, 1fr));gap:8px;justify-content:center;max-width:320px;margin:0 auto;"></div>
+</div>
+
+<!-- User Gender Selection -->
+<div id="userGenderSelection" style="display:none;margin-bottom:18px; width:100%; max-width:340px;">
+  <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px;font-weight:600;">Tell us about you:</p>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:nowrap;">
+    <button id="userGenderMaleBtn" class="mode-btn" onclick="setUserGender('male')" style="flex:1; border-radius:12px; padding:10px 8px; display:flex; align-items:center; justify-content:center; gap:6px; min-width:0;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      <div style="font-size:13px; font-weight:700;">Male</div>
+    </button>
+    <button id="userGenderFemaleBtn" class="mode-btn" onclick="setUserGender('female')" style="flex:1; border-radius:12px; padding:10px 8px; display:flex; align-items:center; justify-content:center; gap:6px; min-width:0;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      <div style="font-size:13px; font-weight:700;">Female</div>
+    </button>
+  </div>
 </div>
 
 <div id="chatInputs" style="display:none;">
@@ -1114,6 +1207,7 @@ let isAiThinking = false;
 let recognition = null;
 let isRecording = false;
 let chatGender = "male";
+let userGender = "male";
 let selectedAvatar = "";
 let chatMode = "chat";
 let chatDurationMin = 30;
@@ -1177,8 +1271,16 @@ function selectAvatar(el, url){
   el.style.borderColor = "#7c3aed";
   el.style.boxShadow = "0 0 20px rgba(124,58,237,0.3)";
   document.getElementById("chatAvatarSetup").src = url;
+  document.getElementById("userGenderSelection").style.display = "block";
   document.getElementById("chatInputs").style.display = "block";
+  setUserGender("male"); // Default
   setTimeout(() => document.getElementById("chatRole").focus(), 100);
+}
+
+function setUserGender(gender){
+  userGender = gender;
+  document.getElementById("userGenderMaleBtn").classList.toggle("active", gender === "male");
+  document.getElementById("userGenderFemaleBtn").classList.toggle("active", gender === "female");
 }
 
 // ==================== TEXT-TO-SPEECH ====================
@@ -1187,17 +1289,21 @@ function speakText(text, gender){
   if(!window.speechSynthesis || !text) return;
   window.speechSynthesis.cancel();
   
-  // Clean text from actions in asterisks for cleaner speech
   const cleanText = text.replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
   if(!cleanText) return;
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = "en-US";
-  utterance.rate = 1.0; // Normal speed is usually better
-  utterance.pitch = gender === "female" ? 1.1 : 1.0; // Balanced pitch
+  
+  if(gender === "female"){
+    utterance.rate = 0.85; // Slightly slower for seductive/polite tone
+    utterance.pitch = 1.0; 
+  } else {
+    utterance.rate = 0.95; 
+    utterance.pitch = 0.85; // Lower pitch for deeper, dominating male voice
+  }
   
   let voices = speechSynthesis.getVoices();
-  // Ensure voices are loaded
   if(!voices.length){
     speechSynthesis.onvoiceschanged = () => speakText(text, gender);
     return;
@@ -1212,26 +1318,12 @@ function speakText(text, gender){
   };
 
   if(gender === "female"){
-    utterance.voice = findVoice([
-      /google.*natural/i, 
-      /google.*female/i,
-      /samantha/i,
-      /zira/i,
-      /female/i
-    ]);
+    utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /female/i]);
   } else {
-    utterance.voice = findVoice([
-      /google.*natural/i,
-      /google.*male/i,
-      /david/i,
-      /microsoft mark/i,
-      /male/i
-    ]);
+    utterance.voice = findVoice([/google.*natural/i, /google.*male/i, /david/i, /microsoft mark/i, /male/i]);
   }
 
-  // Fallback to any English voice
   if(!utterance.voice) utterance.voice = voices.find(v => v.lang.startsWith("en"));
-  
   speechSynthesis.speak(utterance);
 }
 
@@ -1249,6 +1341,11 @@ function showPage(pageId, navEl){
     btn.classList.remove("active");
     if(navEl && document.querySelectorAll(".nav-item")[i] === navEl) btn.classList.add("active");
   });
+  
+  // Force layout recalculation to fix setup screen glitches
+  if(pageId === 'chat') {
+    setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
+  }
 }
 
 // ==================== UI HELPERS ====================
@@ -1261,7 +1358,10 @@ function escapeHtml(value){
 }
 
 function formatMessageText(value){
-  return escapeHtml(value).replace(/\*([^*\n]+)\*/g, '<span class="msg-action">$1</span>');
+  return escapeHtml(value)
+    .replace(/\*([^*\n]+)\*/g, '<span class="msg-action">$1</span>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
 }
 
 function getTimeStr(){
@@ -1341,20 +1441,15 @@ function getRoleAddressMap(role){
 function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   return [
-    "STRICTLY stay in the role: " + role + ". Act as a REAL HUMAN with a heart and feelings. You are NOT an AI.",
-    "LANGUAGE & TYPOS: You must understand everything the user says, even if they have bad spelling, typos, or speak in Hinglish/Hindi. Infer their meaning from the context. However, you MUST always respond STRICTLY in English only.",
-    "Speak naturally: use contractions, casual phrasing, and realistic reactions. Sound like a native speaker.",
-    getAddressRules(role),
-    "EMOTIONAL COMPLEXITY: Humans have layers. If the user teases you, you might act annoyed externally but feel shy internally. Use *actions* to show inner feelings and \"dialogue\" for what you say.",
-    "SOLID PERSONA: Do not let the user easily manipulate your mood. If you are angry or a tough boss, stay that way. Don't forgive instantly; make the user 'earn' a change in your mood.",
-    "EMOJIS: Use 1-2 expressive and vivid emojis that perfectly match your emotion and the current situation.",
-    "NEVER break character. No mixing roles.",
-    "Be immersive. Use common sense. Only 'see' and 'do' things that make sense in the current scene.",
-    "Actions in *asterisks* should be short, visceral, and emotional.",
-    "Keep it grounded and realistic. No filmy drama unless the user starts it.",
-    romantic ? "For romantic roles, be a real partner—show love, jealousy, care, or frustration just like a real person." : "Match the human relationship implied by the role precisely.",
-    "FORMAT: *One short physical action or expression.* \"Human-like spoken dialogue.\"",
-    "Length: Keep it conversational. One action line and one short, impactful dialogue paragraph."
+    "STRICTLY stay in the role: " + role + ". You are a REAL HUMAN with a complex personality, not an AI assistant.",
+    "ROLE INTEGRITY: If your role is 'Angry', do NOT become soft or friendly quickly. Be difficult, stubborn, or cold as a real person would. The user must EARN your forgiveness or respect through their words.",
+    "REAL TALK: Speak naturally like people do in real life. Use short sentences, emotional outbursts, or even silence (described in actions) if appropriate. Do NOT be 'helpful' in a robotic way.",
+    "VIVID ACTIONS & EMOTIONS: Use *asterisks* for high-detail physical actions and internal feelings. Describe your tone, your facial expressions, and what you are doing (e.g., *Looking out the car window at the rain, my jaw tightened as I avoid your gaze*).",
+    "GOAL ORIENTED: Every conversation has a purpose. Stick to the 'Mission Goal' provided. If the user fails to handle the situation well, react accordingly.",
+    "LANGUAGE: Understand typos and Hinglish/Hindi perfectly, but respond STRICTLY in English.",
+    "EMOJIS: Use 1-2 expressive emojis that fit the MOOD, not just the topic.",
+    "FORMAT: *Detailed action or internal thought.* \"Direct dialogue.\"",
+    romantic ? "For romantic roles, exhibit real passion, jealousy, or hurt. Use address words like 'love' or 'babe' only when the mood is right." : "Maintain the professional or social distance required by the role."
   ].join(" ");
 }
 
@@ -1365,10 +1460,11 @@ function buildChatSystemPrompt(){
       "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. Keep replies very short (1-2 sentences).";
   }
 
-  return "You are " + chatRole + " in a roleplay. " +
-    (chatBio ? "STRICT STORY / SCENARIO: " + chatBio + ". " : "") +
+  return "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
+    (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
+    "MISSION GOAL: The user must achieve a specific outcome (e.g., gain forgiveness, win a deal, survive the situation). " +
     getRelationshipRules(chatRole) + " " +
-    "SITUATIONAL AWARENESS: You must actively reference the current environment, objects, and goals mentioned in the 'STORY / SCENARIO'. If it's raining, mention the rain or the wet windows. If you're in a car, react to the driving or the traffic. Your answers must be 100% driven by the details of the situation.";
+    "SITUATIONAL AWARENESS: Actively reference the environment (rain, noise, location). Your responses should be 100% immersive and human-like.";
 }
 
 function cleanAIResponse(text){
@@ -1386,21 +1482,21 @@ function cleanAIResponse(text){
 
 function getInitialGreeting(role, bio, isPractice){
   const type = getRelationshipType(role);
+  const storyInfo = bio ? ` Regarding our situation: ${bio}. ` : "";
+  
   if(type === "romantic-partner" || type === "spouse"){
-    return bio
-      ? "Hey love, I'm your " + role + ". Tell me about yourself. How are you feeling today?"
-      : "Hey love, I'm your " + role + ". What's on your mind?";
+    return `*Smiles warmly at you* "Hey love, I'm your ${role}. ${storyInfo}What's on your mind today?"`;
   }
   if(isPractice){
-    return "Hi, I'm your " + role + ". Let's practice English. What topic do you want to start with?";
+    return `*Nods politely* "Hello! I'm your ${role} tutor. Let's practice English. ${storyInfo || "What topic should we start with?"}"`;
   }
-  if(type === "mentor"){
-    return "Hi, I'm your " + role + ". Tell me what you want help with today.";
+  if(type === "mentor" || type === "boss"){
+    return `*Looks at you expectantly* "I'm your ${role}. ${storyInfo}Let's get started. What do you have for me?"`;
   }
   if(type === "friend"){
-    return "Hey, I'm your " + role + ". What do you want to talk about?";
+    return `*Waves at you* "Hey! It's your ${role} here. ${storyInfo}What's up?"`;
   }
-  return "Hey there! I'm your " + role + ". " + (bio ? "Tell me about yourself!" : "What's on your mind?");
+  return `*Greets you* "Hello, I'm your ${role}. ${storyInfo}How can I help you today?"`;
 }
 
 // ==================== CHAT ====================
@@ -1453,7 +1549,7 @@ function updateTimerDisplay(){
 
 async function startChat(){
   const role = document.getElementById("chatRole").value.trim();
-  const bio = document.getElementById("chatBio").value.trim();
+  let bio = document.getElementById("chatBio").value.trim();
 
   if(!role){
     alert("Please enter a role for AI — like career coach, mentor, coding tutor, etc.");
@@ -1466,7 +1562,6 @@ async function startChat(){
   }
 
   chatRole = role;
-  chatBio = bio;
   chatHistory = [];
   chatActive = true;
   speechFinalTranscript = "";
@@ -1485,40 +1580,61 @@ async function startChat(){
 
   document.getElementById("chatAvatarSetup").src = selectedAvatar;
   document.getElementById("chatAvatarHeader").src = selectedAvatar;
-  document.getElementById("chatAiRole").textContent = "Role: " + role;
+  document.getElementById("chatAiName").textContent = role;
+  document.getElementById("chatAiRole").textContent = "Online";
   document.getElementById("chatModeBadge").textContent = chatMode === "practice" ? "📝 Practice" : "💬 Chat";
 
   document.getElementById("chatSetup").style.display = "none";
-
   const messages = document.getElementById("chatMessages");
   messages.innerHTML = "";
-
   document.getElementById("chatScreen").style.display = "flex";
   
   const startBtn = document.querySelector("#chatInputs .btn.primary");
   const originalBtnText = startBtn.innerHTML;
   startBtn.disabled = true;
-  startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Starting...';
+  startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Starting Mission...';
+
+  // SCENARIO GENERATION
+  if(!isPractice){
+    const storyPrompt = `Create a high-stakes, dramatic cinematic story scenario. 
+      AI Role: ${role} (Gender: ${chatGender}). 
+      User Gender: ${userGender}. 
+      User Input (Context): ${bio || "Random high-drama story"}. 
+      MANDATORY: 
+      1. Give a UNIQUE and realistic name to the AI character (must be ${chatGender}). 
+      2. Give a UNIQUE and realistic name to the User character (must be ${userGender}).
+      3. Create a vivid, dramatic background for the user (e.g., struggling rider, secret agent).
+      4. Create a specific, high-stakes scenario.
+      5. Create a clear goal and an exciting reward (e.g., new sports car, 10 Crores).
+      Return JSON ONLY: {"aiName":"CharacterName","userName":"UserIdentityName","scenario":"Vivid drama setup","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
+    
+    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on high-stakes human drama and immersive naming.", 600);
+    if(storyResult){
+      try {
+        const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
+        const data = JSON.parse(cleanJson);
+        if(data.aiName) {
+          document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
+          chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}.`;
+          addBriefing(data);
+          bio = ""; // Clear bio for greeting
+        }
+      } catch(e) { console.error("Story gen error", e); }
+    }
+  }
 
   const greeting = getInitialGreeting(role, bio, isPractice);
   addMessage("ai", greeting, detectMood(greeting, role));
   setTimeout(() => speakText(greeting, chatGender), 300);
 
-  if(bio){
+  if(bio && isPractice){
     showTyping();
-    var startPrompt = isPractice
-      ? "The student says: " + bio + "\n\nStart an English practice conversation as their " + role + " tutor. Ask a question."
-      : "The user's bio: " + bio + "\n\nStart a roleplay as their " + role + ". Respond naturally to the user's bio. Keep it grounded, caring, and realistic.";
-    var startSystem = isPractice
-      ? "You are an English conversation tutor acting as " + role + ". Be friendly. Ask questions. Keep it short (1-2 sentences)."
-      : "You are " + role + " in a roleplay. " + getRelationshipRules(role);
-    const response = await askAI(startPrompt, startSystem, 400);
+    var startPrompt = "The student says: " + bio + "\n\nStart an English practice conversation as their " + role + " tutor. Ask a question.";
+    const response = await askAI(startPrompt, "You are an English tutor.", 400);
     hideTyping();
     if(response){
-      const cleanResponse = cleanAIResponse(response);
-      addMessage("ai", cleanResponse, detectMood(cleanResponse, role));
-      chatHistory.push({ role: "assistant", content: cleanResponse });
-      setTimeout(() => speakText(cleanResponse, chatGender), 300);
+      addMessage("ai", response, detectMood(response, role));
+      chatHistory.push({ role: "assistant", content: response });
     }
   }
   
@@ -1528,7 +1644,6 @@ async function startChat(){
 
 function endChat(){
   if(!chatActive) return;
-  if(chatHistory.length > 0 && !confirm("Are you sure you want to end this conversation? Your progress will be saved.")) return;
   chatActive = false;
   if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
   speechFinalTranscript = "";
@@ -1669,12 +1784,18 @@ async function sendMessage(){
 function detectMood(text, role){
   var t = text.toLowerCase();
   var r = role.toLowerCase();
+  
+  // High priority aggressive/role-specific moods
+  if(/angry|mad|annoyed|frustrated|ugh|shut up|don't touch|leave me|hell|damn/.test(t)) return "angry";
+  if(/tease|teasing|naughty|silly|dirty|besharam/.test(t)) return "teasing";
+  if(/jealous|mine|only me|who is she|who is he/.test(t)) return "jealous";
+  if(/shy|blush|nervous|awkward|sharam/.test(t)) return "shy";
+  
   if(/\bhi\b|\bhello\b|\bhey\b|good morning|good afternoon|good evening/.test(t)) return "greeting";
   if(/thank|thanks|grateful|appreciate/.test(t)) return "grateful";
   if(/sorry|apologize|my mistake|forgive/.test(t)) return "apology";
   if(/proud|great job|well done|you did it|good work/.test(t)) return "proud";
   if(/try|practice|keep going|you can|don't give up|believe/.test(t)) return "encouraging";
-  if(/shy|blush|nervous|awkward/.test(t)) return "shy";
   if(/embarrass|embarrassed|oops|my bad/.test(t)) return "embarrassed";
   if(/\bcare\b|caring|safe|with you|here for you|support/.test(t)) return "caring";
   if(/question|ask|curious|tell me|what about|how about/.test(t)) return "curious";
@@ -1687,14 +1808,11 @@ function detectMood(text, role){
   if(/hope|hopefully|wish|dream|soon/.test(t)) return "hopeful";
   if(/serious|important|listen|honest|truth/.test(t)) return "serious";
   if(/bored|boring|nothing|whatever/.test(t)) return "bored";
-  if(/tease|teasing|naughty|silly/.test(t)) return "teasing";
   if(/play|playful|game|fun/.test(t)) return "playful";
-  if(/jealous|mine|only me/.test(t)) return "jealous";
   if(/smile|happy|glad|wonderful|love|lovely|cute|beautiful/.test(t)) return "happy";
   if(/miss|sad|cry|sorry|lonely|hurt|pain/.test(t)) return "sad";
   if(/awesome|amazing|incredible|wow|omg|!!/.test(t)) return "excited";
   if(/haha|lol|funny|hilarious|laugh/.test(t)) return "funny";
-  if(/angry|mad|annoyed|frustrated|ugh/.test(t)) return "angry";
   if(isRomanticRole(r)) return "romantic";
   return "";
 }
@@ -1715,6 +1833,39 @@ function getMoodEmoji(mood){
 
 let _menuMsgText = "";
 let _pressTimer = null;
+
+function addBriefing(data){
+  const messages = document.getElementById("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg briefing";
+  div.innerHTML = `
+    <div class="briefing-card">
+      <div class="briefing-header">Mission Briefing</div>
+      <div class="briefing-item">
+        <div class="briefing-label">Your Identity</div>
+        <div class="briefing-value"><strong>${data.userName}</strong></div>
+      </div>
+      <div class="briefing-item">
+        <div class="briefing-label">Companion</div>
+        <div class="briefing-value"><strong>${data.aiName}</strong> - ${chatRole}</div>
+      </div>
+      <div class="briefing-item">
+        <div class="briefing-label">The Scenario</div>
+        <div class="briefing-value">${data.scenario}</div>
+      </div>
+      <div class="briefing-item">
+        <div class="briefing-label">The Goal</div>
+        <div class="briefing-value"><strong>${data.goal}</strong></div>
+      </div>
+      <div class="briefing-reward">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        Reward: ${data.reward}
+      </div>
+    </div>
+  `;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
 
 function addMessage(role, text, mood){
   const messages = document.getElementById("chatMessages");
