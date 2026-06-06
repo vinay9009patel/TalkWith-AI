@@ -1601,13 +1601,13 @@ async function startChat(){
       User Gender: ${userGender}. 
       User Input (Context): ${bio || "Random high-drama story"}. 
       MANDATORY: 
-      1. Give a SINGLE realistic FIRST NAME to the AI (must be ${chatGender}, e.g., Priya). 
-      2. Give a SINGLE realistic FIRST NAME to the User (must be ${userGender}, e.g., Rohan). Do NOT add titles like 'The Phoenix'.
-      3. Create a vivid, dramatic scene setup (e.g., inside a car in heavy rain, in a tense office).
-      4. Create a clear goal and an exciting reward.
-      Return JSON ONLY: {"aiName":"FirstName","userName":"FirstName","scenario":"Vivid drama setup","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
+      1. Give a SINGLE realistic FIRST NAME to the AI (must be ${chatGender}). 
+      2. Give a SINGLE realistic FIRST NAME to the User (must be ${userGender}).
+      3. Create a MULTI-STAGE SCENE: Start from the VERY BEGINNING of the user's input (e.g., inside the lift). 
+      4. Set a clear goal and an exciting reward.
+      Return JSON ONLY: {"aiName":"FirstName","userName":"FirstName","scenario":"Describe the STARTING scene clearly (e.g., You are in the lift with a beautiful stranger, not knowing she is the boss).","goal":"Specific task user must achieve","reward":"Exciting incentive"}`;
 
-    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on realistic naming and high-stakes cinematic drama.", 600);
+    const storyResult = await askAI(storyPrompt, "Return ONLY valid JSON. Focus on starting from the very first moment of the story. Stay 100% immersive.", 600);
     if(storyResult){
       try {
         const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
@@ -1617,10 +1617,10 @@ async function startChat(){
           chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}.`;
           addBriefing(data);
 
-          // Generate an immersive first message instead of generic greeting
+          // Generate an immersive first message starting at the VERY BEGINNING
           showTyping();
-          const firstMsgPrompt = `Start the roleplay scene. Scene: ${data.scenario}. You are ${data.aiName} (${role}). Act out your first reaction. Use *vivid actions* and "Dialogue". Be strictly in character. If angry, be angry. Respond in 2-3 immersive sentences.`;
-          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " Stay 100% in the scene. No technical intros.", 500);
+          const firstMsgPrompt = `Start the roleplay at the VERY BEGINNING of the scenario: ${data.scenario}. You are ${data.aiName}. You don't know the user well yet. Use *vivid actions* and "Dialogue". Be in character. Simple English. Respond in 2 sentences.`;
+          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " Start from the very first moment. No technical intros.", 500);
           hideTyping();
           if(firstMsg){
             addMessage("ai", firstMsg, detectMood(firstMsg, role));
