@@ -776,8 +776,8 @@ Achievements</h2>
 <div id="chatSetup" class="chat-setup">
 <button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" style="position:absolute;top:10px;left:10px;display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;">←</button>
 <img class="ai-avatar" id="chatAvatarSetup" src="" alt="AI" style="display:none;">
-<h2>AI Talk</h2>
-<p>Choose your AI companion and start a conversation</p>
+<h2>Character World</h2>
+<p>Step into a new life. Pick your character and start your mission.</p>
 
 <div style="display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:nowrap;width:100%;max-width:340px;">
 <button id="genderMaleBtn" class="btn" style="flex:1;background:rgba(59,130,246,0.15);color:#60a5fa;border:2px solid rgba(59,130,246,0.3);padding:10px 8px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;" onclick="setChatGender('male')">
@@ -807,7 +807,7 @@ Female
 
 <!-- Avatar Selection Grid -->
 <div id="avatarGrid" style="display:none;margin-bottom:18px; width:100%;">
-<p style="color:var(--text-muted);font-size:13px;margin-bottom:12px;">Choose your AI companion's look:</p>
+<p style="color:var(--text-muted);font-size:13px;margin-bottom:12px;">Choose your character's look:</p>
 <div id="avatarGridItems" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(70px, 1fr));gap:8px;justify-content:center;max-width:320px;margin:0 auto;"></div>
 </div>
 
@@ -827,7 +827,7 @@ Female
 </div>
 
 <div id="chatInputs" style="display:none;">
-<input type="text" id="chatRole" class="input" placeholder="Give Role: e.g. Teacher, Angry Boss, Nature Guide, Historian..." style="font-weight:600;">
+<input type="text" id="chatRole" class="input" placeholder="Give Character Role: e.g. Angry Boss, Silent Lover, Secret Agent..." style="font-weight:600;">
 
 <textarea id="chatBio" class="input" rows="4" placeholder="Topic / Story: What do you want to talk about? (e.g. Nature and trees, Historical facts, or a story like 'It's raining and we are in a car...')"></textarea>
 
@@ -848,8 +848,8 @@ Start Talking
 <button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" title="Back">←</button>
 <img id="chatAvatarHeader" class="ai-avatar-sm" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop&crop=face" alt="" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=7c3aed&color=fff&size=96'">
 <div class="ai-info">
-<div class="ai-name" id="chatAiName">AI Assistant</div>
-<div class="ai-role" id="chatAiRole">Role: friend</div>
+<div class="ai-name" id="chatAiName">Character</div>
+<div class="ai-role" id="chatAiRole">Online</div>
 </div>
 <span class="mode-badge" id="chatModeBadge">💬 Chat</span>
 <div class="ai-status" id="chatAiStatus">Online</div>
