@@ -1611,35 +1611,45 @@ async function startChat(){
       Return JSON ONLY: {"aiName":"Name","userName":"Name","scenario":"Vivid, cinematic scene setup starting at the beginning","goal":"The difficult task user must do","reward":"The huge incentive for success"}`;
 
     const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense, human, and perfectly tailored to the user's intent. JSON only.", 700);
+    let storyProcessed = false;
     if(storyResult){
       try {
         const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
         const data = JSON.parse(cleanJson);
-        if(data.aiName) {
+        if(data.aiName && data.scenario) {
           document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
           chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}.`;
           addBriefing(data);
 
-          // Generate a truly DYNAMIC first response
           showTyping();
           const firstMsgPrompt = `The scene begins: ${data.scenario}. You are ${data.aiName} (${role}). 
             Respond with a DYNAMIC first reaction. Use 1 sentence of deep internal feeling/action in *asterisks* and 1-2 lines of sharp, character-driven dialogue. 
-            DON'T BE NICE. BE THE CHARACTER. If the user insulted you in the scenario, react to that tension NOW.`;
-          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role) + " You are in the scene. No technical intros. Direct action only.", 500);
+            DON'T BE NICE. BE THE CHARACTER. If the user insulted you in the scenario, react to that tension NOW. Stay 100% in the scene.`;
+          const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
           hideTyping();
           if(firstMsg){
             addMessage("ai", firstMsg, detectMood(firstMsg, role));
             chatHistory.push({ role: "assistant", content: firstMsg });
             setTimeout(() => speakText(firstMsg, chatGender), 300);
-            startBtn.disabled = false;
-            startBtn.innerHTML = originalBtnText;
-            return;
+            storyProcessed = true;
           }
         }
       } catch(e) { console.error("Story gen error", e); }
     }
+
+    if(!storyProcessed) {
+      // Robust Fallback if AI fails to generate JSON
+      const fallbackGreeting = `*Waiting for you with a sharp, expectant look.* "I'm ready when you are. Don't waste my time."`;
+      addMessage("ai", fallbackGreeting, "serious");
+      chatHistory.push({ role: "assistant", content: fallbackGreeting });
+    }
+
+    startBtn.disabled = false;
+    startBtn.innerHTML = originalBtnText;
+    return; // Stop here for Chat Mode
   }
 
+  // PRACTICE MODE LOGIC
   const greeting = getInitialGreeting(role, bio, isPractice);
   addMessage("ai", greeting, detectMood(greeting, role));
   setTimeout(() => speakText(greeting, chatGender), 300);
@@ -1654,10 +1664,10 @@ async function startChat(){
       chatHistory.push({ role: "assistant", content: response });
     }
   }
-  
+
   startBtn.disabled = false;
   startBtn.innerHTML = originalBtnText;
-}
+  }
 
 function endChat(){
   if(!chatActive) return;
