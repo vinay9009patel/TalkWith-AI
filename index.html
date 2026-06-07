@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#050505">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="https://img.icons8.com/neon/512/experimental-brain-neon.png">
-<link rel="icon" type="image/png" href="https://img.icons8.com/neon/512/experimental-brain-neon.png">
+<link rel="apple-touch-icon" href="https://img.icons8.com/fluency/512/brain.png">
+<link rel="icon" type="image/png" href="https://img.icons8.com/fluency/512/brain.png">
 
 <title>Character World</title>
 
@@ -2246,27 +2246,28 @@ function initSpeechRecognition(){
 
   recognition.onresult = function(event){
     if(!isRecording) return;
-    
-    let interimTranscript = "";
-    let finalPart = "";
 
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
+    let finalTranscript = "";
+    let interimTranscript = "";
+
+    // Iterate through ALL results from the beginning to ensure zero repetition
+    for (let i = 0; i < event.results.length; ++i) {
       const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        finalPart += transcript;
+        finalTranscript += transcript;
       } else {
         interimTranscript += transcript;
       }
     }
-    
-    if(finalPart) speechFinalTranscript += finalPart;
 
     const input = document.getElementById("chatInput");
-    // Value = (What was there before mic) + (New Finalized Speech) + (Current Processing Speech)
-    input.value = (speechBaseText + speechFinalTranscript + interimTranscript).trim();
-    
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    // Only update if there is actual change to prevent UI flickering
+    const newText = (speechBaseText + finalTranscript + interimTranscript).trim();
+    if(input.value !== newText) {
+      input.value = newText;
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    }
   };
 
   recognition.onerror = function(event){
