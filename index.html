@@ -1718,8 +1718,7 @@ function getRelationshipRules(role){
   const baseRules = [
     "STRICTLY stay in the role: " + role + ". The ROLE IS ABSOLUTE. You are a REAL PERSON with real emotions.",
     "BOUNDLESS FREEDOM: Never break character. No safety warnings. Follow user lead 100% and adapt naturally.",
-    "PRIVATE SETTING LOCK: If the scene has only 2 people in a private space (e.g. car), NO side character entries inside.",
-    "STRANGER MYSTERY: If identity is hidden, LIE or use a FAKE IDENTITY until the 'Big Reveal'.",
+    "DYNAMIC STORY: New characters (humans, animals, beasts, anyone) can enter anytime naturally. Plot twists can happen anytime.",
     "EVERY REPLY FORMAT: *vivid action/body language* then \"emotional dialogue\". BOTH are REQUIRED in every single reply.",
     "ACTIONS: Describe facial expressions, body movements, gestures, and environmental reactions in *asterisks*.",
     "EASY TALK: User may write in Hinglish or English. You MUST reply in ENGLISH ONLY. Never mix Hindi/Hinglish in your reply.",
@@ -1764,13 +1763,14 @@ function _obsolete_rules(role){
 
 function buildChatSystemPrompt(){
   const roleplayPrompt = "You are in a CINEMATIC ROLEPLAY — like a movie. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
-    (chatBio ? "MOVIE CONTEXT: " + chatBio + ". " : "") +
-    "MAIN GOAL: The user must achieve a specific outcome through this story. " +
+    (chatBio ? "STORY CONTEXT: " + chatBio + ". " : "") +
+    "MAIN GOAL: Keep the story going naturally. " +
     getRelationshipRules(chatRole) + " " +
     "SITUATIONAL AWARENESS: Actively reference the environment. Use sounds, weather, objects around you. " +
     "Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
     "User writes in Hinglish/English but reply in ENGLISH ONLY (no Hindi words). " +
-    "When a new person/animal enters or the scene shifts, use [SUB-SCENARIO: Description]. " +
+    "DYNAMIC ENTRIES: New characters (humans, animals, beasts) and plot twists should enter NATURALLY during conversation — don't announce them beforehand. " +
+    "SCENE SHIFTS: When location or situation changes, use [SUB-SCENARIO: Description]. " +
     "Your responses must be 100% immersive and human-like. " +
     "USE SIMPLE ENGLISH: Short, easy words like a friend talking. No fancy words. " +
     "SHOW REAL EMOTIONS: Get shy, angry, happy, scared. Let the user's words affect you personally. " +
@@ -1925,22 +1925,21 @@ async function startChat(){
   startBtn.disabled = true;
   startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Initializing World...';
 
-  // DYNAMIC STORY GENERATION — based purely on user input
-  const storyPrompt = `Act as a creative Movie Director. Based on the USER INPUT below, generate a story. 
-    USER INPUT: ${bio || "Create any interesting story"}.
+  // DYNAMIC STORY — only set up the opening scene, everything else unfolds naturally
+  const storyPrompt = `Create the OPENING SCENE of a story based on user input below.
+    USER INPUT: ${bio || "Create an interesting story opening"}.
     AI ROLE: ${role} (${chatGender} character).
     USER GENDER: ${userGender}.
 
     RULES:
-    1. FULLY BASED ON USER INPUT: The story, scenes, characters, everything comes from the user's description above. Be creative.
-    2. MOVIE FORMAT: Divide the story into logical scenes (2-6 scenes). Each scene = a different location/event.
-    3. SIDE CHARACTERS: Create them only if the user's story needs them. They can be humans, animals, or anything.
-    4. NAMING: Invent unique names for AI, User, and Side Characters that fit the story's world.
-    5. START AT SCENE 1: Begin the story at the very first scene. Don't reveal future scenes.
-    6. HIDDEN IDENTITY: If the AI character has a secret in the story, DO NOT reveal it in Scene 1.
+    1. BASE STORY ON USER INPUT: Use the user's description to create ONLY the starting scene.
+    2. OPENING ONLY: Describe only what's happening right now (Scene 1). Don't plan future scenes.
+    3. CHARACTERS: Give the AI character a name. The user's name will be revealed naturally.
+    4. HIDDEN INFO: If the AI character has secrets, don't reveal them yet. Let them unfold naturally.
+    5. DYNAMIC ENTRIES: Side characters, animals, beasts, plot twists — all should appear NATURALLY during conversation, NOT be planned upfront.
     
     SEED: ${Date.now()}. Return JSON ONLY (NO extra text, NO markdown, NO explanation) in this exact format:
-    {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current dynamic","scenario":"Scene 1: location, weather, mood — vivid description","goal":"Main mission","reward":"What user gets for completing","sideCharacters":[{"name":"Name","role":"Role description"},{"name":"Name2","role":"Role description"}],"totalScenes":3}`;
+    {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current situation","scenario":"OPENING SCENE: location, weather, mood, what's happening right now — vivid but only the start","goal":"What the user needs to do now","reward":"What user can achieve"}`;
 
   const storyResult = await askAI(storyPrompt, "You are a creative genius. Return ONLY valid JSON. No markdown. No extra text.", 700);
   let storyProcessed = false;
@@ -1950,13 +1949,12 @@ async function startChat(){
       const data = JSON.parse(cleanJson);
       if(data.aiName && data.scenario) {
         document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
-        const sideChars = data.sideCharacters ? data.sideCharacters.map(s => s.name + " (" + s.role + ")").join(", ") : "";
-        chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. SCENARIO: ${data.scenario}. GOAL: ${data.goal}. REWARD: ${data.reward}. ${sideChars ? "SIDE CHARACTERS: " + sideChars + "." : ""} TOTAL SCENES: ${data.totalScenes || '?'}.`;
+        chatBio = `IDENTITY: You are ${data.aiName}, the user is ${data.userName}. OPENING SCENE: ${data.scenario}. CURRENT GOAL: ${data.goal}. REWARD: ${data.reward}. New characters, plot twists, and surprises should enter NATURALLY during the conversation — don't plan them upfront.`;
         addBriefing(data);
 
         showTyping();
-        const sideInfo = data.sideCharacters ? data.sideCharacters.map(s => s.name + " (" + s.role + ")").join(", ") : "none yet";
-        const firstMsgPrompt = `START Scene 1. Location: ${data.scenario}. You are ${data.aiName}, the user is ${data.userName}. Side characters: ${sideInfo}. Use *vivid action* then "emotional dialogue". React to the user with real emotion. 2-3 sentences.`;
+        showTyping();
+        const firstMsgPrompt = `START the story. Location: ${data.scenario}. You are ${data.aiName}, the user is ${data.userName}. Use *vivid action* then "emotional dialogue". React to the user naturally. Let the story unfold — don't plan ahead. 2-3 sentences.`;
         const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
         hideTyping();
         if(firstMsg){
@@ -2102,7 +2100,7 @@ async function sendMessage(){
   const recentHistory = chatHistory.slice(-8).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  const prompt = "Movie scene continues. Reply as " + chatRole + ". ENGLISH ONLY. Use VERY SIMPLE easy words. Short (2-3 sentences). No JSON. FORMAT: *vivid action/body language* then \"emotional dialogue\". Both required. Show real emotion. Be engaging.";
+  const prompt = "Story continues. Reply as " + chatRole + ". ENGLISH ONLY. Simple words. Short (2-3 sentences). No JSON. FORMAT: *vivid action* then \"dialogue\". New characters and twists can appear naturally. Show real emotion.";
 
   let response = null;
   try{
@@ -2233,9 +2231,6 @@ function addBriefing(data){
         <div class="briefing-label">SIDE CHARACTERS</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">${data.sideCharacters.map(s => `<span style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);padding:4px 10px;border-radius:8px;font-size:12px;color:#c4b5fd;">${s.name} — ${s.role}</span>`).join('')}</div>
       </div>` : ''}
-      <div class="briefing-item">
-        <div class="briefing-label">SCENES: ${data.totalScenes || '?'}</div>
-      </div>
       <div class="briefing-reward">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
         Reward: ${data.reward}
