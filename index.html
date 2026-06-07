@@ -2341,21 +2341,21 @@ function initSpeechRecognition(){
   recognition.onresult = function(event){
     if(!isRecording || isSendingMessage) return;
     
-    let finalInSession = "";
-    let interimInSession = "";
-
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      const transcript = event.results[i][0].transcript;
+    // Rebuild ALL final results from scratch each time to avoid duplication
+    let fullFinal = "";
+    let interimText = "";
+    for (let i = 0; i < event.results.length; ++i) {
+      const t = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        speechBaseText += (speechBaseText.endsWith(" ") ? "" : " ") + transcript;
+        fullFinal += (fullFinal ? " " : "") + t;
       } else {
-        interimInSession += transcript;
+        interimText = t; // only the latest interim
       }
     }
 
     const input = document.getElementById("chatInput");
     if(input) {
-      input.value = (speechBaseText + " " + interimInSession).replace(/\s+/g, ' ').trim();
+      input.value = (speechBaseText + " " + fullFinal + " " + interimText).replace(/\s+/g, ' ').trim();
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
     }
@@ -2401,7 +2401,6 @@ function toggleMic(){
     return;
   }
   
-  // Reset for new session
   speechBaseText = input.value ? input.value : "";
   
   try{
