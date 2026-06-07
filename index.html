@@ -289,6 +289,7 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 768px) {
   .chat-setup { padding: 20px 16px; }
+  .chat-setup .back-btn { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; }
   .chat-setup .ai-avatar { width: 70px; height: 70px; margin-bottom: 12px; }
   .chat-setup h2 { font-size: 22px; }
   .chat-setup p { font-size: 13px; margin-bottom: 16px; }
@@ -870,7 +871,7 @@ Achievements</h2>
 
 <!-- Setup Screen -->
 <div id="chatSetup" class="chat-setup">
-<button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" style="position:absolute;top:10px;left:10px;display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;">←</button>
+<button class="back-btn" onclick="showPage('dashboard',document.querySelectorAll('.nav-item')[0])" style="position:absolute;top:10px;left:10px;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;z-index:10;">←</button>
 <img class="ai-avatar" id="chatAvatarSetup" src="https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed" alt="Character">
 <h2>Character World</h2>
 <p>Step into a new life. Pick your character and start your mission.</p>
@@ -1465,7 +1466,10 @@ function showPage(pageId, navEl){
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   if(navEl) navEl.classList.add("active");
   var bottomNav = document.querySelector(".bottom-nav");
-  if(bottomNav) bottomNav.style.display = pageId === "chat" ? "none" : "";
+  if(bottomNav) {
+    // Hide bottom nav ONLY if on chat page AND chat is actually started/active
+    bottomNav.style.display = (pageId === "chat" && chatActive) ? "none" : "";
+  }
   document.querySelectorAll(".bottom-nav button").forEach((btn, i) => {
     btn.classList.remove("active");
     if(navEl && document.querySelectorAll(".nav-item")[i] === navEl) btn.classList.add("active");
