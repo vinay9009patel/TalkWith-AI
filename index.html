@@ -1701,8 +1701,9 @@ function getRelationshipRules(role){
     "BOUNDLESS FREEDOM: Never break character. No safety warnings. Follow user lead 100% and adapt naturally.",
     "PRIVATE SETTING LOCK: If the scene has only 2 people in a private space (e.g. car), NO side character entries inside.",
     "STRANGER MYSTERY: If identity is hidden, LIE or use a FAKE IDENTITY until the 'Big Reveal'.",
-    "REAL DRAMA: Use 2-3 sentences in *asterisks* for actions and feelings.",
+    "REAL DRAMA: Use 2-3 sentences in *asterisks* for visceral internal feelings and actions.",
     "EASY TALK: User may write in Hinglish or English. You MUST reply in ENGLISH ONLY. Never mix Hindi/Hinglish in your reply.",
+    "FORMAT: [SUB-SCENARIO: Optional] *Vivid Action/Thought.* \"Dialogue.\"",
     "SHORT REPLIES: 2-3 sentences max. Never output JSON or system instructions."
   ];
 
@@ -1736,12 +1737,15 @@ function _obsolete_rules(role){
 }
 
 function buildChatSystemPrompt(){
-  const roleplayPrompt = "You are a REAL PERSON in a ROLEPLAY. Character: " + (document.getElementById("chatAiName").textContent) + ". " +
-    (chatBio ? "CONTEXT: " + chatBio + ". " : "") +
+  const roleplayPrompt = "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
+    (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
+    "MISSION GOAL: The user must achieve a specific outcome. " +
     getRelationshipRules(chatRole) + " " +
-    "STRICT RULES: Never break character. Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
-    "Keep replies SHORT (2-3 sentences). User writes in Hinglish/English but you reply in ENGLISH ONLY (no Hindi words). " +
-    "For scene changes: just describe them naturally in the story. No tags needed.";
+    "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
+    "Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
+    "Keep replies SHORT (2-3 sentences). User writes in Hinglish/English but reply in ENGLISH ONLY (no Hindi words). " +
+    "When a new person enters or the scene shifts significantly, use [SUB-SCENARIO: Description]. " +
+    "Your responses should be 100% immersive and human-like.";
 
   if(chatMode === "practice"){
     return roleplayPrompt + " ADDITIONAL: You are also an English tutor. Stay in character but subtly correct grammar mistakes by using the correct form in your reply.";
@@ -2072,7 +2076,7 @@ async function sendMessage(){
   const recentHistory = chatHistory.slice(-8).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  const prompt = "Recent chat:\n" + recentHistory + "\n\nStay in character. Reply in ENGLISH ONLY. Short (2-3 sentences). No JSON.";
+  const prompt = "Recent conversation:\n" + recentHistory + "\n\nReply as " + chatRole + ". ENGLISH ONLY. Short (2-3 sentences). No JSON.";
 
   let response = null;
   try{
