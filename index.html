@@ -1899,14 +1899,14 @@ async function startChat(){
 
     INSTRUCTIONS:
     1. CHRONOLOGICAL STAGES: Break the story into logical stages (e.g., Stage 1: The Lift). 
-    2. DYNAMIC NAMING: Invent a creative and fitting name for the User (the protagonist) and the AI character. Use names appropriate for the setting (e.g. Indian names for Mumbai setting).
+    2. DYNAMIC NAMING: Invent a creative ${chatGender === "male" ? "male" : "female"} name for the AI character and a ${userGender === "male" ? "male" : "female"} name for the User. Use names appropriate for the setting.
     3. SEQUENTIAL START: You MUST start at Stage 1. 
     4. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1, DO NOT reveal it yet.
     5. NATURAL FLOW: React only to what is happening NOW.
     6. ERROR TOLERANCE: Intelligently handle typos. 
 
     Return JSON ONLY (NO extra text, NO markdown, NO explanation) in this exact format:
-    {"aiName":"Invented Name","aiRoleLabel":"Initial Role","userName":"Protagonist Name","userRoleLabel":"Short Role","userDynamic":"Current dynamic","scenario":"Stage 1 location and tension","goal":"Immediate task","reward":"Incentive"}`;
+    {"aiName":"Gender-appropriate AI name","aiRoleLabel":"Short role","userName":"Gender-appropriate User name","userRoleLabel":"Short role","userDynamic":"Current dynamic","scenario":"Stage 1 location and tension","goal":"Immediate task","reward":"Incentive"}`;
 
   const storyResult = await askAI(storyPrompt, "You are a creative genius. Return ONLY valid JSON. No markdown. No extra text.", 700);
   let storyProcessed = false;
