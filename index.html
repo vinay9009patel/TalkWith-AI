@@ -2339,6 +2339,11 @@ function initSpeechRecognition(){
     // Use ONLY the latest result to avoid Chrome's cumulative duplication
     const last = event.results[event.results.length - 1];
     const transcript = last[0].transcript;
+    
+    resultOffset = event.results.length;
+
+    // Don't display AI's own speech (echo feedback loop)
+    if(isAiThinking) return;
 
     const input = document.getElementById("chatInput");
     if(input) {
