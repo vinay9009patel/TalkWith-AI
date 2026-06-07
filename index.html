@@ -1981,15 +1981,12 @@ async function sendMessage(){
 
   input.value = "";
   speechFinalTranscript = "";
-  speechBaseText = ""; // Hard reset memory to stop repetition
+  speechBaseText = ""; 
   input.style.height = "auto";
   
-  // Reset mic session to prevent repetition
+  // Hard stop mic to clear all buffers
   if(isRecording && recognition){
-    try {
-      recognition.stop(); 
-      // recognition.onend will automatically restart it because isRecording is still true
-    } catch(e){}
+    try { recognition.stop(); } catch(e){}
   }
 
   addMessage("user", text);
