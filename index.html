@@ -998,7 +998,10 @@ Start Talking
 
 <!-- Report Modal -->
 <div class="report-overlay" id="reportOverlay">
-<div class="report-card">
+<div class="report-card" style="position:relative;">
+<button class="back-btn-intro" onclick="closeReport(); showPage('dashboard',document.querySelectorAll('.nav-item')[0])" title="Back to Dashboard" style="top:15px; left:15px; padding:6px; position:absolute;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+</button>
 <h2>📝 Practice Report</h2>
 <div class="subtitle">Here's how your conversation went</div>
 <div class="report-section">
