@@ -1567,13 +1567,13 @@ function speakText(text, defaultGender){
     const role = (chatRole || "").toLowerCase();
 
     if(chunk.gender === "female"){
-      utterance.rate = 0.85;
-      utterance.pitch = 1.1;
-      utterance.voice = findVoice([/google.*female/i, /zira/i, /samantha/i, /victoria/i, /microsoft.*female/i, /female/i]);
-    } else {
       utterance.rate = 0.9;
-      utterance.pitch = 0.85;
-      utterance.voice = findVoice([/google.*male/i, /david/i, /microsoft.*male/i, /mark/i, /male/i]);
+      utterance.pitch = 1.15;
+      utterance.voice = findVoice([/microsoft.*zira/i, /microsoft.*hazel/i, /google.*female/i, /samantha/i, /victoria/i, /female/i, /zira/i]);
+    } else {
+      utterance.rate = 0.95;
+      utterance.pitch = 0.9;
+      utterance.voice = findVoice([/microsoft.*david/i, /microsoft.*mark/i, /google.*male/i, /david/i, /mark/i, /male/i]);
     }
     speechSynthesis.speak(utterance);
   });
