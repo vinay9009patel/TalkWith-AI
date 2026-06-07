@@ -2229,6 +2229,8 @@ function hideTyping(){
 
 let speechFinalTranscript = "";
 
+let speechBaseText = ""; // Text that was in the box before mic started
+
 function initSpeechRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
@@ -2241,36 +2243,36 @@ function initSpeechRecognition(){
   recognition.continuous = true;
 
   recognition.onresult = function(event){
-    let fullTranscript = "";
-    for (let i = 0; i < event.results.length; ++i) {
-      fullTranscript += event.results[i][0].transcript;
+    if(!isRecording) return;
+    
+    let interimTranscript = "";
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        speechFinalTranscript += transcript;
+      } else {
+        interimTranscript += transcript;
+      }
     }
 
     const input = document.getElementById("chatInput");
-    input.value = fullTranscript.trim();
+    // Value = (What was there) + (New Finalized Speech) + (Current Processing Speech)
+    input.value = (speechBaseText + speechFinalTranscript + interimTranscript).trim();
+    
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 120) + "px";
-    
-    // Sync the global final transcript for the next session
-    speechFinalTranscript = fullTranscript;
   };
 
   recognition.onerror = function(event){
-    console.log("Speech error:", event.error);
     if(event.error === "not-allowed"){
-      alert("Microphone access denied. Please allow microphone access for voice input.");
-      isRecording = false;
-      updateMicBtn();
+      alert("Microphone access denied.");
+      isRecording = false; updateMicBtn();
     }
   };
 
   recognition.onend = function(){
     if (isRecording) {
-      setTimeout(() => {
-        if (isRecording) {
-          try { recognition.start(); } catch (e) { console.log("Restart error:", e); }
-        }
-      }, 300);
+      try { recognition.start(); } catch (e) {}
     } else {
       updateMicBtn();
     }
@@ -2281,6 +2283,8 @@ function toggleMic(){
   if(!recognition) initSpeechRecognition();
   if(!recognition) return;
 
+  const input = document.getElementById("chatInput");
+
   if(isRecording){
     isRecording = false;
     try{ recognition.stop(); }catch(e){}
@@ -2288,13 +2292,15 @@ function toggleMic(){
     return;
   }
   
-  speechFinalTranscript = document.getElementById("chatInput").value ? document.getElementById("chatInput").value + " " : "";
+  // Capture existing text so we don't overwrite it
+  speechBaseText = input.value ? input.value + " " : "";
+  speechFinalTranscript = ""; // Reset voice-only buffer
+  
   try{
     recognition.start();
     isRecording = true;
   }catch(e){
     console.log("Mic start error:", e);
-    alert("Could not start microphone. Make sure you've allowed microphone access.");
   }
   updateMicBtn();
 }
