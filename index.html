@@ -1984,6 +1984,7 @@ async function sendMessage(){
 
   input.value = "";
   speechFinalTranscript = "";
+  speechBaseText = ""; // Hard reset memory to stop repetition
   input.style.height = "auto";
   
   // Reset mic session to prevent repetition
@@ -2253,7 +2254,7 @@ function initSpeechRecognition(){
     return;
   }
   recognition = new SR();
-  recognition.lang = "en-US";
+  recognition.lang = "en-IN"; // Optimized for Indian accents and Hinglish
   recognition.interimResults = true;
   recognition.continuous = true;
 
@@ -2274,13 +2275,16 @@ function initSpeechRecognition(){
     }
 
     const input = document.getElementById("chatInput");
-    // Only update if there is actual change to prevent UI flickering
+    // Value = (Manual text) + (New Finalized Speech) + (Current Processing Speech)
     const newText = (speechBaseText + finalTranscript + interimTranscript).trim();
     if(input.value !== newText) {
       input.value = newText;
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
     }
+
+    // Sync final voice buffer for stability
+    speechFinalTranscript = finalTranscript;
   };
 
   recognition.onerror = function(event){
