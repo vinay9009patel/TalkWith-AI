@@ -1957,6 +1957,14 @@ async function sendMessage(){
   input.value = "";
   speechFinalTranscript = "";
   input.style.height = "auto";
+  
+  // Reset mic session to prevent repetition
+  if(isRecording && recognition){
+    try {
+      recognition.stop(); 
+      // recognition.onend will automatically restart it because isRecording is still true
+    } catch(e){}
+  }
 
   addMessage("user", text);
   chatHistory.push({ role: "user", content: text });
@@ -2220,18 +2228,18 @@ function initSpeechRecognition(){
   recognition.continuous = true;
 
   recognition.onresult = function(event){
-    let interimTranscript = "";
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        speechFinalTranscript += event.results[i][0].transcript;
-      } else {
-        interimTranscript += event.results[i][0].transcript;
-      }
+    let fullTranscript = "";
+    for (let i = 0; i < event.results.length; ++i) {
+      fullTranscript += event.results[i][0].transcript;
     }
+
     const input = document.getElementById("chatInput");
-    input.value = (speechFinalTranscript + interimTranscript).trim();
+    input.value = fullTranscript.trim();
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    
+    // Sync the global final transcript for the next session
+    speechFinalTranscript = fullTranscript;
   };
 
   recognition.onerror = function(event){
@@ -2241,12 +2249,10 @@ function initSpeechRecognition(){
       isRecording = false;
       updateMicBtn();
     }
-    // Ignore other errors like 'no-speech' or 'aborted' to stay persistent
   };
 
   recognition.onend = function(){
     if (isRecording) {
-      // Small delay to prevent rapid restart issues
       setTimeout(() => {
         if (isRecording) {
           try { recognition.start(); } catch (e) { console.log("Restart error:", e); }
