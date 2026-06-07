@@ -2377,23 +2377,20 @@ function initSpeechRecognition(){
     if(!isRecording) return;
     if(event.results.length <= resultOffset) return;
     
-    // Get ALL new results since last offset and accumulate them
-    let newTranscript = "";
-    for (let i = resultOffset; i < event.results.length; i++) {
-      const r = event.results[i];
-      if (r[0] && r[0].transcript) {
-        newTranscript += (newTranscript ? " " : "") + r[0].transcript;
-      }
-    }
+    // Chrome gives CUMULATIVE results — only take the LATEST one to avoid duplication
+    // e.g., "Hello" → "Hello how" → "Hello how are" — last one has full text
+    const lastIndex = event.results.length - 1;
+    const transcript = event.results[lastIndex][0].transcript;
     resultOffset = event.results.length;
 
-    // Don't display AI's own speech (echo feedback loop)
+    // Echo feedback fix: AI is thinking/speaking, advance offset but DON'T update textarea
     if(isAiThinking) return;
 
     const input = document.getElementById("chatInput");
-    if(input && newTranscript) {
-      input.value = speechBaseText ? speechBaseText + " " + newTranscript : newTranscript;
-      speechBaseText = input.value.trim();
+    if(input && transcript) {
+      // speechBaseText = user's original typed text (set once when mic starts)
+      input.value = speechBaseText ? speechBaseText + " " + transcript : transcript;
+      // DON'T update speechBaseText — keep it as original typed text only
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
     }
