@@ -2055,17 +2055,19 @@ async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
+  isSendingMessage = true; // Prevent onresult from re-populating speechBaseText while stopping
+
+  if(isRecording && recognition){
+    try {
+      recognition.stop();
+    } catch(e){}
+  }
+
   input.value = "";
   speechBaseText = ""; // Hard reset voice memory for next turn
   input.style.height = "auto";
-  
-  // Reset mic session to prevent repetition
-  if(isRecording && recognition){
-    try {
-      recognition.stop(); 
-      // recognition.onend will automatically restart it because isRecording is still true
-    } catch(e){}
-  }
+
+  setTimeout(() => { isSendingMessage = false; }, 400);
 
   addMessage("user", text);
   chatHistory.push({ role: "user", content: text });
@@ -2321,6 +2323,7 @@ function hideTyping(){
 
 let speechBaseText = ""; 
 let micLock = false;
+let isSendingMessage = false;
 
 function initSpeechRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2339,7 +2342,7 @@ function initSpeechRecognition(){
   };
 
   recognition.onresult = function(event){
-    if(!isRecording) return;
+    if(!isRecording || isSendingMessage) return;
     
     let finalInSession = "";
     let interimInSession = "";
