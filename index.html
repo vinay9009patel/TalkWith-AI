@@ -2873,6 +2873,17 @@ onAuthStateChanged(auth, (user) => {
     initSecureStore(user.uid);
   }
 });
+
+// Safety Cleanup: Stop mic and speech when site is closed
+window.addEventListener('beforeunload', () => {
+  isRecording = false;
+  if(recognition) {
+    try { recognition.stop(); } catch(e) {}
+  }
+  if(window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+});
 </script>
 
 </body>
