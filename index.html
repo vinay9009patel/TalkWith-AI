@@ -283,30 +283,32 @@ a { color: inherit; text-decoration: none; }
 
 
 .chat-setup {
-  text-align: center; padding: 24px 20px;
+  text-align: center; padding: 24px 16px;
   display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start; flex: 1;
-  overflow-y: auto; max-height: 100%; width: 100%;
+  overflow-y: auto; height: 100%; width: 100%;
+  max-width: 600px; margin: 0 auto;
 }
 .chat-setup .ai-avatar {
-  width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 16px;
+  width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
   object-fit: cover; border: 2px solid rgba(124,58,237,0.3);
-  box-shadow: 0 0 25px rgba(124,58,237,0.2);
+  box-shadow: 0 0 30px rgba(124,58,237,0.25);
+  flex-shrink: 0;
 }
-.chat-setup h2 { font-size: 26px; font-weight: 900; color: var(--primary-light); margin-bottom: 6px; }
-.chat-setup p { color: var(--text-muted); margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
-.chat-setup .input { max-width: 440px; margin: 0 auto 12px; text-align: center; border-radius: 14px; border: 1px solid var(--border); padding: 14px 18px; }
-.chat-setup textarea.input { text-align: left; resize: none; min-height: 140px; }
-.chat-setup .btn { margin-top: 8px; padding: 14px 48px; font-size: 16px; border-radius: 16px; }
+.chat-setup h2 { font-size: 28px; font-weight: 900; color: var(--primary-light); margin-bottom: 8px; }
+.chat-setup p { color: var(--text-muted); margin-bottom: 24px; font-size: 15px; line-height: 1.5; }
+.chat-setup .input { width: 100%; max-width: 480px; margin-bottom: 12px; }
+.chat-setup textarea.input { min-height: 140px; }
+.chat-setup .btn.primary { margin-top: 10px; width: 100%; max-width: 300px; padding: 14px; border-radius: 16px; font-size: 16px; }
 
 @media (max-width: 768px) {
-  .chat-setup { padding: 20px 16px; justify-content: flex-start; }
-  .chat-setup .ai-avatar { width: 70px; height: 70px; margin-bottom: 12px; }
-  .chat-setup h2 { font-size: 20px; }
+  .chat-setup { padding: 20px 12px; }
+  .chat-setup .ai-avatar { width: 80px; height: 80px; margin-bottom: 12px; }
+  .chat-setup h2 { font-size: 22px; }
   .chat-setup p { font-size: 13px; margin-bottom: 16px; }
-  .chat-setup .input { font-size: 15px; padding: 12px 14px; margin-bottom: 10px; }
-  .chat-setup textarea.input { min-height: 100px; }
-  .chat-setup .btn { width: 100%; padding: 14px; margin-top: 4px; }
+  .chat-setup .input { font-size: 15px; padding: 12px; margin-bottom: 10px; }
+  .chat-setup textarea.input { min-height: 120px; }
+  .chat-setup .btn.primary { max-width: none; }
 }
 .mode-btn {
   padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
@@ -2247,6 +2249,8 @@ let speechFinalTranscript = "";
 
 let speechBaseText = ""; // Text that was in the box before mic started
 
+let lastSessionFinalized = ""; // Stores text from PREVIOUS ended sessions
+
 function initSpeechRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
@@ -2254,37 +2258,31 @@ function initSpeechRecognition(){
     return;
   }
   recognition = new SR();
-  recognition.lang = "en-IN"; // Optimized for Indian accents and Hinglish
+  recognition.lang = "en-IN";
   recognition.interimResults = true;
   recognition.continuous = true;
 
   recognition.onresult = function(event){
     if(!isRecording) return;
 
-    let finalTranscript = "";
+    let currentSessionFinal = "";
     let interimTranscript = "";
 
-    // Iterate through ALL results from the beginning to ensure zero repetition
+    // Atomic Rebuild: Always iterate from index 0 of current session
     for (let i = 0; i < event.results.length; ++i) {
-      const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        finalTranscript += transcript;
+        currentSessionFinal += event.results[i][0].transcript;
       } else {
-        interimTranscript += transcript;
+        interimTranscript += event.results[i][0].transcript;
       }
     }
 
     const input = document.getElementById("chatInput");
-    // Value = (Manual text) + (New Finalized Speech) + (Current Processing Speech)
-    const newText = (speechBaseText + finalTranscript + interimTranscript).trim();
-    if(input.value !== newText) {
-      input.value = newText;
-      input.style.height = "auto";
-      input.style.height = Math.min(input.scrollHeight, 120) + "px";
-    }
+    // Display = (Manual Text) + (Old Session Text) + (Current Session Text)
+    input.value = (speechBaseText + lastSessionFinalized + currentSessionFinal + interimTranscript).trim();
 
-    // Sync final voice buffer for stability
-    speechFinalTranscript = finalTranscript;
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 120) + "px";
   };
 
   recognition.onerror = function(event){
@@ -2296,7 +2294,12 @@ function initSpeechRecognition(){
 
   recognition.onend = function(){
     if (isRecording) {
-      try { recognition.start(); } catch (e) {}
+      // Small pause to allow accuracy buffer
+      setTimeout(() => {
+        if(isRecording){
+          try { recognition.start(); } catch (e) {}
+        }
+      }, 400);
     } else {
       updateMicBtn();
     }
@@ -2315,17 +2318,15 @@ function toggleMic(){
     updateMicBtn();
     return;
   }
-  
-  // Capture existing text so we don't overwrite it
+
+  // Hard Reset on Start
   speechBaseText = input.value ? input.value + " " : "";
-  speechFinalTranscript = ""; // Reset voice-only buffer
-  
+  lastSessionFinalized = "";
+
   try{
     recognition.start();
     isRecording = true;
-  }catch(e){
-    console.log("Mic start error:", e);
-  }
+  }catch(e){}
   updateMicBtn();
 }
 
