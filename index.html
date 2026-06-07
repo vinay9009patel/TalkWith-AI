@@ -2045,19 +2045,13 @@ async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
-  isSendingMessage = true; // Prevent onresult from re-populating speechBaseText while stopping
-
-  if(isRecording && recognition){
-    try {
-      recognition.stop();
-    } catch(e){}
+  // Don't stop mic — just skip old results so they don't reappear
+  if(recognition) {
+    resultOffset = recognition.results ? recognition.results.length : (resultOffset + 1);
   }
-
+  speechBaseText = "";
   input.value = "";
-  speechBaseText = ""; // Hard reset voice memory for next turn
   input.style.height = "auto";
-
-  setTimeout(() => { isSendingMessage = false; }, 400);
 
   addMessage("user", text);
   chatHistory.push({ role: "user", content: text });
@@ -2320,7 +2314,7 @@ function hideTyping(){
 
 let speechBaseText = ""; 
 let micLock = false;
-let isSendingMessage = false;
+let resultOffset = 0;
 
 function initSpeechRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2339,17 +2333,19 @@ function initSpeechRecognition(){
   };
 
   recognition.onresult = function(event){
-    if(!isRecording || isSendingMessage) return;
+    if(!isRecording) return;
     
-    // Rebuild ALL final results from scratch each time to avoid duplication
+    // Only process NEW results (beyond what was already sent)
+    if(event.results.length <= resultOffset) return;
+    
     let fullFinal = "";
     let interimText = "";
-    for (let i = 0; i < event.results.length; ++i) {
+    for (let i = resultOffset; i < event.results.length; ++i) {
       const t = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
         fullFinal += (fullFinal ? " " : "") + t;
       } else {
-        interimText = t; // only the latest interim
+        interimText = t;
       }
     }
 
@@ -2402,6 +2398,7 @@ function toggleMic(){
   }
   
   speechBaseText = input.value ? input.value : "";
+  resultOffset = 0;
   
   try{
     if(!micLock) {
