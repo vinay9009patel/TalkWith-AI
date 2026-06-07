@@ -1679,21 +1679,19 @@ function cleanAIResponse(text){
 
 function getInitialGreeting(role, bio, isPractice){
   const type = getRelationshipType(role);
-  const storyInfo = bio ? ` Regarding our situation: ${bio}. ` : "";
-  
   if(type === "romantic-partner" || type === "spouse"){
-    return `*Smiles warmly at you* "Hey love, I'm your ${role}. ${storyInfo}What's on your mind today?"`;
+    return `*Smiles warmly at you* "Hey love, what's on your mind today?"`;
   }
   if(isPractice){
-    return `*Nods politely* "Hello! I'm your ${role} tutor. Let's practice English. ${storyInfo || "What topic should we start with?"}"`;
+    return `*Nods politely* "Hello! I'm your ${role} tutor. What topic should we start with today?"`;
   }
   if(type === "mentor" || type === "boss"){
-    return `*Looks at you expectantly* "I'm your ${role}. ${storyInfo}Let's get started. What do you have for me?"`;
+    return `*Looks at you expectantly* "I'm ready. What do you have for me today?"`;
   }
   if(type === "friend"){
-    return `*Waves at you* "Hey! It's your ${role} here. ${storyInfo}What's up?"`;
+    return `*Waves at you* "Hey! What's up?"`;
   }
-  return `*Greets you* "Hello, I'm your ${role}. ${storyInfo}How can I help you today?"`;
+  return `*Greets you* "Hello. How can I help you today?"`;
 }
 
 // ==================== CHAT ====================
