@@ -871,7 +871,7 @@ Achievements</h2>
 <!-- Setup Screen -->
 <div id="chatSetup" class="chat-setup">
 <button class="back-btn" onclick="showPage('dashboard',document.querySelector('.nav-item'))" style="position:absolute;top:10px;left:10px;display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;">←</button>
-<img class="ai-avatar" id="chatAvatarSetup" src="" alt="AI" style="display:none;">
+<img class="ai-avatar" id="chatAvatarSetup" src="https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed" alt="Character">
 <h2>Character World</h2>
 <p>Step into a new life. Pick your character and start your mission.</p>
 
@@ -1474,6 +1474,10 @@ function showPage(pageId, navEl){
   // Force layout recalculation to fix setup screen glitches
   if(pageId === 'chat') {
     setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
+    // Default to Female character if nothing is selected yet
+    if(!selectedAvatar && !chatActive) {
+      setChatGender('female');
+    }
   }
 }
 
@@ -1673,7 +1677,7 @@ function selectMode(mode){
   document.getElementById("avatarGrid").style.display = "none";
   document.getElementById("userGenderSelection").style.display = "none";
   document.getElementById("chatInputs").style.display = "none";
-  document.getElementById("chatAvatarSetup").src = "";
+  document.getElementById("chatAvatarSetup").src = "https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed";
   selectedAvatar = "";
   
   // Re-enable original gender buttons opacity/transform
@@ -1881,9 +1885,7 @@ function endChat(){
   document.getElementById("chatInputs").style.display = "none";
   document.getElementById("avatarGrid").style.display = "none";
   document.getElementById("userGenderSelection").style.display = "none";
-  const setupImg = document.getElementById("chatAvatarSetup");
-  setupImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  setupImg.style.display = "none";
+  document.getElementById("chatAvatarSetup").src = "https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed";
   document.getElementById("timerDisplay").style.display = "none";
   selectedAvatar = "";
 
