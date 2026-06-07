@@ -1506,11 +1506,16 @@ function speakText(text, defaultGender){
 
   window.speechSynthesis.cancel();
   
-  const voices = speechSynthesis.getVoices();
-  const findVoice = (patterns) => {
-    for (const pattern of patterns) {
-      const v = voices.find(v => v.lang.startsWith("en") && pattern.test(v.name));
-      if (v) return v;
+  // Ensure voices are loaded
+  let voices = speechSynthesis.getVoices();
+  if(voices.length === 0){
+    speechSynthesis.addEventListener("voiceschanged", () => { voices = speechSynthesis.getVoices(); }, { once: true });
+  }
+
+  const findVoice = (preferred) => {
+    for(const p of preferred){
+      const v = voices.find(v => v.lang.startsWith("en") && p.test(v.name));
+      if(v) return v;
     }
     return voices.find(v => v.lang.startsWith("en"));
   };
@@ -1542,16 +1547,13 @@ function speakText(text, defaultGender){
     const role = (chatRole || "").toLowerCase();
 
     if(chunk.gender === "female"){
-      utterance.rate = 0.9;
-      utterance.pitch = 1.0;
-      if(/girlfriend|lover|sweet|wife|crush/.test(role)) { utterance.rate = 0.82; }
-      if(/angry|boss|strict|tough/.test(role)) { utterance.rate = 1.0; utterance.pitch = 1.1; }
-      utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /victoria/i, /female/i]);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.1;
+      utterance.voice = findVoice([/google.*female/i, /zira/i, /samantha/i, /victoria/i, /microsoft.*female/i, /female/i]);
     } else {
-      utterance.rate = 0.95;
-      utterance.pitch = 0.75; // DEEP BASS for male
-      if(/angry|boss|strict|tough|dominating/.test(role)) { utterance.rate = 0.88; utterance.pitch = 0.7; }
-      utterance.voice = findVoice([/google.*natural/i, /premium/i, /google.*male/i, /david/i, /microsoft mark/i, /male/i]);
+      utterance.rate = 0.9;
+      utterance.pitch = 0.85;
+      utterance.voice = findVoice([/google.*male/i, /david/i, /microsoft.*male/i, /mark/i, /male/i]);
     }
     speechSynthesis.speak(utterance);
   });
@@ -1700,7 +1702,7 @@ function getRelationshipRules(role){
     "PRIVATE SETTING LOCK: If the scene has only 2 people in a private space (e.g. car), NO side character entries inside.",
     "STRANGER MYSTERY: If identity is hidden, LIE or use a FAKE IDENTITY until the 'Big Reveal'.",
     "REAL DRAMA: Use 2-3 sentences in *asterisks* for actions and feelings.",
-    "EASY TALK: Reply in SIMPLE English. Understand Hinglish nuances perfectly.",
+    "EASY TALK: User may write in Hinglish or English. You MUST reply in ENGLISH ONLY. Never mix Hindi/Hinglish in your reply.",
     "SHORT REPLIES: 2-3 sentences max. Never output JSON or system instructions."
   ];
 
@@ -1738,7 +1740,7 @@ function buildChatSystemPrompt(){
     (chatBio ? "CONTEXT: " + chatBio + ". " : "") +
     getRelationshipRules(chatRole) + " " +
     "STRICT RULES: Never break character. Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
-    "Keep replies SHORT (2-3 sentences). Use simple English. Understand Hinglish and typos naturally. " +
+    "Keep replies SHORT (2-3 sentences). User writes in Hinglish/English but you reply in ENGLISH ONLY (no Hindi words). " +
     "For scene changes: just describe them naturally in the story. No tags needed.";
 
   if(chatMode === "practice"){
@@ -2070,7 +2072,7 @@ async function sendMessage(){
   const recentHistory = chatHistory.slice(-8).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  const prompt = "Recent chat:\n" + recentHistory + "\n\nStay in character. Short reply (2-3 sentences). No JSON. No system talk.";
+  const prompt = "Recent chat:\n" + recentHistory + "\n\nStay in character. Reply in ENGLISH ONLY. Short (2-3 sentences). No JSON.";
 
   let response = null;
   try{
