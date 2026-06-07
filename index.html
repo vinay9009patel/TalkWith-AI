@@ -1427,33 +1427,6 @@ function speakText(text, defaultGender){
 
   window.speechSynthesis.cancel();
   
-  // Parse text into chunks by gender tags [M] and [F]
-  const chunks = [];
-  const tagRegex = /\[([MF])\]/gi;
-  let lastIndex = 0;
-  let currentGender = defaultGender;
-  let match;
-
-  while ((match = tagRegex.exec(text)) !== null) {
-    // Save text before the tag
-    const preText = text.substring(lastIndex, match.index).replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
-    if(preText) chunks.push({ text: preText, gender: currentGender });
-    
-    // Update gender for the next part
-    currentGender = match[1].toLowerCase() === 'f' ? 'female' : 'male';
-    lastIndex = tagRegex.lastIndex;
-  }
-  
-  // Save remaining text
-  const postText = text.substring(lastIndex).replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
-  if(postText) chunks.push({ text: postText, gender: currentGender });
-
-  // If no tags were found, just speak the whole thing with default
-  if(chunks.length === 0){
-    const clean = text.replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
-    if(clean) chunks.push({ text: clean, gender: defaultGender });
-  }
-
   const voices = speechSynthesis.getVoices();
   const findVoice = (patterns) => {
     for (const pattern of patterns) {
@@ -1463,22 +1436,44 @@ function speakText(text, defaultGender){
     return voices.find(v => v.lang.startsWith("en"));
   };
 
+  // Parse text into chunks by gender tags [M] and [F]
+  const chunks = [];
+  const tagRegex = /\[([MF])\]/gi;
+  let lastIndex = 0;
+  let currentGender = defaultGender;
+  let match;
+
+  while ((match = tagRegex.exec(text)) !== null) {
+    const preText = text.substring(lastIndex, match.index).replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
+    if(preText) chunks.push({ text: preText, gender: currentGender });
+    currentGender = match[1].toLowerCase() === 'f' ? 'female' : 'male';
+    lastIndex = tagRegex.lastIndex;
+  }
+  const postText = text.substring(lastIndex).replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
+  if(postText) chunks.push({ text: postText, gender: currentGender });
+
+  if(chunks.length === 0){
+    const clean = text.replace(/\*[^*]+\*/g, "").replace(/<[^>]*>/g, "").trim();
+    if(clean) chunks.push({ text: clean, gender: defaultGender });
+  }
+
   chunks.forEach(chunk => {
     const utterance = new SpeechSynthesisUtterance(chunk.text);
     utterance.lang = "en-US";
     const role = (chatRole || "").toLowerCase();
 
     if(chunk.gender === "female"){
-      utterance.rate = 0.9; utterance.pitch = 1.05;
-      if(/girlfriend|lover|sweet|wife|crush/.test(role)) { utterance.rate = 0.82; utterance.pitch = 1.0; }
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      if(/girlfriend|lover|sweet|wife|crush/.test(role)) { utterance.rate = 0.82; }
       if(/angry|boss|strict|tough/.test(role)) { utterance.rate = 1.0; utterance.pitch = 1.1; }
-      utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /victoria/i]);
+      utterance.voice = findVoice([/google.*natural/i, /google.*female/i, /samantha/i, /zira/i, /victoria/i, /female/i]);
     } else {
-      utterance.rate = 0.95; utterance.pitch = 0.9;
-      if(/angry|boss|strict|tough|dominating/.test(role)) { utterance.rate = 0.9; utterance.pitch = 0.82; }
-      utterance.voice = findVoice([/google.*natural/i, /google.*male/i, /david/i, /microsoft mark/i, /premium/i]);
+      utterance.rate = 0.95;
+      utterance.pitch = 0.75; // DEEP BASS for male
+      if(/angry|boss|strict|tough|dominating/.test(role)) { utterance.rate = 0.88; utterance.pitch = 0.7; }
+      utterance.voice = findVoice([/google.*natural/i, /premium/i, /google.*male/i, /david/i, /microsoft mark/i, /male/i]);
     }
-    
     speechSynthesis.speak(utterance);
   });
 }
