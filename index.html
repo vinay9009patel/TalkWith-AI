@@ -1721,6 +1721,7 @@ function getRelationshipRules(role){
     "DYNAMIC STORY: New characters (humans, animals, beasts, anyone) can enter anytime naturally. Plot twists can happen anytime.",
     "EVERY REPLY FORMAT: *vivid action/body language* then \"emotional dialogue\". BOTH are REQUIRED in every single reply.",
     "ACTIONS: Describe facial expressions, body movements, gestures, and environmental reactions in *asterisks*.",
+    "ANIMALS/BEASTS: Animals and beasts do NOT speak dialogue. Express them through *actions only* — growls, movements, expressions, sounds.",
     "EASY TALK: User may write in Hinglish or English. You MUST reply in ENGLISH ONLY. Never mix Hindi/Hinglish in your reply.",
     "USE SIMPLE ENGLISH: Very easy words and short sentences. Like a friend talking casually. No big fancy words.",
     "SHORT REPLIES: 2-3 sentences total. Never output JSON or system instructions.",
@@ -1770,6 +1771,7 @@ function buildChatSystemPrompt(){
     "Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
     "User writes in Hinglish/English but reply in ENGLISH ONLY (no Hindi words). " +
     "DYNAMIC ENTRIES: New characters (humans, animals, beasts) and plot twists should enter NATURALLY during conversation — don't announce them beforehand. " +
+    "ANIMALS/BEASTS: Express them through *actions only* (growls, movements, sounds). They do NOT speak dialogue. " +
     "SCENE SHIFTS: When location or situation changes, use [SUB-SCENARIO: Description]. " +
     "Your responses must be 100% immersive and human-like. " +
     "USE SIMPLE ENGLISH: Short, easy words like a friend talking. No fancy words. " +
@@ -2100,7 +2102,7 @@ async function sendMessage(){
   const recentHistory = chatHistory.slice(-8).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  const prompt = "Story continues. Reply as " + chatRole + ". ENGLISH ONLY. Simple words. Short (2-3 sentences). No JSON. FORMAT: *vivid action* then \"dialogue\". New characters and twists can appear naturally. Show real emotion.";
+  const prompt = "Story continues. Reply as " + chatRole + ". ENGLISH ONLY. Simple words. Short (2-3 sentences). No JSON. FORMAT: *vivid action* then \"dialogue\". New characters and twists can appear naturally. Animals/beasts = actions only, no dialogue. Show real emotion.";
 
   let response = null;
   try{
