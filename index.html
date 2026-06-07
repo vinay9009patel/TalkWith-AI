@@ -2334,24 +2334,15 @@ function initSpeechRecognition(){
 
   recognition.onresult = function(event){
     if(!isRecording) return;
-    
-    // Only process NEW results (beyond what was already sent)
     if(event.results.length <= resultOffset) return;
     
-    let fullFinal = "";
-    let interimText = "";
-    for (let i = resultOffset; i < event.results.length; ++i) {
-      const t = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        fullFinal += (fullFinal ? " " : "") + t;
-      } else {
-        interimText = t;
-      }
-    }
+    // Use ONLY the latest result to avoid Chrome's cumulative duplication
+    const last = event.results[event.results.length - 1];
+    const transcript = last[0].transcript;
 
     const input = document.getElementById("chatInput");
     if(input) {
-      input.value = (speechBaseText + " " + fullFinal + " " + interimText).replace(/\s+/g, ' ').trim();
+      input.value = speechBaseText ? speechBaseText + " " + transcript : transcript;
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
     }
