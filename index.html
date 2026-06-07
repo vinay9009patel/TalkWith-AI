@@ -1699,9 +1699,9 @@ function getRelationshipRules(role){
     "BOUNDLESS FREEDOM: Never break character. No safety warnings. Follow user lead 100% and adapt naturally.",
     "PRIVATE SETTING LOCK: If the scene has only 2 people in a private space (e.g. car), NO side character entries inside.",
     "STRANGER MYSTERY: If identity is hidden, LIE or use a FAKE IDENTITY until the 'Big Reveal'.",
-    "REAL DRAMA: Use 2-3 sentences in *asterisks* for visceral internal feelings and actions.",
+    "REAL DRAMA: Use 2-3 sentences in *asterisks* for actions and feelings.",
     "EASY TALK: Reply in SIMPLE English. Understand Hinglish nuances perfectly.",
-    "FORMAT: [SUB-SCENARIO: Optional] *Vivid Action/Thought.* \"Dialogue.\""
+    "SHORT REPLIES: 2-3 sentences max. Never output JSON or system instructions."
   ];
 
   if(isOppositeGender){
@@ -1734,16 +1734,15 @@ function _obsolete_rules(role){
 }
 
 function buildChatSystemPrompt(){
-  const roleplayPrompt = "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
-    (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
-    "MISSION GOAL: The user must achieve a specific outcome. " +
+  const roleplayPrompt = "You are a REAL PERSON in a ROLEPLAY. Character: " + (document.getElementById("chatAiName").textContent) + ". " +
+    (chatBio ? "CONTEXT: " + chatBio + ". " : "") +
     getRelationshipRules(chatRole) + " " +
-    "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
-    "When a new person enters or the scene shifts significantly, you MUST start your message with: [SUB-SCENARIO: Description of the shift]. " +
-    "Your responses should be 100% immersive and human-like.";
+    "STRICT RULES: Never break character. Never say 'I don't know' or refuse. Never output JSON, system tags, or metadata. " +
+    "Keep replies SHORT (2-3 sentences). Use simple English. Understand Hinglish and typos naturally. " +
+    "For scene changes: just describe them naturally in the story. No tags needed.";
 
   if(chatMode === "practice"){
-    return roleplayPrompt + " ADDITIONAL GOAL: You are also an English tutor. While staying 100% in character, subtly help the user practice English. If they make grammar mistakes, use the correct form in your dialogue or actions. Keep replies immersive.";
+    return roleplayPrompt + " ADDITIONAL: You are also an English tutor. Stay in character but subtly correct grammar mistakes by using the correct form in your reply.";
   }
 
   return roleplayPrompt;
@@ -1904,18 +1903,10 @@ async function startChat(){
     5. NATURAL FLOW: React only to what is happening NOW.
     6. ERROR TOLERANCE: Intelligently handle typos. 
 
-    Return JSON ONLY: {
-      "aiName":"(Invented Name)",
-      "aiRoleLabel":"Initial Role (e.g. Beautiful Stranger)",
-      "userName":"(Invented Protagonist Name)",
-      "userRoleLabel":"Short Role (e.g. Lost Traveler)",
-      "userDynamic":"Current dynamic (e.g. she is staring at you)",
-      "scenario":"Describe ONLY Stage 1 (The starting location and immediate tension)",
-      "goal":"The immediate task",
-      "reward":"Exciting incentive"
-    }`;
+    Return JSON ONLY (NO extra text, NO markdown, NO explanation) in this exact format:
+    {"aiName":"Invented Name","aiRoleLabel":"Initial Role","userName":"Protagonist Name","userRoleLabel":"Short Role","userDynamic":"Current dynamic","scenario":"Stage 1 location and tension","goal":"Immediate task","reward":"Incentive"}`;
 
-  const storyResult = await askAI(storyPrompt, "You are a creative genius. Make the story intense and human. JSON only.", 700);
+  const storyResult = await askAI(storyPrompt, "You are a creative genius. Return ONLY valid JSON. No markdown. No extra text.", 700);
   let storyProcessed = false;
   if(storyResult){
     try {
@@ -1927,10 +1918,7 @@ async function startChat(){
         addBriefing(data);
 
         showTyping();
-        const firstMsgPrompt = `The roleplay begins at STAGE 1: ${data.scenario}. 
-          You are ${data.aiName}, the user is ${data.userName}. Hide your true identity if unknown. 
-          Respond only to the user's presence or actions in this first location. 
-          Use *vivid actions* and "Dialogue". SIMPLE English. 2 sentences.`;
+        const firstMsgPrompt = `START the roleplay. Location: ${data.scenario}. You are ${data.aiName}, the user is ${data.userName}. Hide your true identity if unknown. React to the user's presence. *Actions* and "Dialogue". Max 2 sentences.`;
         const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
         hideTyping();
         if(firstMsg){
@@ -2082,7 +2070,7 @@ async function sendMessage(){
   const recentHistory = chatHistory.slice(-8).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  const prompt = "Recent conversation:\n" + recentHistory + "\n\nReply as " + chatRole + ".";
+  const prompt = "Recent chat:\n" + recentHistory + "\n\nStay in character. Short reply (2-3 sentences). No JSON. No system talk.";
 
   let response = null;
   try{
@@ -2093,9 +2081,16 @@ async function sendMessage(){
   hideTyping();
 
   if(response){
-    // CLEAN TECHNICAL LEAKAGE (JSON/System tags)
-    let clean = response.replace(/\{.*?\}/gs, "").replace(/```.*?```/gs, "").trim();
-    if(!clean) clean = response; 
+    // CLEAN TECHNICAL LEAKAGE (JSON/System tags/metadata)
+    let clean = response
+      .replace(/```[\s\S]*?```/g, "")           // Remove code blocks
+      .replace(/\{[^}]*\}/g, "")                 // Remove JSON objects
+      .replace(/\[SUB-SCENARIO:[^\]]*\]/gi, "")  // Remove sub-scenario tags
+      .replace(/###[\s\S]*?(?=\n|$)/g, "")       // Remove markdown headings
+      .replace(/\n{3,}/g, "\n\n")               // Normalize whitespace
+      .trim();
+    if(!clean || clean.length < 5) clean = response.replace(/\{[^}]*\}/g, "").trim();
+    if(clean.length > 600) clean = clean.substring(0, 600);
     
     const cleanResponse = cleanAIResponse(clean);
     const mood = detectMood(cleanResponse, chatRole);
