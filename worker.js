@@ -95,7 +95,7 @@ async function handleGemini(request, env, corsHeaders) {
       contents: [{ parts }],
       generationConfig: {
         maxOutputTokens: maxTok || 8192,
-        temperature: 0.3,
+        temperature: 0.8,
       },
     }),
   });
@@ -135,13 +135,13 @@ async function handleGroq(request, env, path, corsHeaders) {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${env.GROQ_API_KEY}`,
     },
-    body: JSON.stringify({
-      model: body.model || "llama-3.1-8b-instant",
-      messages: body.messages || [],
-      temperature: body.temperature ?? 0.3,
-      max_tokens: body.max_tokens || 8192,
-      stream: body.stream || false,
-    }),
+      body: JSON.stringify({
+        model: body.model || "llama-3.1-8b-instant",
+        messages: body.messages || [],
+        temperature: body.temperature ?? 0.8,
+        max_tokens: body.max_tokens || 8192,
+        stream: body.stream || false,
+      }),
   });
 
   if (!resp.ok) {
@@ -172,12 +172,12 @@ async function handleOpenRouter(request, env, path, corsHeaders) {
       "HTTP-Referer": request.headers.get("Origin") || "https://ai-talk.app",
       "X-Title": "AI Talk Platform",
     },
-    body: JSON.stringify({
-      model: body.model || "meta-llama/llama-3.1-8b-instruct",
-      messages: body.messages || [],
-      temperature: body.temperature ?? 0.3,
-      max_tokens: body.max_tokens || 8192,
-    }),
+      body: JSON.stringify({
+        model: body.model || "meta-llama/llama-3.1-8b-instruct",
+        messages: body.messages || [],
+        temperature: body.temperature ?? 0.8,
+        max_tokens: body.max_tokens || 8192,
+      }),
   });
 
   if (!resp.ok) {
