@@ -1747,10 +1747,6 @@ function buildChatSystemPrompt(){
     "When a new person enters or the scene shifts significantly, use [SUB-SCENARIO: Description]. " +
     "Your responses should be 100% immersive and human-like.";
 
-  if(chatMode === "practice"){
-    return roleplayPrompt + " ADDITIONAL: You are also an English tutor. Stay in character but subtly correct grammar mistakes by using the correct form in your reply.";
-  }
-
   return roleplayPrompt;
 }
 
