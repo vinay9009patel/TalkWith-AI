@@ -1913,11 +1913,11 @@ async function startChat(){
     USER INPUT: ${bio || "Surprise me with a high-drama story"}.
     AI ROLE: ${role} (${chatGender}).
     USER GENDER: ${userGender}.
-    USE THESE EXACT NAMES: AI name = "${pickedAi}", User name = "${pickedUser}".
+    SUGGESTED NAMES: AI = "${pickedAi}", User = "${pickedUser}".
 
     INSTRUCTIONS:
     1. CHRONOLOGICAL STAGES: Break the story into logical stages (e.g., Stage 1: The Lift). 
-    2. DYNAMIC NAMING: Use the exact names provided above. The AI character is named ${pickedAi} and the User is named ${pickedUser}.
+    2. NAMING: If USER INPUT contains specific names, use those. Otherwise use: AI = "${pickedAi}", User = "${pickedUser}".
     3. SEQUENTIAL START: You MUST start at Stage 1. 
     4. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1, DO NOT reveal it yet.
     5. NATURAL FLOW: React only to what is happening NOW.
