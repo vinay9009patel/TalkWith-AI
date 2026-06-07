@@ -1417,6 +1417,14 @@ function setUserGender(gender){
 
 function speakText(text, defaultGender){
   if(!window.speechSynthesis || !text) return;
+  
+  // Turn OFF mic when AI starts speaking
+  if(isRecording){
+    isRecording = false;
+    if(recognition) try { recognition.stop(); } catch(e){}
+    updateMicBtn();
+  }
+
   window.speechSynthesis.cancel();
   
   // Parse text into chunks by gender tags [M] and [F]
