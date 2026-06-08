@@ -1892,7 +1892,6 @@ async function startChat(){
         addBriefing(data);
 
         showTyping();
-        showTyping();
         const firstMsgPrompt = `START the story. Location: ${data.scenario}. You are ${data.aiName}, the user is ${data.userName}. Use *vivid action* then "emotional dialogue". React to the user naturally. Let the story unfold — don't plan ahead. 2-3 sentences.`;
         const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
         hideTyping();
