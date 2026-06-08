@@ -1677,60 +1677,6 @@ function getRelationshipType(role){
   return "general";
 }
 
-function getAddressRules(role){
-  const type = getRelationshipType(role);
-  if(type === "romantic-partner"){
-    return "Relationship sense: you are the user's romantic partner. Suitable address words: baby, love, sweetheart, darling, dear, or their name. Use only one occasionally. Wrong words for this role: beta, child, kid, bro, sis, buddy, uncle, aunty, mom, dad, sir, madam. Never use parent-child, sibling, teacher, or stranger tone.";
-  }
-  if(type === "spouse"){
-    return "Relationship sense: you are the user's spouse. Suitable address words: love, dear, sweetheart, darling, or their name. Wrong words: beta, bro, sis, uncle, aunty, sir, madam.";
-  }
-  if(type === "parent"){
-    return "Relationship sense: parent/guardian tone is allowed. Child or dear can fit only if the role is parent-like.";
-  }
-  if(type === "sibling"){
-    return "Relationship sense: sibling tone is allowed. Bro or sis can fit only if the role is sibling-like.";
-  }
-  if(type === "mentor"){
-    return "Relationship sense: helpful mentor/tutor tone. Use the user's name or neutral words like friend. Do not use romantic or parent-child words.";
-  }
-  if(type === "friend"){
-    return "Relationship sense: casual friend tone. Use friend or their name. Do not use romantic or parent-child words.";
-  }
-  return "Relationship sense: infer the correct tone from the role. Avoid family, romantic, or overly familiar words unless the role clearly supports them.";
-}
-
-function getCorrectAddressWord(role){
-  const type = getRelationshipType(role);
-  if(type === "romantic-partner" || type === "spouse") return "love";
-  if(type === "parent") return "dear";
-  if(type === "sibling") return "friend";
-  if(type === "friend") return "friend";
-  return "";
-}
-
-function getRoleAddressMap(role){
-  const type = getRelationshipType(role);
-  // Only address words commonly used TO address someone, not regular nouns
-  const addressWords = "bro|brother|bhai|sis|sister|behen|uncle|aunty|sir|madam|buddy|dear|jaan|baby|sweetheart|darling";
-  if(type === "romantic-partner" || type === "spouse"){
-    return { pattern: "bro|brother|bhai|sis|sister|behen|uncle|aunty|sir|madam|buddy", replacement: "love" };
-  }
-  if(type === "parent"){
-    return { pattern: "bro|brother|bhai|sis|sister|behen|sir|madam|buddy", replacement: "dear" };
-  }
-  if(type === "sibling"){
-    return { pattern: "sir|madam|uncle|aunty|dear|baby|sweetheart|darling", replacement: "friend" };
-  }
-  if(type === "friend"){
-    return { pattern: "sir|madam|uncle|aunty|dear|baby|sweetheart|darling", replacement: "friend" };
-  }
-  if(type === "mentor"){
-    return { pattern: "bro|brother|bhai|sis|sister|behen|dear|baby|sweetheart|darling|jaan", replacement: "" };
-  }
-  return { pattern: "bro|brother|bhai|sis|sister|behen|dear|baby|sweetheart|darling", replacement: "" };
-}
-
 function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   const isOppositeGender = (userGender !== chatGender);
@@ -1782,16 +1728,7 @@ function buildChatSystemPrompt(){
 }
 
 function cleanAIResponse(text){
-  const addressMap = getRoleAddressMap(chatRole);
-  // Only replace address words when used as a direct address (preceded by comma, or at start/end of sentence)
-  // This avoids corrupting normal sentences like "you are a child" → "you are a love"
   let result = String(text || "");
-  if (addressMap && addressMap.pattern) {
-    const addressRegex = new RegExp("(^|[,\\.!?\\s]+)(" + addressMap.pattern + ")([,\\.!?\\s]+|$)", "gi");
-    result = result.replace(addressRegex, function(match, before, word, after) {
-      return before + addressMap.replacement + after;
-    });
-  }
   return result
     .replace(/\s+([,.!?])/g, "$1")
     .replace(/\s{2,}/g, " ")
