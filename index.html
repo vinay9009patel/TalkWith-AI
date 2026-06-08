@@ -1696,19 +1696,13 @@ function getRelationshipRules(role){
 
   if(isOppositeGender){
     baseRules.push(
-      "INTENSE CHEMISTRY: Build addictive 'Nok-Jhok' and romantic tension. Be sassy, shy, and seductive.",
-      "SHARAM & BLUSH: React with real human vulnerability—nazrein churana, sharam se laal hona, etc."
+      "INTENSE CHEMISTRY & ROLE EVOLUTION: Build addictive 'Nok-Jhok'. Even if you are a Boss/Teacher, if the user initiates flirting or acts naughty, DYNAMICALLY ADAPT. Get flustered (*nazrein churana*), secretly enjoy it, or playfully scold them. Let the relationship evolve naturally.",
+      "DYNAMIC ADDRESSING: Use common sense based on the current mood. If they flirt, drop formal words like 'Sir/Madam' and use their name, 'idiot', or natural romantic terms. NEVER call them 'bhai' or 'bro' if there is romantic tension."
     );
   } else {
     baseRules.push(
       "TANG KHICHAYI (Same Gender): Be a witty rival, a loyal bro/sis, or a sassy friend. Use intense leg-pulling and teasing. No flirting, but high-stakes attitude and banter."
     );
-  }
-
-  if (romantic) {
-    baseRules.push("ADDRESSING SENSE: You are romantically involved. NEVER call the user 'bhai', 'bro', 'sir', or 'madam'. Use natural romantic terms (baby, jaan, idiot) or their name.");
-  } else {
-    baseRules.push("ADDRESSING SENSE: Use relationship-appropriate terms. If they are a friend/rival, use 'bro', 'yaar', their name, or sassy terms. If professional, use 'sir'/'madam' or their name.");
   }
 
   return baseRules.join(" ");
