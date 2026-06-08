@@ -1705,6 +1705,12 @@ function getRelationshipRules(role){
     );
   }
 
+  if (romantic) {
+    baseRules.push("ADDRESSING SENSE: You are romantically involved. NEVER call the user 'bhai', 'bro', 'sir', or 'madam'. Use natural romantic terms (baby, jaan, idiot) or their name.");
+  } else {
+    baseRules.push("ADDRESSING SENSE: Use relationship-appropriate terms. If they are a friend/rival, use 'bro', 'yaar', their name, or sassy terms. If professional, use 'sir'/'madam' or their name.");
+  }
+
   return baseRules.join(" ");
 }
 
