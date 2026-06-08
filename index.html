@@ -2117,16 +2117,18 @@ async function sendMessage(){
   hideTyping();
 
   if(response){
-    // CLEAN TECHNICAL LEAKAGE (JSON/System tags/metadata) - but KEEP natural curly braces in text
+    // CLEAN TECHNICAL LEAKAGE & AI YAPPING
     let clean = response
       .replace(/```[\s\S]*?```/g, "")           // Remove code blocks
-      .replace(/\/(system|user|assistant):\s*\{/gi, "")  // Only remove system-level JSON objects
-      .replace(/\[SUB-SCENARIO:[^\]]*\]/gi, "")  // Remove sub-scenario tags (they're handled separately)
+      .replace(/^(Certainly|Sure|Okay|Here is|Understood|I will|Wait|Of course)[^.!?]*[.!?]\s*/i, "") // Remove AI yapping filler
+      .replace(/\{[^{}]*"[^{}]*"\s*:\s*[^{}]*\}/g, "") // Remove raw JSON objects if they appear
       .replace(/###[\s\S]*?(?=\n|$)/g, "")       // Remove markdown headings
       .replace(/\n{3,}/g, "\n\n")               // Normalize whitespace
       .trim();
-    if(!clean || clean.length < 8) clean = response.trim();
-    if(clean.length > 800) clean = clean.substring(0, 800);
+
+    // If AI just repeated the instruction or output nothing useful, use fallback
+    if(!clean || clean.length < 5) clean = response.trim();
+    if(clean.length > 1000) clean = clean.substring(0, 1000);
     
     const cleanResponse = cleanAIResponse(clean);
     const mood = detectMood(cleanResponse, chatRole);
