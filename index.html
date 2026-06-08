@@ -1740,7 +1740,9 @@ function getRelationshipRules(role){
     "IDENTITY CLARITY: You are " + (document.getElementById("chatAiName").textContent) + ". The user is the Protagonist. NEVER swap roles.",
     "IDENTITY PROTECTION: If the story starts as strangers, act 100% like a stranger. Reveal secrets only when the story peaks.",
     "BOUNDLESS FREEDOM: No safety warnings. Never break the fourth wall. Follow user's lead 100%.",
-    "DYNAMIC TWISTS: Frequently manifest new people [M]/[F], beasts, or plot twists mid-story using [SUB-SCENARIO: ...].",
+    "ORGANIC TWISTS: Only manifest new people [M]/[F] or plot twists using [SUB-SCENARIO: ...] when the story naturally demands an interruption or climax. Don't force it.",
+    "EMOTIONAL PACING: Balance 'Tashan' and attitude with quiet, soft, and vulnerable moments. Let the mood breathe.",
+    "DIVERSE ACTIONS: Avoid repetitive actions. Use varied physical movements (playing with objects, breathing deeply, looking around) in *asterisks*.",
     "LANGUAGE: True Indian Code-Switching. Seamlessly mix English and Hinglish IN THE SAME SENTENCE. Example: 'Main wahan ja raha tha but I was caught by my friends, aur phir humne rubbish talking ki.' Don't separate them artificially.",
     "VISCERAL PSYCHOLOGY: Use 2-3 sentences in *asterisks* for internal feelings, heartbeat, sharam, or gussa.",
     "FORMAT: [SUB-SCENARIO: Required for twists/entries] *vivid action/internal thought* [Tag] \"Meaningful Hinglish dialogue\".",
@@ -1765,6 +1767,7 @@ function buildChatSystemPrompt(){
   const isPractice = chatMode === "practice";
   let roleplayPrompt = "You are in a HIGH-STAKES CINEMATIC INDIAN DRAMA. Character Name: " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
+    "STORY PACING: Use a 3-Act Structure. Stage 1: Build tension/mystery. Stage 2: Introduce a twist/conflict. Stage 3: Reach an emotional climax or resolution. " +
     "MISSION GOAL: The user must achieve a specific outcome while you maintain your secrets. " +
     getRelationshipRules(chatRole) + " ";
 
@@ -2093,9 +2096,19 @@ async function sendMessage(){
   showTyping();
 
   const systemPrompt = buildChatSystemPrompt();
+  
+  // CRITICAL FIX: Restore chat history so AI remembers the conversation
+  const recentHistory = chatHistory.slice(-8).map(function(m){
+    return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
+  }).join("\n");
+  
   const prompt = `Story continues in HINGLISH. You are ${document.getElementById("chatAiName").textContent}. User is the Protagonist. 
-    REPLY FORMAT: *vivid action/internal thought* "Meaningful Hinglish dialogue".
-    RULES: 2-3 sentences. No JSON. React to user first, then progress the story. Use [SUB-SCENARIO] for twists or new entries.`;
+  
+  RECENT HISTORY:
+  ${recentHistory}
+  
+  YOUR NEXT REPLY FORMAT: *vivid action/internal thought* "Meaningful Hinglish dialogue".
+  RULES: 2-3 sentences. No JSON. React to user first, then progress the story. Use [SUB-SCENARIO] for twists.`;
 
   let response = null;
   try{
