@@ -2389,10 +2389,11 @@ function initSpeechRecognition(){
   };
 
   recognition.onresult = function(event){
-    if(!isRecording) return;
+    if(!isRecording || isAiThinking) return;
     
-    // Build full transcript from ALL results (accumulates across sentences)
-    const transcript = Array.from(event.results).map(r => r[0].transcript).join(' ');
+    // Use only the latest result index (Chrome results are cumulative in many environments)
+    // This prevents the "Hello Hello how Hello how are" repeat bug.
+    const transcript = event.results[event.results.length - 1][0].transcript;
 
     const input = document.getElementById("chatInput");
     if(input && transcript) {
