@@ -1534,11 +1534,15 @@ function speakText(text, defaultGender){
   }
 
   const findVoice = (preferred) => {
-    for(const p of preferred){
-      const v = voices.find(v => v.lang.startsWith("en") && p.test(v.name));
-      if(v) return v;
+    // Prefer en-IN for better Hinglish pronunciation, then fallback to others
+    const langs = ["en-IN", "en-GB", "en-US"];
+    for(const lang of langs){
+      for(const p of preferred){
+        const v = voices.find(v => v.lang.startsWith(lang) && p.test(v.name));
+        if(v) return v;
+      }
     }
-    return voices.find(v => v.lang.startsWith("en"));
+    return voices.find(v => v.lang.startsWith("en-IN")) || voices.find(v => v.lang.startsWith("en"));
   };
 
   // Parse text into chunks by gender tags [M] and [F]
@@ -1564,17 +1568,17 @@ function speakText(text, defaultGender){
 
   chunks.forEach((chunk, index) => {
     const utterance = new SpeechSynthesisUtterance(chunk.text);
-    utterance.lang = "en-US";
+    utterance.lang = "en-IN"; // Use en-IN for Hinglish support
     const role = (chatRole || "").toLowerCase();
 
     if(chunk.gender === "female"){
-      utterance.rate = 0.9;
-      utterance.pitch = 1.15;
-      utterance.voice = findVoice([/microsoft.*zira/i, /microsoft.*hazel/i, /google.*female/i, /samantha/i, /victoria/i, /female/i, /zira/i]);
-    } else {
       utterance.rate = 0.95;
-      utterance.pitch = 0.9;
-      utterance.voice = findVoice([/microsoft.*david/i, /microsoft.*mark/i, /google.*male/i, /david/i, /mark/i, /male/i]);
+      utterance.pitch = 1.1;
+      utterance.voice = findVoice([/heera/i, /raveena/i, /ishita/i, /sangeeta/i, /google.*female/i, /zira/i, /samantha/i]);
+    } else {
+      utterance.rate = 1.0;
+      utterance.pitch = 0.95;
+      utterance.voice = findVoice([/neel/i, /rishi/i, /karan/i, /google.*male/i, /david/i, /mark/i]);
     }
 
     // Only restart mic after the LAST chunk finishes
@@ -1930,22 +1934,21 @@ async function startChat(){
   startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Initializing World...';
 
   // DYNAMIC STORY — only set up the opening scene, everything else unfolds naturally
-  const storyPrompt = `Create the OPENING SCENE of a story based on user input below.
+  const storyPrompt = `Create the OPENING SCENE of a cinematic Indian story based on user input below.
     USER INPUT: ${bio || "Create an interesting story opening"}.
     AI ROLE: ${role} (${chatGender} character).
     USER GENDER: ${userGender}.
 
     RULES:
-    1. BASE STORY ON USER INPUT: Use the user's description to create ONLY the starting scene.
-    2. OPENING ONLY: Describe only what's happening right now (Scene 1). Don't plan future scenes.
-    3. CHARACTERS: Give the AI character a name. The user's name will be revealed naturally.
-    4. HIDDEN INFO: If the AI character has secrets, don't reveal them yet. Let them unfold naturally.
-    5. DYNAMIC ENTRIES: Side characters, animals, beasts, plot twists — all should appear NATURALLY during conversation, NOT be planned upfront.
+    1. BASE STORY ON USER INPUT: Create ONLY the starting scene in HINGLISH.
+    2. SCENARIO, GOAL, REWARD: Must be written in HINGLISH (Mix of Hindi and English).
+    3. CHARACTERS: Give the AI character a name.
+    4. DYNAMIC: Encourage drama, nakhre, and 'Tang Khichayi' from the start.
     
-    SEED: ${Date.now()}. Return JSON ONLY (NO extra text, NO markdown, NO explanation) in this exact format:
-    {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current situation","scenario":"OPENING SCENE: location, weather, mood, what's happening right now — vivid but only the start","goal":"What the user needs to do now","reward":"What user can achieve"}`;
+    SEED: ${Date.now()}. Return JSON ONLY in this exact format:
+    {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current situation in Hinglish","scenario":"OPENING SCENE in Hinglish: mood and what's happening right now","goal":"What user needs to do in Hinglish","reward":"What user can achieve in Hinglish"}`;
 
-  const storyResult = await askAI(storyPrompt, "You are a creative genius. Return ONLY valid JSON. No markdown. No extra text.", 700);
+  const storyResult = await askAI(storyPrompt, "You are a creative genius who writes cinematic Indian dramas in Hinglish. Return ONLY valid JSON.", 700);
   let storyProcessed = false;
   if(storyResult){
     try {
