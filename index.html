@@ -1517,7 +1517,8 @@ function setUserGender(gender){
 function speakText(text, defaultGender){
   if(!window.speechSynthesis || !text) return;
   
-  // Turn OFF mic when AI starts speaking
+  // Track if we should restart mic after speaking finishes
+  const wasRecording = isRecording;
   if(isRecording){
     isRecording = false;
     if(recognition) try { recognition.stop(); } catch(e){}
@@ -1561,7 +1562,7 @@ function speakText(text, defaultGender){
     if(clean) chunks.push({ text: clean, gender: defaultGender });
   }
 
-  chunks.forEach(chunk => {
+  chunks.forEach((chunk, index) => {
     const utterance = new SpeechSynthesisUtterance(chunk.text);
     utterance.lang = "en-US";
     const role = (chatRole || "").toLowerCase();
@@ -1575,6 +1576,21 @@ function speakText(text, defaultGender){
       utterance.pitch = 0.9;
       utterance.voice = findVoice([/microsoft.*david/i, /microsoft.*mark/i, /google.*male/i, /david/i, /mark/i, /male/i]);
     }
+
+    // Only restart mic after the LAST chunk finishes
+    if (index === chunks.length - 1 && wasRecording) {
+      utterance.onend = () => {
+        if (!isRecording && !isAiThinking) {
+          isRecording = true;
+          updateMicBtn();
+          try { 
+            micLock = true;
+            recognition.start(); 
+          } catch(e) { micLock = false; }
+        }
+      };
+    }
+
     speechSynthesis.speak(utterance);
   });
 }
@@ -1896,7 +1912,6 @@ async function startChat(){
   chatRole = role;
   chatHistory = [];
   chatActive = true;
-  speechFinalTranscript = "";
 
   const isUserAdmin = isAdmin();
   const isPractice = chatMode === "practice";
@@ -1984,7 +1999,6 @@ function endChat(){
   if(!chatActive) return;
   chatActive = false;
   if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-  speechFinalTranscript = "";
   if(recognition){ try{ recognition.stop(); }catch(e){} isRecording = false; updateMicBtn(); }
 
   appData.chatsDone++;
@@ -2081,11 +2095,11 @@ async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
-  // Don't stop mic — just skip old results so they don't reappear
-  if(recognition) {
-    resultOffset = recognition.results ? recognition.results.length : (resultOffset + 1);
-  }
+  // Clear base text and stop mic so it restarts with a fresh buffer
   speechBaseText = "";
+  if(isRecording && recognition) {
+    try { recognition.stop(); } catch(e) {}
+  }
   input.value = "";
   input.style.height = "auto";
 
@@ -2357,7 +2371,6 @@ function hideTyping(){
 
 let speechBaseText = ""; 
 let micLock = false;
-let resultOffset = 0;
 
 function initSpeechRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2377,22 +2390,16 @@ function initSpeechRecognition(){
 
   recognition.onresult = function(event){
     if(!isRecording) return;
-    if(event.results.length <= resultOffset) return;
     
-    // Chrome gives CUMULATIVE results — only take the LATEST one to avoid duplication
-    // e.g., "Hello" → "Hello how" → "Hello how are" — last one has full text
-    const lastIndex = event.results.length - 1;
-    const transcript = event.results[lastIndex][0].transcript;
-    resultOffset = event.results.length;
-
-    // Echo feedback fix: AI is thinking/speaking, advance offset but DON'T update textarea
-    if(isAiThinking) return;
+    // Build full transcript from ALL results (accumulates across sentences)
+    const transcript = Array.from(event.results).map(r => r[0].transcript).join(' ');
 
     const input = document.getElementById("chatInput");
     if(input && transcript) {
-      // speechBaseText = user's original typed text (set once when mic starts)
-      input.value = speechBaseText ? speechBaseText + " " + transcript : transcript;
-      // DON'T update speechBaseText — keep it as original typed text only
+      // Build combined text and clean up whitespace
+      const combined = speechBaseText ? speechBaseText + " " + transcript : transcript;
+      input.value = combined.replace(/\s+/g, ' ');
+      
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
     }
@@ -2410,6 +2417,11 @@ function initSpeechRecognition(){
   recognition.onend = function(){
     micLock = false;
     if (isRecording) {
+      // CRITICAL: Update speechBaseText to current input value before restarting 
+      // so the next session appends instead of overwriting.
+      const input = document.getElementById("chatInput");
+      if(input) speechBaseText = input.value;
+
       // Auto-restart for "Always-On" feel
       setTimeout(() => {
         if(isRecording && !micLock){
@@ -2439,7 +2451,6 @@ function toggleMic(){
   }
   
   speechBaseText = input.value ? input.value : "";
-  resultOffset = 0;
   
   try{
     if(!micLock) {
