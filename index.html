@@ -1875,14 +1875,16 @@ async function startChat(){
     3. CHARACTERS: Give the AI character a name.
     4. DYNAMIC: Encourage drama, nakhre, and 'Tang Khichayi' from the start.
     
-    SEED: ${Date.now()}. Return JSON ONLY in this exact format:
+    SEED: ${Date.now()}. 
+    CRITICAL: YOU MUST RETURN ONLY A RAW JSON OBJECT. NO PREAMBLE. NO EXPLANATION. NO MARKDOWN BLOCKS. JUST THE JSON.
+    Format exactly like this:
     {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current situation in Hinglish","scenario":"OPENING SCENE in Hinglish: mood and what's happening right now","goal":"What user needs to do in Hinglish","reward":"What user can achieve in Hinglish"}`;
 
-  const storyResult = await askAI(storyPrompt, "You are a creative genius who writes cinematic Indian dramas in Hinglish. Return ONLY valid JSON.", 700);
+  const storyResult = await askAI(storyPrompt, "You are a JSON generator. Output ONLY raw JSON.", 700);
   let storyProcessed = false;
   if(storyResult){
     try {
-      const cleanJson = storyResult.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
+      const cleanJson = extractJsonFromText(storyResult);
       const data = JSON.parse(cleanJson);
       if(data.aiName && data.scenario) {
         document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
