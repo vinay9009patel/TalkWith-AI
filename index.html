@@ -3084,22 +3084,39 @@ const setupSuggestions = [
   { role: "Your Childhood Best Friend...", bio: "Met after 10 long years" },
   { role: "A 1000-year-old Ghost...", bio: "Haunting the old mansion" }
 ];
+
+const dynamicActionBios = [
+  "attacks suddenly",
+  "reveals a secret",
+  "is trapped with you",
+  "starts a fight",
+  "needs your help fast",
+  "appears in your room"
+];
+
 let suggestionIdx = 0;
+let dynamicBioIdx = 0;
+
 setInterval(() => {
   const roleInput = document.getElementById("chatRole");
   const bioInput = document.getElementById("chatBio");
   
-  let shouldUpdateRole = (roleInput && document.activeElement !== roleInput && !roleInput.value);
-  let shouldUpdateBio = (bioInput && document.activeElement !== bioInput && !bioInput.value);
-  
-  if(shouldUpdateRole || shouldUpdateBio) {
-    suggestionIdx = (suggestionIdx + 1) % setupSuggestions.length;
-    if (shouldUpdateRole) {
+  if(!roleInput || !bioInput) return;
+
+  const hasRole = roleInput.value.trim().length > 0;
+  const hasBio = bioInput.value.trim().length > 0;
+
+  if(!hasRole && !hasBio) {
+    if(document.activeElement !== roleInput && document.activeElement !== bioInput) {
+      suggestionIdx = (suggestionIdx + 1) % setupSuggestions.length;
       roleInput.setAttribute("placeholder", "e.g. " + setupSuggestions[suggestionIdx].role);
-    }
-    if (shouldUpdateBio) {
       bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + setupSuggestions[suggestionIdx].bio + ")");
     }
+  } else if (hasRole && !hasBio && document.activeElement !== bioInput) {
+    dynamicBioIdx = (dynamicBioIdx + 1) % dynamicActionBios.length;
+    let r = roleInput.value.trim().split(" ")[0]; // Use the first word of the role to keep it short
+    if(r.length > 15) r = r.substring(0, 15);
+    bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + r + " " + dynamicActionBios[dynamicBioIdx] + ")");
   }
 }, 3500);
 
