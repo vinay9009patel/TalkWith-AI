@@ -1925,6 +1925,7 @@ async function startChat(){
   6. FORMAT: You MUST prefix all dialogue with the character's name (e.g., Aurora: "Hi").
   7. USE NAMES: You MUST explicitly use the user's name in your dialogue to make it immersive.
   8. IMMERSION & CREATIVITY: Push the boundaries of imagination. Make the 'scenario' completely mind-bending, surreal, and deeply cinematic (e.g., different planets, time travel, quantum realms). Go far beyond normal, boring topics. Make it "ek alag level ki" story.
+  9. EXTREME ORIGINALITY: NEVER repeat common tropes. Create completely UNIQUE, weird, and fresh roles, scenarios, and twists every single time. Be unpredictable.
 
   Return JSON ONLY: {
     "aiName":"FirstName",
@@ -3072,25 +3073,37 @@ window.addEventListener('beforeunload', () => {
 });
 
 // ==================== DYNAMIC ROLE SUGGESTIONS ====================
-const setupSuggestions = [
+const rawSetupSuggestions = [
   { role: "A Quantum Time Tourist...", bio: "Causing a glitch in the Roman Empire" },
   { role: "Interdimensional Smuggler...", bio: "Stealing the core of a dying star" },
   { role: "AI from a Forgotten Spaceship...", bio: "Waking up after a million years" },
   { role: "A Dream Hacker...", bio: "Breaking into my subconscious mind" },
   { role: "The Last Alien Warlord...", bio: "Hiding on Earth as a high school teacher" },
   { role: "A Parallel Universe Dictator...", bio: "Trying to conquer my timeline" },
-  { role: "Cyborg from the year 2199...", bio: "Stranded on a dead, frozen planet" }
+  { role: "Cyborg from the year 2199...", bio: "Stranded on a dead, frozen planet" },
+  { role: "A Telepathic Detective...", bio: "Solving a crime inside a dream" },
+  { role: "An Alchemist from the 5th Dimension...", bio: "Turning dark matter into gold" },
+  { role: "A Rogue Digital Virus...", bio: "Escaping the internet into the real world" },
+  { role: "Galactic Bounty Hunter...", bio: "Tracking a shapeshifter on Mars" },
+  { role: "The Keeper of the Multiverse...", bio: "Fixing a broken reality portal" }
 ];
+// Shuffle suggestions on load so they rarely repeat
+const setupSuggestions = rawSetupSuggestions.sort(() => Math.random() - 0.5);
 
-const dynamicActionBios = [
+const rawDynamicActionBios = [
   "glitches the timeline",
   "opens a black hole",
   "steals my memory",
   "teleports us to Mars",
   "mutates into a cyborg",
   "hacks my brain",
-  "freezes time"
+  "freezes time",
+  "summons a meteor",
+  "erases my past",
+  "opens a portal"
 ];
+// Shuffle dynamic actions
+const dynamicActionBios = rawDynamicActionBios.sort(() => Math.random() - 0.5);
 
 let suggestionIdx = 0;
 let dynamicBioIdx = 0;
