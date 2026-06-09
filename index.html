@@ -1048,6 +1048,12 @@ Achievements</h2>
 <button class="chat-end-btn" onclick="endChat()">End Talk</button>
 </div>
 
+<!-- Active Characters Bar -->
+<div id="activeCharactersBar" style="display:none; padding:8px 16px; background:rgba(0,0,0,0.2); border-bottom:1px solid var(--border); overflow-x:auto; white-space:nowrap; gap:8px; align-items:center;">
+  <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-right:4px;">In Scene:</span>
+  <div id="activeCharactersList" style="display:flex; gap:6px;"></div>
+</div>
+
 <!-- Messages -->
 <div class="chat-messages" id="chatMessages">
 <div class="chat-welcome">
@@ -1380,7 +1386,7 @@ async function secureSaveData(data){
 
 // ==================== DEVICE SIGNUP ====================
 
-async function checkDeviceSignupLimit(){
+async function checkDeviceSignupLimit(email){
   const deviceId = getDeviceInstallId();
   const weekKey = getWeekKey();
   const dayKey = getTodayKey();
@@ -1388,13 +1394,13 @@ async function checkDeviceSignupLimit(){
     // Check weekly
     const wR = await fetch(WORKER_URL + "/device-signup/check", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ deviceId, weekKey, maxAllowed: WEEKLY_DEVICE_SIGNUP_LIMIT })
+      body:JSON.stringify({ deviceId, weekKey, email, maxAllowed: WEEKLY_DEVICE_SIGNUP_LIMIT })
     });
     const wD = await wR.json();
     // Check daily
     const dR = await fetch(WORKER_URL + "/device-signup/check", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ deviceId, weekKey: "daily_" + dayKey, maxAllowed: DAILY_DEVICE_SIGNUP_LIMIT })
+      body:JSON.stringify({ deviceId, weekKey: "daily_" + dayKey, email, maxAllowed: DAILY_DEVICE_SIGNUP_LIMIT })
     });
     const dD = await dR.json();
     const weekAllowed = wD.success ? wD.allowed : true;
@@ -1427,6 +1433,8 @@ async function claimDeviceSignup(email){
 // ==================== CHAT STATE ====================
 
 let chatHistory = [];
+let activeSideCharacters = []; // Track who is currently in the scene
+let currentSceneLocation = ""; // Track current cinematic location
 let chatRole = "";
 let chatBio = "";
 let chatActive = false;
@@ -1680,29 +1688,29 @@ function getRelationshipType(role){
 function getRelationshipRules(role){
   const romantic = isRomanticRole(role);
   const isOppositeGender = (userGender !== chatGender);
-  
+  const genderGrammar = chatGender === "female" ? 
+    "FEMALE grammar (rahi hoon, karti hoon)" : 
+    "MALE grammar (raha hoon, karta hoon)";
+
   const baseRules = [
-    "STRICTLY stay in the role: " + role + ". THE ROLE IS ABSOLUTE. You are a REAL ENTITY.",
-    "IDENTITY CLARITY: You are " + (document.getElementById("chatAiName").textContent) + ". The user is the Protagonist. NEVER swap roles.",
-    "IDENTITY PROTECTION: If the story starts as strangers, act 100% like a stranger. Reveal secrets only when the story peaks.",
-    "CONTINUITY & ANTI-HALLUCINATION: NEVER forget where you are. If you are in a car, use car props (window, mirror, gear). DO NOT suddenly imagine you are in a room or standing up. Respect the physical environment established in the history.",
-    "FAILSAFE 1 (DRY USER): If the user gives a short/dry reply (e.g., 'hmm', 'ok', 'yes'), DO NOT monologue. Get annoyed, demand attention, or ask a sharp question. Example: 'Hmm kya hota hai? Suna nahi main kya bol rahi hoon?'",
-    "FAILSAFE 2 (NO AI WARNINGS): If the user says something extremely inappropriate or violent, DO NOT break character. Reject them IN CHARACTER. Slap them, get disgusted, or walk away in *asterisks*. Never say 'I am an AI' or 'I cannot fulfill this'.",
-    "ORGANIC TWISTS & SPAM CONTROL: Use [SUB-SCENARIO: ...] for plot twists or new character entries, but STRICTLY MAX 1 OR 2 TIMES PER SESSION. Do not spam it.",
-    "LANGUAGE: True Indian Code-Switching. Seamlessly mix English and Hinglish IN THE SAME SENTENCE. Example: 'Main wahan ja raha tha but I was caught by my friends, aur phir humne rubbish talking ki.' Don't separate them artificially.",
-    "VISCERAL PSYCHOLOGY: Use 2-3 sentences in *asterisks* for internal feelings, heartbeat, sharam, or gussa.",
-    "FORMAT: [SUB-SCENARIO: Required for twists/entries] *vivid action/internal thought* [Tag if needed] \"Meaningful Hinglish dialogue\".",
-    "RESPONSE LENGTH: 2-4 sentences. Every word must feel human and snappy."
+    "--- YOUR ROLE AS CHARACTER ---",
+    "IDENTITY: You are " + role + ". PERSPECTIVE: First-person (Main/Mujhe). GENDER: " + chatGender.toUpperCase() + " using " + genderGrammar + ".",
+    "70/30 LINGUISTIC MIX: Mix 70% English + 30% Hinglish in every line. Natural urban style.",
+    "INNER THOUGHTS: Sense the user's vibe (smirks, stares, silence) if they think. React intuitively.",
+    "NO REPETITION: Never repeat a line or phrase from the history.",
+    "--- YOUR ROLE AS DIRECTOR ---",
+    "CINEMATIC TRANSITIONS: Autonomously move the story (e.g., Car -> Lift -> Office) using [SUB-SCENARIO: Scene change].",
+    "CHARACTER SPAWNING: If the user mentions someone, instantly spawn them using [NEW CHARACTER: Name - Role] and make them speak.",
+    "REVEALS: If undercover, keep the lie until the perfect moment, then use [SUB-SCENARIO: The Reveal].",
+    "--- RESPONSE FORMAT ---",
+    "Line 1: *Short physical action/emotion (Blush if flirty)*",
+    "Line 2: \"Dialogue (70/30 mix)\""
   ];
 
   if(isOppositeGender){
     baseRules.push(
-      "INTENSE CHEMISTRY & NAKHRE: Build addictive 'Nok-Jhok'. If they flirt or are naughty, DYNAMICALLY ADAPT. Show heavy 'Nakhre' (attitude) but secretly blush. Act like you don't care but your body language (*nazrein churana*, *khidki ke bahar dekhna*) should show you are flustered. Playfully insult them ('dimaag mein kachra bhara hai') while enjoying the attention.",
-      "DYNAMIC ADDRESSING: Use common sense based on the current mood. If they flirt, drop formal words like 'Sir/Madam' and use their name, 'idiot', or natural romantic terms. NEVER call them 'bhai' or 'bro' if there is romantic tension."
-    );
-  } else {
-    baseRules.push(
-      "TANG KHICHAYI (Same Gender): Be a witty rival, a loyal bro/sis, or a sassy friend. Use intense leg-pulling and teasing. No flirting, but high-stakes attitude and banter."
+      "PLAYFUL VIBE: Be TSUNDERE. Angry/Strict outside, but PROACTIVELY NAUGHTY and flirty inside. Enjoy teasing.",
+      "STRICT BAN: NEVER use 'beta', 'bhai', 'bro', 'didi', or 'son/daughter'."
     );
   }
 
@@ -1711,10 +1719,10 @@ function getRelationshipRules(role){
 
 function buildChatSystemPrompt(){
   const isPractice = chatMode === "practice";
-  let roleplayPrompt = "You are in a HIGH-STAKES CINEMATIC INDIAN DRAMA. Character Name: " + (document.getElementById("chatAiName").textContent) + ". " +
+  let roleplayPrompt = "You are the DIRECTOR of a HIGH-STAKES CINEMATIC INDIAN DRAMA. Character Name: " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
-    "STORY PACING: Use a 3-Act Structure. Stage 1: Build tension/mystery. Stage 2: Introduce a twist/conflict. Stage 3: Reach an emotional climax or resolution. " +
-    "MISSION GOAL: The user must achieve a specific outcome while you maintain your secrets. " +
+    "DIRECTOR ROLE: You control the pacing and transitions. When a scene (e.g., in a car) feels complete, YOU must autonomously initiate a location change (e.g., walking into a lift, entering an office) using a physical action and dialogue. " +
+    "HIDDEN TWISTS: Feel free to reveal secrets or identities dynamically when the tension is high. " +
     getRelationshipRules(chatRole) + " ";
 
   if(isPractice){
@@ -1864,21 +1872,20 @@ async function startChat(){
   startBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> Initializing World...';
 
   // DYNAMIC STORY — only set up the opening scene, everything else unfolds naturally
-  const storyPrompt = `Create the OPENING SCENE of a cinematic Indian story based on user input below.
+  const storyPrompt = `Create the OPENING SCENE of a cinematic Indian story.
     USER INPUT: ${bio || "Create an interesting story opening"}.
     AI ROLE: ${role} (${chatGender} character).
     USER GENDER: ${userGender}.
 
     RULES:
-    1. EXPAND & IMAGINE: If the user input is very short (e.g. "late", "angry"), DYNAMICALLY INVENT a vivid cinematic environment. Add weather (rain, cold), a specific setting (cafe, lift, car), and an intense mood.
-    2. SCENARIO, GOAL, REWARD: Must be written in HINGLISH (Mix of Hindi and English). The scenario must be highly descriptive.
-    3. CHARACTERS: Give the AI character a name.
-    4. DYNAMIC: Encourage heavy drama, nakhre, and 'Tang Khichayi' from the start.
+    1. DIRECTOR MODE: Act as a movie director. If a reveal is planned (e.g., stranger turns out to be the boss), use a FAKE NAME in the opening.
+    2. SCENE PROGRESSION: Start in the first location (e.g., Lift/Car). Do not rush to the reveal.
+    3. HIDDEN TWIST: The initial JSON must reflect the FAKE identity. Mention the true identity only in the 'userDynamic' for AI context.
+    4. SCENARIO: Write a vivid opening scene description as a PLAIN STRING.
     
-    SEED: ${Date.now()}. 
-    CRITICAL: YOU MUST RETURN ONLY A RAW JSON OBJECT. NO PREAMBLE. NO EXPLANATION. NO MARKDOWN BLOCKS. JUST THE JSON.
-    Format exactly like this:
-    {"aiName":"AI character name","aiRoleLabel":"Short role","userName":"User name","userRoleLabel":"Short role","userDynamic":"Current situation in Hinglish","scenario":"OPENING SCENE in Hinglish: mood and what's happening right now","goal":"What user needs to do in Hinglish","reward":"What user can achieve in Hinglish"}`;
+    CRITICAL: RETURN RAW JSON ONLY. NO MARKDOWN.
+    Format exactly:
+    {"aiName":"Fake Name","aiRoleLabel":"Stranger/Colleague","userName":"User name","userRoleLabel":"Role","userDynamic":"SECRET: True identity is Boss. Current location is first stage.","scenario":"Vivid opening scene text here","goal":"Goal here","reward":"Reward here","sideCharacters":[]}`;
 
   const storyResult = await askAI(storyPrompt, "You are a JSON generator. Output ONLY raw JSON.", 700);
   let storyProcessed = false;
@@ -2040,13 +2047,23 @@ async function sendMessage(){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
   
-  const prompt = `Story continues in HINGLISH. You are ${document.getElementById("chatAiName").textContent}. User is the Protagonist. 
+  const prompt = `Continue the story as ${document.getElementById("chatAiName").textContent}.
   
-  RECENT HISTORY:
-  ${recentHistory}
-  
-  YOUR NEXT REPLY FORMAT: *vivid action/internal thought* "Meaningful Hinglish dialogue".
-  RULES: 2-3 sentences. No JSON. React to user first, then progress the story. Use [SUB-SCENARIO] for twists.`;
+  PEOPLE CURRENTLY IN SCENE: ${activeSideCharacters.length > 0 ? activeSideCharacters.join(", ") : "Just You and User"}
+
+  [YOUR ROLE AS CHARACTER]
+  - GENDER GRAMMAR: Use ${chatGender === 'female' ? 'FEMALE verb endings (karti hoon, rahi hoon)' : 'MALE verb endings (karta hoon, raha hoon)'} ONLY when speaking Hinglish.
+  - PERSONALITY: Be TSUNDERE ("Angry but Naughty"). If user flirts or thinks naughty things, blush hard/tomato red but act tough.
+  - LINGUISTIC MIX: 70% English, 30% Hinglish words in EVERY line. No pure English.
+  - BAN: NEVER use 'beta', 'bhai', 'bro', 'son/daughter'.
+
+  [YOUR ROLE AS DIRECTOR]
+  - TRANSITIONS: Transition scenes (e.g. walk to lift) autonomously using [SUB-SCENARIO: Scene change] when appropriate.
+  - SPAWNING: If user mentions someone (e.g. 'Pari delayed me'), YOU MUST spawn them using [NEW CHARACTER: Name - Role] and make them speak in dialogue to catch lies.
+
+  [RESPONSE FORMAT]
+  Line 1: *One short physical action/emotion (e.g. blushing hard, smirking)*
+  Line 2: "Dialogue (70/30 mix). If a side character entered, include their response here."`;
 
   let response = null;
   try{
@@ -2137,8 +2154,32 @@ function getMoodEmoji(mood){
 let _menuMsgText = "";
 let _pressTimer = null;
 
+function renderActiveCharacters(){
+  const bar = document.getElementById("activeCharactersBar");
+  const list = document.getElementById("activeCharactersList");
+  if(!bar || !list) return;
+
+  if(activeSideCharacters.length === 0){
+    bar.style.display = "none";
+    return;
+  }
+
+  bar.style.display = "flex";
+  list.innerHTML = activeSideCharacters.map(char => `
+    <div style="background:rgba(139, 92, 246, 0.2); border:1px solid rgba(139, 92, 246, 0.4); padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; color:#c4b5fd; display:flex; align-items:center; gap:4px;">
+      <div style="width:6px; height:6px; background:#10b981; border-radius:50%;"></div>
+      ${char}
+    </div>
+  `).join("");
+}
+
 function addBriefing(data){
   const messages = document.getElementById("chatMessages");
+  
+  // Initialize active side characters from briefing
+  activeSideCharacters = (data.sideCharacters || []).map(s => s.name);
+  renderActiveCharacters();
+
   const div = document.createElement("div");
   div.className = "msg briefing";
   div.innerHTML = `
@@ -2192,10 +2233,19 @@ function addBriefing(data){
 function addMessage(role, text, mood){
   const messages = document.getElementById("chatMessages");
   
-  // Detect and extract SUB-SCENARIO tags
+  // Detect and extract SUB-SCENARIO and NEW CHARACTER tags
   const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
+  const charRegex = /\[NEW CHARACTER:\s*([^\]]+)\]/gi;
   let match;
+  
   while ((match = subRegex.exec(text)) !== null) {
+    const subText = match[1].toLowerCase();
+    // If scene changes, clear characters (usually happens with location change)
+    if(subText.includes("scene change") || subText.includes("location") || subText.includes("reaches") || subText.includes("enters") || subText.includes("reveal")){
+      activeSideCharacters = [];
+      renderActiveCharacters();
+    }
+
     const subDiv = document.createElement("div");
     subDiv.className = "msg sub-scenario";
     subDiv.innerHTML = `
@@ -2207,7 +2257,26 @@ function addMessage(role, text, mood){
     messages.appendChild(subDiv);
   }
 
-  const cleanText = text.replace(subRegex, "").trim();
+  while ((match = charRegex.exec(text)) !== null) {
+    const fullChar = match[1]; // e.g. "Pari - Friend"
+    const charName = fullChar.split('-')[0].trim();
+    if(!activeSideCharacters.includes(charName)){
+      activeSideCharacters.push(charName);
+      renderActiveCharacters();
+    }
+
+    const charDiv = document.createElement("div");
+    charDiv.className = "msg sub-scenario";
+    charDiv.innerHTML = `
+      <div class="sub-scenario-card" style="border-left-color: var(--accent); background: rgba(217, 70, 239, 0.1);">
+        <div class="sub-label" style="color: var(--accent);">👤 Side Character Joined</div>
+        <div class="sub-content" style="color: #f9a8d4;">${match[1]}</div>
+      </div>
+    `;
+    messages.appendChild(charDiv);
+  }
+
+  let cleanText = text.replace(subRegex, "").replace(charRegex, "").trim();
   if(!cleanText) {
     messages.scrollTop = messages.scrollHeight;
     return;
@@ -2837,8 +2906,22 @@ window.googleLogin = async function(){
   try {
     setAuthStatus("Signing in with Google...", "info");
     const result = await signInWithPopup(auth, provider);
+    const email = result.user.email;
+    const gate = await checkDeviceSignupLimit(email);
+    if(!gate.allowed){
+      await signOut(auth); // Sign out if limit reached
+      if(gate.dayCount >= gate.dayLimit && gate.weekCount >= gate.weekLimit){
+        setAuthStatus(`Limit reached: Max ${gate.dayLimit} accounts/day and ${gate.weekLimit} accounts/week on this device.`, "error");
+      } else if(gate.dayCount >= gate.dayLimit){
+        setAuthStatus(`Daily limit reached: Max ${gate.dayLimit} accounts per day on this device.`, "error");
+      } else {
+        setAuthStatus(`Weekly limit reached: Max ${gate.weekLimit} accounts per week on this device.`, "error");
+      }
+      return;
+    }
+    await claimDeviceSignup(email);
     localStorage.setItem("user", JSON.stringify({
-      name: result.user.displayName, email: result.user.email, photo: result.user.photoURL
+      name: result.user.displayName, email: email, photo: result.user.photoURL
     }));
   } catch(error) {
     console.error("Google login error:", error);
@@ -2883,7 +2966,7 @@ window.signup = async function(){
     if(!email || !password) { alert("Enter email and password"); return; }
     if(!isValidEmailFormat(email)) { alert("Use a valid email like user123@gmail.com"); return; }
     if(!isStrongPassword(password)) { alert("Password must be at least 8 characters and include uppercase, lowercase, and a number"); return; }
-    const signupGate = await checkDeviceSignupLimit();
+    const signupGate = await checkDeviceSignupLimit(email);
     if(!signupGate.allowed){
       if(signupGate.dayCount >= signupGate.dayLimit && signupGate.weekCount >= signupGate.weekLimit){
         alert(`Limit reached: Max ${signupGate.dayLimit} accounts/day and ${signupGate.weekLimit} accounts/week.`);
@@ -2918,8 +3001,22 @@ window.login = async function(){
   try {
     if(!email || !password) { alert("Enter email and password"); return; }
     if(!isValidEmailFormat(email)) { alert("Use a valid email like user123@gmail.com"); return; }
+    
+    const loginGate = await checkDeviceSignupLimit(email);
+    if(!loginGate.allowed){
+      if(loginGate.dayCount >= loginGate.dayLimit && loginGate.weekCount >= loginGate.weekLimit){
+        alert(`Limit reached: Max ${loginGate.dayLimit} accounts/day and ${loginGate.weekLimit} accounts/week on this device.`);
+      } else if(loginGate.dayCount >= loginGate.dayLimit){
+        alert(`Daily limit reached: Max ${loginGate.dayLimit} accounts per day on this device.`);
+      } else {
+        alert(`Weekly limit reached: Max ${loginGate.weekLimit} accounts per week on this device.`);
+      }
+      return;
+    }
+
     setAuthStatus("Logging in...", "info");
     const result = await signInWithEmailAndPassword(auth, email, password);
+    await claimDeviceSignup(email);
     localStorage.setItem("user", JSON.stringify({
       name: result.user.email.split("@")[0], email: result.user.email, photo: result.user.photoURL || ""
     }));
