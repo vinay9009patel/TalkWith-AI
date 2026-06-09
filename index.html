@@ -1053,7 +1053,7 @@ Achievements</h2>
 
   <div class="setup-section">
     <div class="setup-label">Final Context <span style="font-size:10px; color:var(--text-muted); font-weight:600; text-transform:none; margin-left:6px;">(Optional)</span></div>
-    <textarea id="chatBio" class="input" rows="4" placeholder="Write topic in 2 to 3 words (e.g. Raining in car, Midnight forest)"></textarea>
+    <textarea id="chatBio" class="input" rows="4" placeholder="Write topic in 2 to 3 words (e.g. Raining in car, Midnight forest)" onclick="if(!this.value && this.getAttribute('data-suggestion')) this.value = this.getAttribute('data-suggestion');"></textarea>
 
     <div style="text-align:center; margin-top:10px;">
       <button class="btn primary" onclick="startChat()" style="padding:14px 40px;font-size:16px; border-radius:20px; width:100%; max-width:320px;">
@@ -1751,12 +1751,12 @@ function getRelationshipRules(role){
     "SUB-SCENARIOS: For plot shifts, new character entries, or unexpected twists, you MUST start your message with: [SUB-SCENARIO: Vivid description of the shift].",
     "MULTI-ENTITY: Handle dialogue for any side characters and visceral actions for animals/creatures.",
     "REAL DRAMA: Use 2-3 sentences in *asterisks* for visceral internal feelings and physical actions (heartbeat, blushing, intense gaze).",
-    "EASY TALK: Reply in VERY SIMPLE, everyday English. Use easy words that a 10-year-old can understand. No heavy vocabulary.",
+    "EASY TALK: Reply in EXTREMELY BASIC, A1-level English. Short words, simple sentences. If a 10-year-old cannot understand it, it's too complex.",
     "TURN-TAKING: You MUST end every message by directly addressing the user or asking them a question. Make it obvious that it is their turn to speak.",
     "VARIETY: NEVER repeat the same physical action twice in a row.",
     "FORMAT: [SUB-SCENARIO: Optional] Name: *Vivid Action/Thought.* \"Dialogue.\"",
     "ANTI-TEACHER: IGNORE ALL TYPOS. Never correct the user.",
-    "STRICT BAN: NEVER use narrative tags ('I say'). NO meta-notes in parentheses."
+    "STRICT BAN: NEVER use narrative tags ('I say'). NO meta-notes in parentheses. NEVER refer to the other person as 'the user'."
   ];
 
   if(isOppositeGender){
@@ -1783,6 +1783,7 @@ function buildChatSystemPrompt(){
     "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
     "DRAMATIC ESCALATION: If the user is getting too comfortable, trigger a [SUB-SCENARIO] twist or introduce a side character to challenge them. " +
     "CRITICAL FORMAT: Start your message with the Character's Name followed by a colon (e.g., Riya: *action* \"dialogue\"). Do NOT repeat the name on every new line. End by addressing the user so they know it's their turn. " +
+    "NAME USAGE: You MUST address the other person by their actual name (" + sessionUserName + "). NEVER call them 'the user'. " +
     "Your responses should be 100% immersive and human-like.";
 
   if(chatMode === "practice"){
@@ -1947,7 +1948,7 @@ async function startChat(){
         document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
         addBriefing(data);
         showTyping();
-        const firstMsgPrompt = `START the story. You are ${data.aiName}. Use *action* "dialogue". 2 lines max. Simple English only.`;
+        const firstMsgPrompt = `START the story exactly at Stage 1. Do NOT skip ahead or use [SUB-SCENARIO] yet. You are ${data.aiName}. Address ${data.userName}. Use *action* "dialogue". 2 lines max. Simple English only.`;
         const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
         hideTyping();
         if(firstMsg){
@@ -3107,13 +3108,17 @@ setInterval(() => {
     if(document.activeElement !== roleInput && document.activeElement !== bioInput) {
       suggestionIdx = (suggestionIdx + 1) % setupSuggestions.length;
       roleInput.setAttribute("placeholder", "e.g. " + setupSuggestions[suggestionIdx].role);
+      roleInput.setAttribute("data-suggestion", setupSuggestions[suggestionIdx].role.replace("...", ""));
       bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + setupSuggestions[suggestionIdx].bio + ")");
+      bioInput.setAttribute("data-suggestion", setupSuggestions[suggestionIdx].bio);
     }
   } else if (hasRole && !hasBio && document.activeElement !== bioInput) {
     dynamicBioIdx = (dynamicBioIdx + 1) % dynamicActionBios.length;
     let r = roleInput.value.trim().split(" ")[0]; // Use the first word of the role to keep it short
     if(r.length > 15) r = r.substring(0, 15);
-    bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + r + " " + dynamicActionBios[dynamicBioIdx] + ")");
+    const dynamicBioText = r + " " + dynamicActionBios[dynamicBioIdx];
+    bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + dynamicBioText + ")");
+    bioInput.setAttribute("data-suggestion", dynamicBioText);
   }
 }, 3500);
 
