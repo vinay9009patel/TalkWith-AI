@@ -1052,7 +1052,7 @@ Achievements</h2>
   </div>
 
   <div class="setup-section">
-    <div class="setup-label">Final Context</div>
+    <div class="setup-label">Final Context <span style="font-size:10px; color:var(--text-muted); font-weight:600; text-transform:none; margin-left:6px;">(Optional)</span></div>
     <textarea id="chatBio" class="input" rows="4" placeholder="Write topic in 2 to 3 words (e.g. Raining in car, Midnight forest)"></textarea>
 
     <div style="text-align:center; margin-top:10px;">
@@ -2016,8 +2016,6 @@ async function sendMessage(){
   updateStreakAndXP();
   awardXP(2);
 
-  currentSpeakerName = sessionAiName;
-  renderActiveCharacters();
   showTyping();
   input.placeholder = "Wait, " + sessionAiName + " is typing...";
 
@@ -2055,8 +2053,6 @@ async function sendMessage(){
     chatHistory.push({ role: "assistant", content: cleanResponse });
     setTimeout(() => speakText(cleanResponse, chatGender), 300);
     
-    currentSpeakerName = sessionUserName;
-    renderActiveCharacters();
     setInputPulse(); // AI finished, hint user turn
     input.placeholder = "Your turn to reply, " + sessionUserName + "...";
   } else {
