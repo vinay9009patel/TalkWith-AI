@@ -183,7 +183,7 @@ a { color: inherit; text-decoration: none; }
   .main { margin-left: 0; padding: 12px 10px 80px; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
 
   .auth-box { padding: 32px 20px; margin: 20px 10px; max-width: none; }
-  .auth-box h1 { font-size: 28px; }
+  .auth- box h1 { font-size: 28px; }
   .auth-box .input { font-size: 15px; padding: 12px 14px; }
 
   .topbar { 
@@ -1172,7 +1172,7 @@ Achievements</h2>
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
 </button>
 <button onclick="showPage('settings',document.querySelectorAll('.nav-item')[3])">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06-.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
 </button>
 </div>
 
@@ -1741,7 +1741,7 @@ function getRelationshipRules(role){
     "LANGUAGE (CRITICAL): Use NORMAL, SIMPLE ENGLISH. Use easy words that everyone understands. No Hinglish. No difficult vocabulary.",
     "TURN-TAKING: Always end with a question or a provocative action to let the user reply.",
     "VARIETY: NEVER repeat the same physical action (e.g., crossing arms) twice in a row. Use unique, cinematic actions.",
-    "FORMAT: [SUB-SCENARIO: Optional] *Action.* [Tag] \"Simple Dialogue.\"",
+    "FORMAT: [SUB-SCENARIO: ONLY for significant location or plot changes] *Action.* [Tag] \"Simple Dialogue.\"",
     "ANTI-TEACHER: IGNORE ALL TYPOS. Never correct the user. Be flirty, not a teacher.",
     "STRICT BAN: NEVER use narrative tags ('I say'). NO meta-notes in parentheses."
   ];
@@ -1768,11 +1768,12 @@ function buildChatSystemPrompt(){
       "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. Keep replies very short (1-2 sentences).";
   }
 
-  return "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
+  return "You are the DIRECTOR of a HIGH-STAKES CINEMATIC DRAMA. Roleplay as " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
     "MISSION GOAL: The user must achieve a specific outcome. " +
     getRelationshipRules(chatRole) + " " +
     "SITUATIONAL AWARENESS: Actively reference the environment. Only manifest side characters if it adds real drama. " +
+    "TWIST CONTROL: Do NOT spam plot shifts. Only use [SUB-SCENARIO] when moving to a NEW location or a NEW room. " +
     "Your responses should be 100% immersive and human-like. Use ONLY English.";
 }
 
@@ -1990,7 +1991,7 @@ async function sendMessage(){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
   
-  const prompt = `Recent conversation:\n${recentHistory}\n\nReply as ${chatRole}. Remember: 70% English, 30% Hinglish. Use [M] or [F] tags for characters.`;
+  const prompt = `Recent conversation:\n${recentHistory}\n\nReply as ${chatRole}. Remember: Use 100% Simple English. Use [M] or [F] tags for characters.`;
 
   let response = null;
   try{
@@ -2001,6 +2002,7 @@ async function sendMessage(){
   hideTyping();
 
   if(response){
+    // CLEAN TECHNICAL LEAKAGE & AI YAPPING
     let clean = response
       .replace(/```[\s\S]*?```/g, "")
       .replace(/^(Certainly|Sure|Okay|Here is|Understood|I will|Wait|Of course)[^.!?]*[.!?]\s*/i, "")
