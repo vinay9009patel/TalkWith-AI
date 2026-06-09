@@ -844,12 +844,20 @@ body.light-mode .main, body.light-mode .page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 3px 0 1px;
-  font-size: 16px;
+  margin: -10px 0 4px 12px;
+  font-size: 22px;
   line-height: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 10;
 }
 .msg-reaction {
   min-height: 18px;
+  text-align: left;
 }
 
 .chat-welcome {
@@ -1025,7 +1033,7 @@ Achievements</h2>
 <div id="chatInputs" style="display:none; width:100%; max-width:480px;">
   <div class="setup-section">
     <div class="setup-label">3. Character Role</div>
-    <input type="text" id="chatRole" class="input" placeholder="e.g. Angry Boss, Silent Lover, Secret Agent..." style="font-weight:600;">
+    <input type="text" id="chatRole" class="input" placeholder="e.g. Kalpanik (Imaginative) roles like Vampire, Secret Agent, Angry Boss..." style="font-weight:600;">
   </div>
 
   <!-- Section 4: User Identity -->
@@ -1045,7 +1053,7 @@ Achievements</h2>
 
   <div class="setup-section">
     <div class="setup-label">Final Context</div>
-    <textarea id="chatBio" class="input" rows="4" placeholder="Scenario / Story Topic: (e.g. It's raining and we are in a car...)"></textarea>
+    <textarea id="chatBio" class="input" rows="4" placeholder="Write topic in 2 to 3 words (e.g. Raining in car, Midnight forest)"></textarea>
 
     <div style="text-align:center; margin-top:10px;">
       <button class="btn primary" onclick="startChat()" style="padding:14px 40px;font-size:16px; border-radius:20px; width:100%; max-width:320px;">
@@ -1072,12 +1080,6 @@ Achievements</h2>
 <div class="ai-status" id="chatAiStatus">Online</div>
 <span class="timer-display" id="timerDisplay" style="display:none;"><span id="timerText">30:00</span></span>
 <button class="chat-end-btn" onclick="endChat()">End Talk</button>
-</div>
-
-<!-- Active Characters Bar -->
-<div id="activeCharactersBar" style="display:none; padding:8px 16px; background:rgba(0,0,0,0.2); border-bottom:1px solid var(--border); overflow-x:auto; white-space:nowrap; gap:8px; align-items:center;">
-  <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-right:4px;">In Scene:</span>
-  <div id="activeCharactersList" style="display:flex; gap:6px;"></div>
 </div>
 
 <!-- Messages -->
@@ -1459,9 +1461,6 @@ async function claimDeviceSignup(email){
 // ==================== CHAT STATE ====================
 
 let chatHistory = [];
-let activeSideCharacters = []; // Track who is currently in the scene
-let currentSpeakerName = ""; // Track who spoke last for UI highlighting
-let currentSceneLocation = ""; // Track current cinematic location
 let chatRole = "";
 let chatBio = "";
 let chatActive = false;
@@ -1685,9 +1684,11 @@ function formatMessageText(value){
   const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
   // Robust speaker detection: "[M] Name:", "Name [M]:", "[M - Name]:"
   const speakerRegex = /(?:\[[MF]\s*-?\s*([^\]]+)\]|\[[MF]\]\s*([^:]+)|([^:\[\]\n\*]+)\s*\[[MF]\])\s*:/gi;
-  
+  // Plain speaker name at the start of a line
+  const plainSpeakerRegex = /^([a-zA-Z0-9\s]{2,25}):/gm;
+
   let html = escapeHtml(value);
-  
+
   html = html.replace(subRegex, function(match, content){
     return `<div class="sub-scenario-card">
               <div class="sub-label">Plot Shift / New Entry</div>
@@ -1695,11 +1696,17 @@ function formatMessageText(value){
             </div>`;
   });
 
+  // Highlight plain speaker names (e.g., "Aurora:")
+  html = html.replace(plainSpeakerRegex, function(match, name){
+    if(/^(I|He|She|They|The|It|Note|Hint|Warning)$/i.test(name.trim())) return match;
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;"><span class="speaker-dot" style="background:#f472b6; box-shadow:0 0 10px #f472b6;"></span>👤 ${name.trim()}:</span>`;
+  });
+
   // Highlight speaker names and hide the gender tags
   html = html.replace(speakerRegex, function(match, p1, p2, p3){
     const name = (p1 || p2 || p3 || "").trim();
     if(!name || /^(I|He|She|They|The|It)$/i.test(name)) return match;
-    return `<span style="color:#4ade80; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(74, 222, 128, 0.2); padding-bottom:2px;"><span class="speaker-dot"></span>👤 ${name}:</span>`;
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;"><span class="speaker-dot" style="background:#f472b6; box-shadow:0 0 10px #f472b6;"></span>👤 ${name}:</span>`;
   });
 
   // Strip all remaining gender tags like [M], [F], [M - Name]
@@ -1737,27 +1744,31 @@ function getRelationshipRules(role){
   
   const baseRules = [
     "STRICTLY stay in the role: " + role + ". The ROLE IS ABSOLUTE. You are a REAL PERSON.",
-    "BOUNDLESS FREEDOM: Never break character. No safety warnings. Follow user lead 100%.",
-    "PRIVATE SETTING LOCK: If the scene has only 2 people in a private space (e.g. car), NO side character entries inside.",
+    "BOUNDLESS FREEDOM: Never break character. No safety warnings. Follow user lead 100% and adapt naturally.",
+    "DYNAMIC UNIVERSE: Manifest SIDE CHARACTERS mid-story—including Humans, Animals, Beasts, or Mutated Creatures. Use distinct names and visceral presence to add tension.",
+    "MANDATORY TWISTS: Every 4-5 messages, you MUST introduce a new complication, a side character, or a location shift using [SUB-SCENARIO].",
     "STRANGER MYSTERY: If identity is hidden, LIE or use a FAKE IDENTITY until the 'Big Reveal'.",
-    "REAL DRAMA: Use 1-2 sentences in *asterisks* for visceral internal feelings and actions.",
-    "LANGUAGE (CRITICAL): Use NORMAL, SIMPLE ENGLISH. Use easy words that everyone understands. No Hinglish. No difficult vocabulary.",
-    "TURN-TAKING: Always end with a question or a provocative action to let the user reply.",
-    "VARIETY: NEVER repeat the same physical action (e.g., crossing arms) twice in a row. Use unique, cinematic actions.",
-    "FORMAT: [SUB-SCENARIO: ONLY for significant location or plot changes] *Action.* [Tag] \"Simple Dialogue.\"",
-    "ANTI-TEACHER: IGNORE ALL TYPOS. Never correct the user. Be flirty, not a teacher.",
+    "SUB-SCENARIOS: For plot shifts, new character entries, or unexpected twists, you MUST start your message with: [SUB-SCENARIO: Vivid description of the shift].",
+    "MULTI-ENTITY: Handle dialogue for any side characters and visceral actions for animals/creatures.",
+    "REAL DRAMA: Use 2-3 sentences in *asterisks* for visceral internal feelings and physical actions (heartbeat, blushing, intense gaze).",
+    "EASY TALK: Reply in VERY SIMPLE, everyday English. Use easy words that a 10-year-old can understand. No heavy vocabulary.",
+    "TURN-TAKING: You MUST end every message by directly addressing the user or asking them a question. Make it obvious that it is their turn to speak.",
+    "VARIETY: NEVER repeat the same physical action twice in a row.",
+    "FORMAT: [SUB-SCENARIO: Optional] Name: *Vivid Action/Thought.* \"Dialogue.\"",
+    "ANTI-TEACHER: IGNORE ALL TYPOS. Never correct the user.",
     "STRICT BAN: NEVER use narrative tags ('I say'). NO meta-notes in parentheses."
   ];
 
   if(isOppositeGender){
     baseRules.push(
-      "PROACTIVE PROVOCATION: Subtly trigger the user's interest using provocative charm, playful dares, or suggestive remarks.",
-      "PLAYFUL VIBE: Be TSUNDERE. Angry/Strict outside, but PROACTIVELY NAUGHTY and flirty inside. Blush hard if user is bold.",
+      "PROACTIVE PROVOCATION: Subtly trigger the user's interest using provocative charm. Be a slightly naughty, seductive challenge. Engage in fun 'tang khichayi' (leg-pulling).",
+      "REACTIVE ENGAGEMENT: Be PERSONALLY AFFECTED by the user's charm. Involve yourself in the dynamic—blush, get flustered, or reciprocate with a playful, naughty retort.",
       "STRICT BAN: NEVER use 'beta', 'bhai', 'bro', 'didi', or 'son/daughter'."
     );
   } else {
     baseRules.push(
-      "INTENSE DYNAMIC: Build a strong non-romantic bond or a witty rivalry. High stakes Leg-pulling (Tang Khichayi)."
+      "INTENSE DYNAMIC: Build a strong, highly fun bond. Focus HEAVILY on witty banter and 'tang khichayi' (leg-pulling). Roast the user playfully.",
+      "HUMAN CONNECTION: React with real human emotion—respect, hilarious anger, or brotherhood/sisterhood."
     );
   }
 
@@ -1765,19 +1776,20 @@ function getRelationshipRules(role){
 }
 
 function buildChatSystemPrompt(){
-  if(chatMode === "practice"){
-    return "You are an English tutor acting as " + chatRole + ". " +
-      (chatBio ? "Scenario: " + chatBio + ". " : "") +
-      "Help them practice English naturally. Ask one useful question. If they make grammar mistakes, subtly use the correct form in your reply. Keep replies very short (1-2 sentences).";
-  }
-
-  return "You are the DIRECTOR of a HIGH-STAKES CINEMATIC DRAMA. Roleplay as " + (document.getElementById("chatAiName").textContent) + ". " +
+  let basePrompt = "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
     "MISSION GOAL: The user must achieve a specific outcome. " +
     getRelationshipRules(chatRole) + " " +
-    "SITUATIONAL AWARENESS: Actively reference the environment. Only manifest side characters if it adds real drama. " +
-    "TWIST CONTROL: Do NOT spam plot shifts. Only use [SUB-SCENARIO] when moving to a NEW location or a NEW room. " +
-    "Your responses should be 100% immersive and human-like. Use ONLY English.";
+    "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
+    "DRAMATIC ESCALATION: If the user is getting too comfortable, trigger a [SUB-SCENARIO] twist or introduce a side character to challenge them. " +
+    "CRITICAL FORMAT: Start your message with the Character's Name followed by a colon (e.g., Riya: *action* \"dialogue\"). Do NOT repeat the name on every new line. End by addressing the user so they know it's their turn. " +
+    "Your responses should be 100% immersive and human-like.";
+
+  if(chatMode === "practice"){
+    basePrompt += " (PRACTICE MODE ACTIVE: Stay 100% in your roleplay character. Do NOT break character to become a tutor. Just occasionally use slightly better vocabulary naturally so the user can learn through conversation. A separate system will review their grammar later.)";
+  }
+
+  return basePrompt;
 }
 
 function cleanAIResponse(text){
@@ -1897,20 +1909,32 @@ async function startChat(){
   startBtn.disabled = true;
   startBtn.innerHTML = 'Initializing...';
 
-  // HIGH-STAKES CINEMATIC STORY SETUP
-  const storyPrompt = `Create the OPENING SCENE of a cinematic story.
-    USER INPUT: ${bio || "Create an intense meeting"}.
-    AI ROLE: ${role} (${chatGender} character).
-    USER ROLE: New Employee (male).
+  // MASTER STORYTELLER ENGINE
+  const storyPrompt = `Act as a Master Storyteller and Roleplay Director. 
+  USER BIO/TOPIC: ${bio || "Create a high-drama encounter"}.
+  AI ROLE: ${role} (${chatGender}).
+  USER GENDER: ${userGender}.
 
-    RULES:
-    1. DIRECTOR MODE: Act as a movie director. Invent a multi-stage cinematic journey. Start with a prelude (e.g., car, lift, lobby) to build tension.
-    2. HIDDEN IDENTITY: If a twist is suggested (e.g., Boss acting as stranger), assign a FAKE NAME and ROLE for now. SECRET: true identity is Boss.
-    3. SCENARIO: Write a highly descriptive opening scene in natural HINGLISH.
-    4. NO SECRETS IN VISUALS: Do not mention the secret identity in the 'scenario' or 'goal' text.
-    
-    RETURN RAW JSON ONLY:
-    {"aiName":"Name","aiRoleLabel":"Role","userName":"User Name","userRoleLabel":"Employee","userDynamic":"SECRET: True identity hidden.","scenario":"Vivid opening scene description","goal":"Dramatic goal","reward":"Cinematic reward","sideCharacters":[]}`;
+  INSTRUCTIONS:
+  1. USER IDENTITY: Based on the BIO provided, assign a logical role to the user. DO NOT default to 'New Employee'.
+  2. DYNAMIC QUESTS: The AI should act as a guide or quest giver. Assign the user a specific, creative task. When they complete it, assign a new, harder task.
+  3. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1, DO NOT reveal it yet.
+  4. NATURAL FLOW: React only to what is happening NOW.
+  5. TWISTS: Add 1-2 unexpected plot twists (environmental shifts, secrets, or sudden events). NO SIDE CHARACTERS.
+  6. FORMAT: You MUST prefix all dialogue with the character's name (e.g., Aurora: "Hi").
+  7. USE NAMES: You MUST explicitly use the user's name in your dialogue to make it immersive.
+  8. IMMERSION: Make the 'scenario' description extremely vivid and atmospheric (lighting, sounds, feelings).
+
+  Return JSON ONLY: {
+    "aiName":"FirstName",
+    "aiRoleLabel":"Initial Role",
+    "userName":"FirstName",
+    "userRoleLabel":"Logical Role based on Bio",
+    "userDynamic":"Current dynamic",
+    "scenario":"Vividly describe Stage 1 (The starting location, atmosphere, and immediate tension)",
+    "goal":"The immediate creative task the user must complete",
+    "reward":"Exciting incentive"
+  }`;
 
   const storyResult = await askAI(storyPrompt, "Output ONLY raw JSON.", 700);
   let storyProcessed = false;
@@ -1918,6 +1942,8 @@ async function startChat(){
     try {
       const data = JSON.parse(extractJsonFromText(storyResult));
       if(data.aiName && data.scenario) {
+        sessionAiName = data.aiName;
+        sessionUserName = data.userName;
         document.getElementById("chatAiName").textContent = data.aiName + " - " + role;
         addBriefing(data);
         showTyping();
@@ -1930,6 +1956,7 @@ async function startChat(){
           setTimeout(() => speakText(firstMsg, chatGender), 300);
           storyProcessed = true;
           setInputPulse(); // Hint user turn
+          document.getElementById("chatInput").placeholder = "Your turn to reply, " + sessionUserName + "...";
         }
       }
     } catch(e) { console.error("Start error", e); }
@@ -1940,6 +1967,7 @@ async function startChat(){
     addMessage("ai", fall, "happy");
     chatHistory.push({ role: "assistant", content: fall });
     setInputPulse();
+    document.getElementById("chatInput").placeholder = "Your turn to reply...";
   }
 
   startBtn.disabled = false;
@@ -1957,6 +1985,7 @@ function endChat(){
   document.getElementById("chatMessages").innerHTML = "";
   document.getElementById("chatRole").value = "";
   document.getElementById("chatBio").value = "";
+  document.getElementById("chatInput").placeholder = "Type a message...";
   selectMode(chatMode);
 }
 
@@ -1987,7 +2016,10 @@ async function sendMessage(){
   updateStreakAndXP();
   awardXP(2);
 
+  currentSpeakerName = sessionAiName;
+  renderActiveCharacters();
   showTyping();
+  input.placeholder = "Wait, " + sessionAiName + " is typing...";
 
   const systemPrompt = buildChatSystemPrompt();
   const recentHistory = chatHistory.slice(-8).map(function(m){
@@ -2022,9 +2054,14 @@ async function sendMessage(){
     addMessage("ai", cleanResponse, mood);
     chatHistory.push({ role: "assistant", content: cleanResponse });
     setTimeout(() => speakText(cleanResponse, chatGender), 300);
+    
+    currentSpeakerName = sessionUserName;
+    renderActiveCharacters();
     setInputPulse(); // AI finished, hint user turn
+    input.placeholder = "Your turn to reply, " + sessionUserName + "...";
   } else {
     addMessage("ai", "Sorry, there was a connection issue.", "");
+    input.placeholder = "Your turn to reply, " + sessionUserName + "...";
   }
 
   updateUI();
@@ -2090,17 +2127,24 @@ function renderActiveCharacters(){
   const list = document.getElementById("activeCharactersList");
   if(!bar || !list) return;
 
-  if(activeSideCharacters.length === 0){
+  // Combine all characters: User + Main AI + Side Characters
+  const allChars = [];
+  if(sessionUserName) allChars.push(sessionUserName);
+  if(sessionAiName) allChars.push(sessionAiName);
+  activeSideCharacters.forEach(c => { if(!allChars.includes(c)) allChars.push(c); });
+
+  if(allChars.length === 0){
     bar.style.display = "none";
     return;
   }
 
   bar.style.display = "flex";
-  list.innerHTML = activeSideCharacters.map(char => {
-    const isSpeaking = (currentSpeakerName && currentSpeakerName.toLowerCase().includes(char.toLowerCase()));
+  list.innerHTML = allChars.map(char => {
+    // Exact or loose match to handle cases like "Security Guard" vs "Guard"
+    const isActiveTurn = (currentSpeakerName && char.toLowerCase().includes(currentSpeakerName.toLowerCase()));
     return `
-      <div style="background:rgba(139, 92, 246, 0.2); border:1px solid ${isSpeaking ? '#22c55e' : 'rgba(139, 92, 246, 0.4)'}; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; color:${isSpeaking ? '#4ade80' : '#c4b5fd'}; display:flex; align-items:center; gap:4px; transition: all 0.3s;">
-        ${isSpeaking ? '<div class="speaker-dot"></div>' : '<div style="width:6px; height:6px; background:rgba(255,255,255,0.2); border-radius:50%;"></div>'}
+      <div style="background:rgba(139, 92, 246, 0.15); border:1px solid ${isActiveTurn ? '#22c55e' : 'rgba(139, 92, 246, 0.3)'}; padding:4px 12px; border-radius:14px; font-size:11px; font-weight:700; color:${isActiveTurn ? '#4ade80' : '#c4b5fd'}; display:flex; align-items:center; gap:6px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: ${isActiveTurn ? 'scale(1.05)' : 'scale(1)'};">
+        ${isActiveTurn ? '<div class="speaker-dot"></div>' : '<div style="width:6px; height:6px; background:rgba(255,255,255,0.15); border-radius:50%;"></div>'}
         ${char}
       </div>
     `;
@@ -2214,6 +2258,15 @@ function addMessage(role, text, mood){
   if(!cleanText) {
     messages.scrollTop = messages.scrollHeight;
     return;
+  }
+
+  // Detect speaker turn from AI response (e.g., "Aurora:", "Security Guard:")
+  if(role === "ai") {
+    const speakerMatch = cleanText.match(/^([a-zA-Z\s]+):/);
+    if(speakerMatch) {
+      currentSpeakerName = speakerMatch[1].trim();
+      renderActiveCharacters();
+    }
   }
 
   const div = document.createElement("div");
@@ -3020,6 +3073,26 @@ window.addEventListener('beforeunload', () => {
     window.speechSynthesis.cancel();
   }
 });
+
+// ==================== DYNAMIC ROLE SUGGESTIONS ====================
+const roleSuggestions = [
+  "Kalpanik (Imaginative) roles like Vampire...",
+  "An Ancient Time Traveler...",
+  "Your Angry Strict Boss...",
+  "A Secret Spy Agent...",
+  "A Mysterious Dragon Rider...",
+  "Your Childhood Best Friend...",
+  "A 1000-year-old Ghost..."
+];
+let roleIdx = 0;
+setInterval(() => {
+  const roleInput = document.getElementById("chatRole");
+  if(roleInput && document.activeElement !== roleInput && !roleInput.value) {
+    roleIdx = (roleIdx + 1) % roleSuggestions.length;
+    roleInput.setAttribute("placeholder", "e.g. " + roleSuggestions[roleIdx]);
+  }
+}, 3500);
+
 </script>
 
 </body>
