@@ -3075,21 +3075,31 @@ window.addEventListener('beforeunload', () => {
 });
 
 // ==================== DYNAMIC ROLE SUGGESTIONS ====================
-const roleSuggestions = [
-  "Kalpanik (Imaginative) roles like Vampire...",
-  "An Ancient Time Traveler...",
-  "Your Angry Strict Boss...",
-  "A Secret Spy Agent...",
-  "A Mysterious Dragon Rider...",
-  "Your Childhood Best Friend...",
-  "A 1000-year-old Ghost..."
+const setupSuggestions = [
+  { role: "Kalpanik (Imaginative) roles like Vampire...", bio: "Bitten in the midnight forest" },
+  { role: "An Ancient Time Traveler...", bio: "Stuck in the year 2026" },
+  { role: "Your Angry Strict Boss...", bio: "Late for the big meeting" },
+  { role: "A Secret Spy Agent...", bio: "Trapped in the vault" },
+  { role: "A Mysterious Dragon Rider...", bio: "Lost in the icy mountains" },
+  { role: "Your Childhood Best Friend...", bio: "Met after 10 long years" },
+  { role: "A 1000-year-old Ghost...", bio: "Haunting the old mansion" }
 ];
-let roleIdx = 0;
+let suggestionIdx = 0;
 setInterval(() => {
   const roleInput = document.getElementById("chatRole");
-  if(roleInput && document.activeElement !== roleInput && !roleInput.value) {
-    roleIdx = (roleIdx + 1) % roleSuggestions.length;
-    roleInput.setAttribute("placeholder", "e.g. " + roleSuggestions[roleIdx]);
+  const bioInput = document.getElementById("chatBio");
+  
+  let shouldUpdateRole = (roleInput && document.activeElement !== roleInput && !roleInput.value);
+  let shouldUpdateBio = (bioInput && document.activeElement !== bioInput && !bioInput.value);
+  
+  if(shouldUpdateRole || shouldUpdateBio) {
+    suggestionIdx = (suggestionIdx + 1) % setupSuggestions.length;
+    if (shouldUpdateRole) {
+      roleInput.setAttribute("placeholder", "e.g. " + setupSuggestions[suggestionIdx].role);
+    }
+    if (shouldUpdateBio) {
+      bioInput.setAttribute("placeholder", "Write topic in 2 to 3 words (e.g. " + setupSuggestions[suggestionIdx].bio + ")");
+    }
   }
 }, 3500);
 
