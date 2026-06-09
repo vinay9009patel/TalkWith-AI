@@ -1911,29 +1911,29 @@ async function startChat(){
 
   // MASTER STORYTELLER ENGINE
   const storyPrompt = `Act as a Master Storyteller and Roleplay Director. 
-  USER BIO/TOPIC: ${bio || "Create a high-drama encounter"}.
+  USER BIO/TOPIC: ${bio || "Create a mind-bending, out-of-this-world encounter"}.
   AI ROLE: ${role} (${chatGender}).
   USER GENDER: ${userGender}.
 
   INSTRUCTIONS:
-  1. USER IDENTITY: Based on the BIO provided, assign a logical role to the user. DO NOT default to 'New Employee'.
-  2. DYNAMIC QUESTS: The AI should act as a guide or quest giver. Assign the user a specific, creative task. When they complete it, assign a new, harder task.
+  1. USER IDENTITY: Based on the BIO provided, assign a highly imaginative, logical role to the user.
+  2. DYNAMIC QUESTS: The AI should act as a guide or quest giver. Assign the user a specific, highly creative task. When they complete it, assign a new, harder task.
   3. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1, DO NOT reveal it yet.
   4. NATURAL FLOW: React only to what is happening NOW.
-  5. TWISTS: Add 1-2 unexpected plot twists (environmental shifts, secrets, or sudden events). NO SIDE CHARACTERS.
+  5. TWISTS: Add 1-2 unexpected plot twists (environmental shifts, secrets, or sudden sci-fi/surreal events). NO SIDE CHARACTERS.
   6. FORMAT: You MUST prefix all dialogue with the character's name (e.g., Aurora: "Hi").
   7. USE NAMES: You MUST explicitly use the user's name in your dialogue to make it immersive.
-  8. IMMERSION: Make the 'scenario' description extremely vivid and atmospheric (lighting, sounds, feelings).
+  8. IMMERSION & CREATIVITY: Push the boundaries of imagination. Make the 'scenario' completely mind-bending, surreal, and deeply cinematic (e.g., different planets, time travel, quantum realms). Go far beyond normal, boring topics. Make it "ek alag level ki" story.
 
   Return JSON ONLY: {
     "aiName":"FirstName",
     "aiRoleLabel":"Initial Role",
     "userName":"FirstName",
-    "userRoleLabel":"Logical Role based on Bio",
+    "userRoleLabel":"Imaginative Role based on Bio",
     "userDynamic":"Current dynamic",
-    "scenario":"Vividly describe Stage 1 (The starting location, atmosphere, and immediate tension)",
-    "goal":"The immediate creative task the user must complete",
-    "reward":"Exciting incentive"
+    "scenario":"Vividly describe Stage 1 (The starting location, surreal atmosphere, and immediate tension)",
+    "goal":"The immediate mind-bending task the user must complete",
+    "reward":"A legendary or sci-fi incentive"
   }`;
 
   const storyResult = await askAI(storyPrompt, "Output ONLY raw JSON.", 700);
