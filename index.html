@@ -598,15 +598,17 @@ a { color: inherit; text-decoration: none; }
   50% { opacity: 0.3; transform: scale(0.8); }
 }
 
-/* User Turn Pulse */
-.chat-input-area.user-turn {
-  box-shadow: 0 -4px 20px rgba(34, 197, 94, 0.15);
-  border-top-color: #22c55e;
-  animation: borderPulse 2s infinite;
+/* Status Pulse for Turn Hint */
+.ai-status.user-turn {
+  color: #22c55e;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: statusPulse 2s infinite;
 }
-@keyframes borderPulse {
-  0%, 100% { border-top-color: var(--border); }
-  50% { border-top-color: #22c55e; }
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .msg.briefing {
@@ -1458,6 +1460,7 @@ async function claimDeviceSignup(email){
 
 let chatHistory = [];
 let activeSideCharacters = []; // Track who is currently in the scene
+let currentSpeakerName = ""; // Track who spoke last for UI highlighting
 let currentSceneLocation = ""; // Track current cinematic location
 let chatRole = "";
 let chatBio = "";
@@ -2093,12 +2096,15 @@ function renderActiveCharacters(){
   }
 
   bar.style.display = "flex";
-  list.innerHTML = activeSideCharacters.map(char => `
-    <div style="background:rgba(139, 92, 246, 0.2); border:1px solid rgba(139, 92, 246, 0.4); padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; color:#c4b5fd; display:flex; align-items:center; gap:4px;">
-      <div style="width:6px; height:6px; background:#10b981; border-radius:50%;"></div>
-      ${char}
-    </div>
-  `).join("");
+  list.innerHTML = activeSideCharacters.map(char => {
+    const isSpeaking = (currentSpeakerName && currentSpeakerName.toLowerCase().includes(char.toLowerCase()));
+    return `
+      <div style="background:rgba(139, 92, 246, 0.2); border:1px solid ${isSpeaking ? '#22c55e' : 'rgba(139, 92, 246, 0.4)'}; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; color:${isSpeaking ? '#4ade80' : '#c4b5fd'}; display:flex; align-items:center; gap:4px; transition: all 0.3s;">
+        ${isSpeaking ? '<div class="speaker-dot"></div>' : '<div style="width:6px; height:6px; background:rgba(255,255,255,0.2); border-radius:50%;"></div>'}
+        ${char}
+      </div>
+    `;
+  }).join("");
 }
 
 function addBriefing(data){
