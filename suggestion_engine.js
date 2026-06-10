@@ -6,18 +6,22 @@
   var _currentSuggestion = null;
   var _ticks = 0;
   var _lastManualActivity = 0; 
+  var _cachedSuggestions = null;
 
   function getSuggestions() {
+    if (_cachedSuggestions) return _cachedSuggestions;
+    
+    let base = [];
     if (typeof userCustomSetupSuggestions !== 'undefined' && userCustomSetupSuggestions.length > 0) {
-      return userCustomSetupSuggestions;
+      base = userCustomSetupSuggestions;
+    } else if (typeof rawSetupSuggestions !== 'undefined' && rawSetupSuggestions.length > 0) {
+      base = rawSetupSuggestions;
+    } else if (typeof ROLES_DATA !== 'undefined' && ROLES_DATA.length > 0) {
+      base = ROLES_DATA.map(r => ({ role: r.name, bios: r.topics }));
     }
-    if (typeof rawSetupSuggestions !== 'undefined' && rawSetupSuggestions.length > 0) {
-      return rawSetupSuggestions;
-    }
-    if (typeof ROLES_DATA !== 'undefined' && ROLES_DATA.length > 0) {
-      return ROLES_DATA.map(r => ({ role: r.name, bios: r.topics }));
-    }
-    return [];
+    
+    _cachedSuggestions = base;
+    return base;
   }
 
   function getActionBios() {
@@ -38,9 +42,7 @@
 
       const hasRole = roleInput.value.trim().length > 0;
       const hasBio = bioInput.value.trim().length > 0;
-      const roleFocused = document.activeElement === roleInput;
-      const bioFocused = document.activeElement === bioInput;
-
+      
       // PAUSE LOGIC: If user typed manually in the last 2 seconds
       const timeSinceActivity = Date.now() - _lastManualActivity;
       const isUserTyping = timeSinceActivity < 2000;
@@ -53,6 +55,9 @@
         }
         return;
       }
+
+      const roleFocused = document.activeElement === roleInput;
+      const bioFocused = document.activeElement === bioInput;
 
       _ticks++;
 
@@ -112,35 +117,33 @@
 
     if (roleInput && !roleInput.dataset.suggestionInit) {
       roleInput.addEventListener("click", function() {
-        // Only fill if empty and placeholder is a suggestion
         if (!this.value && this.placeholder && !this.placeholder.includes("Search") && !this.placeholder.includes("e.g.")) {
           this.value = this.getAttribute("data-suggestion") || this.placeholder;
           this.dispatchEvent(new Event('input'));
-          
           if (typeof setChatGender === 'function' && !window.selectedAvatar) {
             setChatGender('female');
           }
-          
-          // RESET PAUSE: Clicked suggestion is NOT typing
           _lastManualActivity = 0;
           setTimeout(runCycle, 50); 
         }
       });
       
-      // keydown definitely means manual user intent
-      roleInput.addEventListener("keydown", function() {
-        _lastManualActivity = Date.now();
+      roleInput.addEventListener("keydown", function(e) {
+        // Track only printable keys, backspace, etc. (ignore meta/ctrl/etc)
+        if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+          _lastManualActivity = Date.now();
+        }
       });
       
       roleInput.addEventListener("input", function(e) {
-        // Only pause for REAL manual keyboard activity
+        // e.inputType is usually only present for real manual input
         if (e.inputType) {
           _lastManualActivity = Date.now();
           if (this.value.trim().length > 0 && bioInput && !bioInput.value.trim()) {
              bioInput.placeholder = "Write your topic...";
           }
         } else {
-          // Programmatic (Suggest button or selection) -> RESUME immediately
+          // Programmatic (Suggest button) -> RESUME cycle instantly
           _lastManualActivity = 0;
           setTimeout(runCycle, 50);
         }
@@ -161,8 +164,10 @@
         }
       });
       
-      bioInput.addEventListener("keydown", function() {
-        _lastManualActivity = Date.now();
+      bioInput.addEventListener("keydown", function(e) {
+        if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+          _lastManualActivity = Date.now();
+        }
       });
 
       bioInput.addEventListener("input", function(e) {
