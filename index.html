@@ -1111,12 +1111,6 @@ Achievements</h2>
 </div><!-- /chatContainer -->
 </div><!-- /card -->
 
-<!-- Current Plot Bar -->
-<div id="currentPlotBar" style="display:none; text-align:center; padding:10px 16px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--border); margin:0 6px;">
-  <span style="opacity:0.7;">📖 Plot:</span>
-  <span id="currentPlotText" style="color:var(--primary-light); font-weight:600;"></span>
-</div>
-
 </div><!-- /chat page -->
 
 <!-- Report Modal -->
@@ -1959,6 +1953,7 @@ function updateTimerDisplay(){
 async function startChat(){
   const role = document.getElementById("chatRole").value.trim();
   let bio = document.getElementById("chatBio").value.trim();
+  const manualName = document.getElementById("userNameInput") ? document.getElementById("userNameInput").value.trim() : "";
 
   if(!role){
     alert("Please enter a role.");
