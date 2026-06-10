@@ -1875,11 +1875,14 @@ function suggestRandomRole(){
   roleEl.dispatchEvent(new Event('input'));
   
   document.getElementById("roleDropdown").style.display = "none";
-  if (r.bios && r.bios.length > 0) {
-    const bioEl = document.getElementById("chatBio");
-    bioEl.value = r.bios[0];
+  
+  // Clear bio value so placeholder can show suggestions for the new role
+  const bioEl = document.getElementById("chatBio");
+  if(bioEl) {
+    bioEl.value = "";
     bioEl.dispatchEvent(new Event('input'));
   }
+  
   if(!selectedAvatar) setChatGender('female');
   roleEl.focus();
 }
