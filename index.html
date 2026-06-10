@@ -46,6 +46,9 @@ html { scroll-behavior: smooth; }
   --wa-user: #f472b6;
   --wa-other: #1e1e24;
   --wa-header: #121217;
+  --plot-bg: rgba(245, 158, 11, 0.1);
+  --plot-text: #fef3c7;
+  --plot-accent: #f59e0b;
 }
 body {
   font-family: var(--font-main);
@@ -504,9 +507,9 @@ a { color: inherit; text-decoration: none; }
   to { opacity: 1; transform: translateY(0); }
 }
 .sub-scenario-card {
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--plot-bg);
   border: 1px solid rgba(245, 158, 11, 0.3);
-  border-left: 4px solid #f59e0b;
+  border-left: 4px solid var(--plot-accent);
   border-radius: 12px;
   padding: 14px 18px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.4);
@@ -516,7 +519,7 @@ a { color: inherit; text-decoration: none; }
 .sub-label {
   font-size: 10px;
   font-weight: 900;
-  color: #fbbf24;
+  color: var(--plot-accent);
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 8px;
@@ -528,10 +531,9 @@ a { color: inherit; text-decoration: none; }
 .sub-content {
   font-family: var(--font-sexy);
   font-style: italic;
-  color: #fef3c7;
+  color: var(--plot-text);
   font-size: 15px;
   line-height: 1.6;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .msg-bubble {
@@ -759,6 +761,9 @@ body.light-mode { background-color: #f8f9fa !important; background-image: none !
   --primary: #4f46e5;
   --primary-light: #818cf8;
   --accent: #ec4899;
+  --plot-bg: rgba(245, 158, 11, 0.05);
+  --plot-text: #92400e;
+  --plot-accent: #f59e0b;
 }
 body.light-mode .main, body.light-mode .page { 
   background-color: #f8f9fa !important; 
@@ -801,19 +806,32 @@ body.light-mode .main, body.light-mode .page {
   border-radius: 12px 12px 2px 12px;
 }
 .light-mode .msg.ai .msg-bubble { 
-  background: #ffffff; 
+  background: #f1f5f9; 
   color: #1e293b; 
   border: 1px solid #e2e8f0; 
   border-radius: 12px 12px 12px 2px;
 }
-.light-mode .chat-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; }
-.light-mode .chat-input-area { background: #ffffff; border-top: 1px solid #e2e8f0; }
-.light-mode .chat-input { background: #f1f5f9; color: #1e293b; }
-.light-mode .bottom-nav { background: #ffffff; border-top: 1px solid #e2e8f0; }
-.light-mode .bottom-nav button.active { color: #4f46e5; background: #f1f5f9; }
-.light-mode .btn.dark { background: #f1f5f9; color: #475569; }
-.light-mode .msg-time { color: #94a3b8; }
-.light-mode .msg-action { color: #4f46e5; background: #ebf4ff; border-radius: 4px; }
+.light-mode #currentPlotBar {
+  background: rgba(245, 158, 11, 0.05) !important;
+  border-bottom-color: rgba(245, 158, 11, 0.2) !important;
+}
+.light-mode #currentPlotText {
+  color: #92400e !important; /* Darker amber for contrast */
+}
+.light-mode .sub-scenario-card {
+  background: rgba(245, 158, 11, 0.05) !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+.light-mode .sub-content {
+  color: #92400e !important;
+  text-shadow: none !important;
+}
+.light-mode .msg-action { 
+  color: #4338ca; 
+  background: #e0e7ff; 
+  border-radius: 4px;
+  padding: 0 4px;
+}
 
 .light-mode .briefing-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 .light-mode .scenario-text { background: #f8f9fa; color: #334155; border-left-color: #4f46e5; }
@@ -1080,11 +1098,11 @@ Achievements</h2>
 </div>
 
 <!-- Persistent Plot Bar (Orange Theme) -->
-<div id="currentPlotBar" style="display:none; padding:10px 16px; background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center; gap: 10px; animation: plotIn 0.5s ease-out;">
+<div id="currentPlotBar" style="display:none; padding:10px 16px; background: var(--plot-bg); border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center; gap: 10px; animation: plotIn 0.5s ease-out;">
   <div style="font-size:16px;">📖</div>
   <div style="flex:1; min-width:0;">
-    <div style="font-size:9px; color:#f59e0b; text-transform:uppercase; letter-spacing:1px; font-weight:900;">Current Plot</div>
-    <div id="currentPlotText" style="font-size:12px; color:#fef3c7; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-sexy); font-style:italic;"></div>
+    <div style="font-size:9px; color:var(--plot-accent); text-transform:uppercase; letter-spacing:1px; font-weight:900;">Current Plot</div>
+    <div id="currentPlotText" style="font-size:12px; color:var(--plot-text); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-sexy); font-style:italic;"></div>
   </div>
 </div>
 
@@ -2333,17 +2351,17 @@ function addBriefing(data){
     </div>
 
     <!-- Current Plot summary below the card (Enhanced Orange Theme) -->
-    <div style="margin-top:16px; padding:14px 20px; background: rgba(245, 158, 11, 0.08); border-radius: 18px; border: 1px solid rgba(245, 158, 11, 0.3); border-left: 5px solid #f59e0b; box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: flex-start; gap: 14px; animation: plotIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);">
+    <div id="currentPlotBarBriefing" style="margin-top:16px; padding:14px 20px; background: var(--plot-bg); border-radius: 18px; border: 1px solid rgba(245, 158, 11, 0.3); border-left: 5px solid var(--plot-accent); box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: flex-start; gap: 14px; animation: plotIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);">
       <div style="font-size:24px; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5));">📖</div>
       <div style="flex:1;">
-        <div style="font-size:10px; color:#f59e0b; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; font-weight:900; display:flex; align-items:center; gap:8px;">
+        <div style="font-size:10px; color:var(--plot-accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; font-weight:900; display:flex; align-items:center; gap:8px;">
           Current Plot
           <span style="height:1px; flex:1; background: linear-gradient(90deg, rgba(245,158,11,0.3), transparent);"></span>
         </div>
-        <div style="font-size:14px; color:#fef3c7; font-weight:600; line-height:1.6; font-family:var(--font-sexy); font-style: italic; letter-spacing: 0.3px;">
+        <div style="font-size:14px; color:var(--plot-text); font-weight:600; line-height:1.6; font-family:var(--font-sexy); font-style: italic; letter-spacing: 0.3px;">
           ${data.scenario.length > 100 ? data.scenario.substring(0, 97) + "..." : data.scenario}
         </div>
-        <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(245, 158, 11, 0.2); font-size:13px; color:#fbbf24; font-weight:700;">
+        <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(245, 158, 11, 0.2); font-size:13px; color:var(--plot-accent); font-weight:700;">
           🎯 Goal: ${data.goal.length > 80 ? data.goal.substring(0, 77) + "..." : data.goal}
         </div>
       </div>
