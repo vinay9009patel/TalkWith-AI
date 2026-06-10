@@ -2073,6 +2073,62 @@ function endChat(){
   if(timerInterval) clearInterval(timerInterval);
   appData.chatsDone++;
   awardXP(20);
+  
+  if(chatMode === "practice"){
+    generateAndShowReport();
+  } else {
+    document.getElementById("chatSetup").style.display = "flex";
+    document.getElementById("chatScreen").style.display = "none";
+    document.getElementById("chatMessages").innerHTML = "";
+    document.getElementById("chatRole").value = "";
+    document.getElementById("chatBio").value = "";
+    document.getElementById("chatInput").placeholder = "Type a message...";
+    document.getElementById("currentPlotBar").style.display = "none";
+    selectMode(chatMode);
+  }
+}
+
+async function generateAndShowReport(){
+  const overlay = document.getElementById("reportOverlay");
+  overlay.classList.add("open");
+  
+  // Stats
+  document.getElementById("reportMsgCount").textContent = chatHistory.filter(m => m.role === "user").length;
+  document.getElementById("reportDuration").textContent = chatDurationMin + "m";
+  document.getElementById("reportLevel").textContent = appData.xp > 500 ? "Advanced" : appData.xp > 200 ? "Intermediate" : "Beginner";
+
+  // AI Feedback
+  const userMessages = chatHistory.filter(m => m.role === "user").map(m => m.content).join("\n");
+  if(!userMessages){
+    document.getElementById("reportMistakes").innerHTML = "<p>No messages to analyze.</p>";
+    document.getElementById("reportTips").innerHTML = "<p>Start a conversation to get tips!</p>";
+    return;
+  }
+
+  const feedbackPrompt = `Analyze these messages from an English learner. 
+  1. GRAMMAR: List 2-3 specific grammar or spelling mistakes and provide corrections. 
+  2. TIPS: Give 2 brief tips to sound more natural or advanced in this roleplay context.
+  
+  MESSAGES:
+  ${userMessages}
+  
+  Return JSON: {"mistakes":"HTML formatted list", "tips":"HTML formatted list"}`;
+
+  const result = await askAI(feedbackPrompt, "Output ONLY raw JSON.", 500);
+  if(result){
+    try {
+      const data = JSON.parse(extractJsonFromText(result));
+      document.getElementById("reportMistakes").innerHTML = data.mistakes || "No major mistakes found! Great job.";
+      document.getElementById("reportTips").innerHTML = data.tips || "Keep practicing with different roles.";
+    } catch(e) {
+      document.getElementById("reportMistakes").textContent = "Perfect grammar detected!";
+      document.getElementById("reportTips").textContent = "You're doing great. Try longer sentences.";
+    }
+  }
+}
+
+function closeReport(){
+  document.getElementById("reportOverlay").classList.remove("open");
   document.getElementById("chatSetup").style.display = "flex";
   document.getElementById("chatScreen").style.display = "none";
   document.getElementById("chatMessages").innerHTML = "";
