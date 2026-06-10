@@ -5,7 +5,7 @@
 (function() {
   var _currentSuggestion = null;
   var _ticks = 0;
-  var _lastManualActivity = 0; // Initialize to 0
+  var _lastManualActivity = 0; 
 
   function getSuggestions() {
     if (typeof userCustomSetupSuggestions !== 'undefined' && userCustomSetupSuggestions.length > 0) {
@@ -41,6 +41,7 @@
 
       // PAUSE LOGIC: If user typed manually in the last 3 seconds
       if (isUserTyping) {
+        // While user is typing a role, prompt them to write their own topic
         if (roleInput.value.trim().length > 0 && !bioInput.value.trim().length) {
           bioInput.placeholder = "Write your topic...";
           bioInput.removeAttribute("data-suggestion");
@@ -73,11 +74,9 @@
           bioInput.setAttribute("data-suggestion", bioText);
         }
       } 
-      // CASE 2: Role is filled (by click, dropdown, or after 3s of typing) -> Cycle Topics every 2 seconds
+      // CASE 2: Role is filled -> Cycle Topics every 2 seconds
       else if (hasRole && !hasBio && !bioFocused) {
         const currentRoleVal = roleInput.value.trim().toLowerCase();
-        
-        // Find role with loose matching (trim and case-insensitive)
         let matchedSugg = setupSuggestions.find(s => (s.role || "").trim().toLowerCase() === currentRoleVal);
         
         if (matchedSugg && matchedSugg.bios && matchedSugg.bios.length > 0) {
@@ -109,7 +108,6 @@
 
     if (roleInput && !roleInput.dataset.suggestionInit) {
       roleInput.addEventListener("click", function() {
-        // Only fill if empty and placeholder is a suggestion
         if (!this.value && this.placeholder && !this.placeholder.includes("Search") && !this.placeholder.includes("e.g.")) {
           this.value = this.getAttribute("data-suggestion") || this.placeholder;
           this.dispatchEvent(new Event('input'));
@@ -118,7 +116,8 @@
             setChatGender('female');
           }
           
-          // Trigger immediate topic update
+          // Programmatic update -> Instant cycle, NO 3s pause
+          _lastManualActivity = 0; 
           setTimeout(runCycle, 50); 
         }
       });
@@ -128,14 +127,15 @@
       });
       
       roleInput.addEventListener("input", function(e) {
+        // Only pause for REAL manual activity
         if (e.inputType) {
-          // Real manual typing/deletion
           _lastManualActivity = Date.now();
           if (this.value.trim().length > 0 && bioInput && !bioInput.value.trim()) {
              bioInput.placeholder = "Write your topic...";
           }
         } else {
-          // Programmatic update (like from dropdown) -> Update topics immediately
+          // Programmatic (Suggest button or search pick) -> Reset pause
+          _lastManualActivity = 0;
           setTimeout(runCycle, 50);
         }
       });
@@ -151,11 +151,18 @@
         if (!this.value && this.placeholder && !this.placeholder.includes("Write topic") && !this.placeholder.includes("Write your topic")) {
           this.value = this.getAttribute("data-suggestion") || this.placeholder;
           this.dispatchEvent(new Event('input'));
+          _lastManualActivity = 0;
         }
       });
       
       bioInput.addEventListener("keydown", function() {
         _lastManualActivity = Date.now();
+      });
+
+      bioInput.addEventListener("input", function(e) {
+        if (e.inputType) {
+          _lastManualActivity = Date.now();
+        }
       });
       
       bioInput.dataset.suggestionInit = "true";
