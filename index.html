@@ -1046,10 +1046,6 @@ Achievements</h2>
         <div style="font-size:13px; font-weight:700;">Female</div>
       </button>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-      <input type="text" id="userNameInput" class="input" placeholder="Your character name..." style="flex:1;padding:8px 12px;font-size:13px;">
-      <button id="randomNameBtn" onclick="suggestRandomName()" style="padding:8px;border-radius:10px;background:rgba(124,58,237,0.12);color:var(--primary-light);border:1px solid rgba(124,58,237,0.25);cursor:pointer;display:flex;align-items:center;" title="Suggest random name">⟳</button>
-    </div>
   </div>
 
   <div class="setup-section">
@@ -1566,29 +1562,10 @@ function stopInputPulse() {
   if(area) area.classList.remove("user-turn");
 }
 
-var _recentNames = [];
-
-function suggestRandomName(){
-  var nameInput = document.getElementById("userNameInput");
-  if(!nameInput) return;
-  var names = userGender === 'male' ? (typeof MALE_NAMES !== 'undefined' ? MALE_NAMES : []) : (typeof FEMALE_NAMES !== 'undefined' ? FEMALE_NAMES : []);
-  if(!names || !names.length) return;
-  var currentVal = nameInput.value.trim();
-  var name, attempts = 0;
-  do {
-    name = names[Math.floor(Math.random() * names.length)];
-    attempts++;
-  } while((name === currentVal || _recentNames.includes(name)) && names.length > _recentNames.length + 1 && attempts < 50);
-  nameInput.value = name;
-  _recentNames.push(name);
-  if(_recentNames.length > 20) _recentNames.shift();
-}
-
 function setUserGender(gender){
   userGender = gender;
   document.getElementById("userGenderMaleBtn").classList.toggle("active", gender === "male");
   document.getElementById("userGenderFemaleBtn").classList.toggle("active", gender === "female");
-  suggestRandomName();
 }
 
 // ==================== TEXT-TO-SPEECH ====================
@@ -1882,22 +1859,29 @@ function filterRoles(query){
 }
 
 function selectRole(name){
-  document.getElementById("chatRole").value = name;
+  const el = document.getElementById("chatRole");
+  el.value = name;
+  el.dispatchEvent(new Event('input'));
   document.getElementById("roleDropdown").style.display = "none";
   if(!selectedAvatar) setChatGender('female');
-  document.getElementById("chatRole").focus();
+  el.focus();
 }
 
 function suggestRandomRole(){
   if(typeof rawSetupSuggestions === 'undefined' || !rawSetupSuggestions.length) return;
   var r = rawSetupSuggestions[Math.floor(Math.random() * rawSetupSuggestions.length)];
-  document.getElementById("chatRole").value = r.role;
+  const roleEl = document.getElementById("chatRole");
+  roleEl.value = r.role;
+  roleEl.dispatchEvent(new Event('input'));
+  
   document.getElementById("roleDropdown").style.display = "none";
   if (r.bios && r.bios.length > 0) {
-    document.getElementById("chatBio").value = r.bios[0];
+    const bioEl = document.getElementById("chatBio");
+    bioEl.value = r.bios[0];
+    bioEl.dispatchEvent(new Event('input'));
   }
   if(!selectedAvatar) setChatGender('female');
-  document.getElementById("chatRole").focus();
+  roleEl.focus();
 }
 
 // ==================== CHAT ====================
@@ -2015,12 +1999,10 @@ async function startChat(){
   startBtn.innerHTML = 'Initializing...';
 
   // MASTER STORYTELLER ENGINE
-  const chosenName = document.getElementById("userNameInput").value.trim();
   const storyPrompt = `Act as a Master Storyteller and Roleplay Director. 
   USER BIO/TOPIC: ${bio || "Create a mind-bending, out-of-this-world encounter"}.
   AI ROLE: ${role} (${chatGender}).
   USER GENDER: ${userGender}.
-  ${chosenName ? 'USER CHOSEN NAME: ' + chosenName + '. Use this exact name as the userName.' : ''}
 
   INSTRUCTIONS:
   1. USER IDENTITY: Based on the BIO provided, assign a highly imaginative, logical role to the user.
