@@ -36,23 +36,23 @@
 
       if (!roleInput || !bioInput || setupSuggestions.length === 0) return;
 
-      const timeSinceActivity = Date.now() - _lastManualActivity;
-      const isUserTyping = timeSinceActivity < 3000;
+      const hasRole = roleInput.value.trim().length > 0;
+      const hasBio = bioInput.value.trim().length > 0;
+      const roleFocused = document.activeElement === roleInput;
+      const bioFocused = document.activeElement === bioInput;
 
-      // PAUSE LOGIC: If user typed manually in the last 3 seconds
+      // PAUSE LOGIC: If user typed manually in the last 2 seconds
+      const timeSinceActivity = Date.now() - _lastManualActivity;
+      const isUserTyping = timeSinceActivity < 2000;
+
       if (isUserTyping) {
         // While user is typing a role, prompt them to write their own topic
-        if (roleInput.value.trim().length > 0 && !bioInput.value.trim().length) {
+        if (hasRole && !hasBio) {
           bioInput.placeholder = "Write your topic...";
           bioInput.removeAttribute("data-suggestion");
         }
         return;
       }
-
-      const hasRole = roleInput.value.trim().length > 0;
-      const hasBio = bioInput.value.trim().length > 0;
-      const roleFocused = document.activeElement === roleInput;
-      const bioFocused = document.activeElement === bioInput;
 
       _ticks++;
 
@@ -74,9 +74,11 @@
           bioInput.setAttribute("data-suggestion", bioText);
         }
       } 
-      // CASE 2: Role is filled -> Cycle Topics every 2 seconds
+      // CASE 2: Role is filled (Suggest, Dropdown, or Typing finished) -> Cycle Topics every 2 seconds
       else if (hasRole && !hasBio && !bioFocused) {
         const currentRoleVal = roleInput.value.trim().toLowerCase();
+        
+        // Find role with loose matching
         let matchedSugg = setupSuggestions.find(s => (s.role || "").trim().toLowerCase() === currentRoleVal);
         
         if (matchedSugg && matchedSugg.bios && matchedSugg.bios.length > 0) {
@@ -84,7 +86,7 @@
           bioInput.placeholder = bioText;
           bioInput.setAttribute("data-suggestion", bioText);
         } else {
-          // Fallback to dynamic actions
+          // Fallback to dynamic action-oriented topics
           const action = dynamicActionBios[Math.floor(Math.random() * dynamicActionBios.length)];
           let r = roleInput.value.trim().split(" ")[0]; 
           if (r.length > 15) r = r.substring(0, 15);
@@ -98,8 +100,10 @@
     }
   }
 
-  // Start cycles
+  // Initial trigger
   setTimeout(runCycle, 500);
+  
+  // Base interval 2s (Ticks used for CASE 1's 4s rotation)
   setInterval(runCycle, 2000);
 
   function initSuggestionClicks() {
@@ -108,6 +112,7 @@
 
     if (roleInput && !roleInput.dataset.suggestionInit) {
       roleInput.addEventListener("click", function() {
+        // Only fill if empty and placeholder is a suggestion
         if (!this.value && this.placeholder && !this.placeholder.includes("Search") && !this.placeholder.includes("e.g.")) {
           this.value = this.getAttribute("data-suggestion") || this.placeholder;
           this.dispatchEvent(new Event('input'));
@@ -116,25 +121,26 @@
             setChatGender('female');
           }
           
-          // Programmatic update -> Instant cycle, NO 3s pause
-          _lastManualActivity = 0; 
+          // RESET PAUSE: Clicked suggestion is NOT typing
+          _lastManualActivity = 0;
           setTimeout(runCycle, 50); 
         }
       });
       
+      // keydown definitely means manual user intent
       roleInput.addEventListener("keydown", function() {
         _lastManualActivity = Date.now();
       });
       
       roleInput.addEventListener("input", function(e) {
-        // Only pause for REAL manual activity
+        // Only pause for REAL manual keyboard activity
         if (e.inputType) {
           _lastManualActivity = Date.now();
           if (this.value.trim().length > 0 && bioInput && !bioInput.value.trim()) {
              bioInput.placeholder = "Write your topic...";
           }
         } else {
-          // Programmatic (Suggest button or search pick) -> Reset pause
+          // Programmatic (Suggest button or selection) -> RESUME immediately
           _lastManualActivity = 0;
           setTimeout(runCycle, 50);
         }
@@ -162,6 +168,8 @@
       bioInput.addEventListener("input", function(e) {
         if (e.inputType) {
           _lastManualActivity = Date.now();
+        } else {
+          _lastManualActivity = 0;
         }
       });
       
