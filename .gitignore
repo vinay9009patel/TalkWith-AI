@@ -64,3 +64,13 @@ typings/
 
 # next.js build output
 .next
+
+# Project-specific: Local AI instructions & text data
+context.md
+AiPrompt.txt
+raw_roles.txt
+characterName.txt
+story_notes.txt
+
+# Added from .geminiignore
+GEMINI.md

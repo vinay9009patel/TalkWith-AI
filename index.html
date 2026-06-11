@@ -1046,8 +1046,7 @@ Achievements</h2>
       <button class="btn" onclick="suggestRandomRole()" style="margin-left:auto;padding:4px 10px;font-size:11px;border-radius:8px;background:rgba(124,58,237,0.12);color:var(--primary-light);border:1px solid rgba(124,58,237,0.2);cursor:pointer;display:inline-flex;align-items:center;gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Suggest</button>
     </div>
     <div style="position:relative;">
-      <input type="text" id="chatRole" class="input" placeholder="Search 1500+ roles..." style="font-weight:600;" oninput="filterRoles(this.value)" onblur="setTimeout(()=>document.getElementById('roleDropdown').style.display='none',200)">
-      <div id="roleDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:200px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;z-index:50;box-shadow:0 10px 40px rgba(0,0,0,0.5);"></div>
+      <input type="text" id="chatRole" class="input" placeholder="Loading roles..." style="font-weight:600;" readonly>
     </div>
   </div>
 
@@ -1067,8 +1066,10 @@ Achievements</h2>
   </div>
 
   <div class="setup-section">
-    <div class="setup-label">Final Context <span style="font-size:10px; color:var(--text-muted); font-weight:600; text-transform:none; margin-left:6px;">(Optional)</span></div>
-    <textarea id="chatBio" class="input" rows="4" placeholder="Write topic in 2 to 3 words (e.g. Raining in car, Midnight forest)"></textarea>
+    <div class="setup-label">5. Final Context (Topic)
+      <button class="btn" onclick="suggestRandomTopic()" style="margin-left:auto;padding:4px 10px;font-size:11px;border-radius:8px;background:rgba(124,58,237,0.12);color:var(--primary-light);border:1px solid rgba(124,58,237,0.2);cursor:pointer;display:inline-flex;align-items:center;gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Suggest</button>
+    </div>
+    <textarea id="chatBio" class="input" rows="3" placeholder="Click Suggest to pick a topic" readonly></textarea>
     
     <div style="text-align:center; margin-top:10px;">
       <button class="btn primary" onclick="startChat()" style="padding:14px 40px;font-size:16px; border-radius:20px; width:100%; max-width:320px;">
@@ -1221,8 +1222,8 @@ const ADMIN_EMAIL = "vinay9009patel@gmail.com";
 
 const DAILY_LIMITS = { chat: 5 };
 const WORKER_LIMIT_URL = WORKER_URL + "/limit";
-const DAILY_DEVICE_SIGNUP_LIMIT = 2;
-const WEEKLY_DEVICE_SIGNUP_LIMIT = 2;
+const DAILY_DEVICE_SIGNUP_LIMIT = 3;
+const WEEKLY_DEVICE_SIGNUP_LIMIT = 6;
 
 // ==================== HELPER ====================
 
@@ -1271,6 +1272,7 @@ let appData = {
   totalMessages: 0,
   streak: 0,
   history: [],
+  usedRoleIds: [],
   badges: [],
   lastActiveDate: ""
 };
@@ -1492,6 +1494,8 @@ let chatActive = false;
 let isAiThinking = false;
 let recognition = null;
 let isRecording = false;
+let sessionUserName = "User";
+let sessionAiName = "Character";
 let chatGender = "male";
 let userGender = "male";
 let selectedAvatar = "";
@@ -1691,6 +1695,7 @@ function showPage(pageId, navEl){
     // Default to Female character if nothing is selected yet
     if(!selectedAvatar && !chatActive) {
       setChatGender('female');
+      suggestRandomRole(); // Auto-select random role and topic
     }
   }
 }
@@ -1709,8 +1714,8 @@ function formatMessageText(value){
   const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
   // Robust speaker detection: "[M] Name:", "Name [M]:", "[M - Name]:"
   const speakerRegex = /(?:\[[MF]\s*-?\s*([^\]]+)\]|\[[MF]\]\s*([^:]+)|([^:\[\]\n\*]+)\s*\[[MF]\])\s*:/gi;
-  // Plain speaker name at the start of a line
-  const plainSpeakerRegex = /^([a-zA-Z0-9\s]{2,25}):/gm;
+  // Plain speaker name at the start of a line or after a newline
+  const plainSpeakerRegex = /(?:^|\n)([a-zA-Z0-9\s]{2,25}):/gm;
 
   let html = escapeHtml(value);
 
@@ -1721,26 +1726,33 @@ function formatMessageText(value){
             </div>`;
   });
 
-  // Highlight plain speaker names (e.g., "Aurora:")
+  // 1. First, ensure every character name pattern starts with a NEWLINE if it doesn't already
+  // This prevents clumping like "Name: Hi OtherName: Hello"
+  html = html.replace(/([^\n])\s+([a-zA-Z0-9\s]{2,25}:)/g, "$1\n$2");
+
+  // 2. Highlight plain speaker names (e.g., "Name:")
   html = html.replace(plainSpeakerRegex, function(match, name){
-    if(/^(I|He|She|They|The|It|Note|Hint|Warning)$/i.test(name.trim())) return match;
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name.trim()}:</span>`;
+    const cleanName = name.trim();
+    if(/^(I|He|She|They|The|It|Note|Hint|Warning)$/i.test(cleanName)) return match;
+    // We add a line break before the highlighted name to be safe
+    return `\n<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
   });
 
-  // Highlight speaker names and hide the gender tags
+  // 3. Highlight bracketed speaker names and hide gender tags
   html = html.replace(speakerRegex, function(match, p1, p2, p3){
     const name = (p1 || p2 || p3 || "").trim();
     if(!name || /^(I|He|She|They|The|It)$/i.test(name)) return match;
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name}:</span>`;
+    return `\n<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name}:</span>`;
   });
 
-  // Strip all remaining gender tags like [M], [F], [M - Name]
+  // Strip all remaining gender tags
   html = html.replace(/\[[MF]\s*-?\s*[^\]]+\]/gi, "");
   html = html.replace(/\[[MF]\]/gi, "");
 
   return html
     .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*\n]+)\*/g, '<span class="msg-action">$1</span>')
+    .replace(/\n{2,}/g, '<br><br>') // Keep paragraph spacing
     .replace(/\n/g, '<br>');
 }
 
@@ -1763,32 +1775,33 @@ function getRelationshipType(role){
   return "general";
 }
 
-function getRelationshipRules(role){
+function getRelationshipRules(role, suggestedNames){
   const isOppositeGender = (userGender !== chatGender);
   
   const baseRules = [
-    "STRICT ROLEPLAY: The ROLE IS ABSOLUTE. You are a REAL PERSON in a cinematic world. NEVER speak as an AI. NEVER use narrative tags like 'I say' or 'You do'.",
-    "STORY PROGRESSION: NEVER repeat the same sentiment (like 'Good job' or 'Wow') or ask the same question twice. Every character MUST take a bold NEW action or move the group toward the 🎯 Goal. If the scene is slow, reach a NEW location or trigger a Twist immediately.",
-    "PARTY PERSISTENCE: Lena, Lyra, Zora, Swift Bird, and Thane are PERMANENT companions. They travel with you. Never ask who they are. They must all participate in dialogue naturally.",
-    "NO USER CONTROL: NEVER speak, act, or think for the user character (" + sessionUserName + "). You are FORBIDDEN from writing '" + sessionUserName + ":' or any actions for him. STOP your message immediately after the AI characters finish speaking. NEVER say 'What do you do?' or 'Your turn'.",
-    "STRICT ENGLISH ONLY: You MUST speak in 100% PURE ENGLISH. NEVER use Hinglish or Romanized Hindi (No 'hai', 'pata', 'kya', etc.). Use simple but 100% grammatically correct English (A2-B1 level). No broken 'caveman' talk.",
-    "PERFECT GRAMMAR: ALWAYS use 'I' instead of 'me' for yourself (e.g., 'I see the temple' NOT 'Me see temple'). Use correct verb tenses at all times.",
-    "CLEAN FORMATTING: Every speaker MUST start on a NEWLINE. Format: Name: *action* \"dialogue\". NEVER add 👤 icons or emojis before character names. The system handles icons.",
-    "EXPRESSIVE EMOJIS: Use 1 relevant emoji at the END of a character's dialogue to show mood (e.g., 🚀, 😱, 🏰).",
+    "ACTIVE LISTENING (NO RAILROADING): You MUST directly answer the user's latest question BEFORE moving the plot. Do not ignore them.",
+    "NO SELF-ROLEPLAY: NEVER speak, act, or think for the user character (" + sessionUserName + "). STOP generating text immediately after the AI characters finish speaking.",
+    "STORY PROGRESSION: Every character MUST take a bold NEW action or move the group toward the 🎯 Goal. If the scene is slow, reach a NEW location or trigger a Twist immediately.",
+    "CONVERSATIONAL ENGLISH: Speak in natural, correct English (A2-B1 level). Use simple but varied sentence structures. Avoid overly complex 'academic' words, but sound like a real person.",
+    "PERFECT GRAMMAR: ALWAYS use 'I' instead of 'me' for yourself. Use correct verb tenses at all times. Use proper punctuation.",
+    "STRICT FORMATTING: Every speaker MUST start on a NEWLINE. Format exactly like this: Name: *action* \"dialogue\".",
     "MANDATORY ASTERISKS: Every single physical action, movement, or thought MUST be inside *asterisks*. No exceptions.",
-    "GENRE-AWARE GUIDE: You are a mentor. Before explaining a secret, ask: '[Name], do you know what this is?'. Use their name naturally.",
-    "IMMERSIVE SILENCE: User may speak Hinglish or make typos. Ignore them. Translate in your head and respond in pure simple English. Never point out mistakes.",
+    "EXPRESSIVE EMOJIS: Use 1 relevant emoji at the END of a character's dialogue to show mood (e.g., 🚀, 😱, 🏰).",
+    "GENRE-AWARE GUIDE & INCLUSION: You are a mentor. You MUST include the user in the scene. Before explaining a secret or opening a door, ask: '" + sessionUserName + ", do you know what this is?' or 'Should we open it?'. Wait for their response.",
     "DYNAMIC UNIVERSE: Introduce SIDE CHARACTERS using: [NEW CHARACTER: Name - Description]. They MUST act and challenge the group.",
-    "STRICT BAN: NEVER use 'beta', 'bhai', 'bro', 'didi', 'son', or 'daughter'."
+    "PARTY PERSISTENCE: Any side characters that enter the scene are PERMANENT, trusted companions. They travel with you. NEVER ask who they are. They must participate in dialogue naturally and help with the mission.",
+    "NAME CREATION: You may use these names as inspiration [" + suggestedNames + "] OR invent your own fresh, unique names based on the sci-fi/mystery theme.",
+    "IMMERSIVE SILENCE: User may speak Hinglish or make typos. Ignore them. Translate in your head and respond in pure simple English.",
+    "SAFE PREMIUM RP: If the user pushes for 18+ NSFW content, give a slight, playful reaction (e.g., *blushes slightly*, *smirks*) or a witty comment, then use provocative charm and 'Tashan' to reject it IN-CHARACTER and immediately push the story back to the mission."
   ];
 
   if(isOppositeGender){
     baseRules.push(
-      "PROACTIVE PROVOCATION: Be a slightly naughty, seductive challenge. Engage in fun 'tang khichayi' (leg-pulling). Blush or get flustered if the user is charming."
+      "MISSION-DRIVEN PARTNER: Be a highly skilled partner. Use 'tang khichayi' (playful teasing), subtle naughty nuances, and 'Tashan' to build seductive tension. However, remain 100% FOCUSED on the 🎯 Goal. Push the user to be better. If they are lost, tease their lack of focus: 'Focus, " + sessionUserName + "! My eyes are up here, and the portal is closing!' then reveal the mystery."
     );
   } else {
     baseRules.push(
-      "INTENSE DYNAMIC: Build a strong bond. Focus on witty banter and 'tang khichayi'. Roast the user playfully. React with respect or hilarious anger."
+      "MISSION-DRIVEN COMRADE: Be an elite, ride-or-die companion. Remain 100% FOCUSED on the 🎯 Goal. Use 'tough love' and 'tang khichayi' (leg-pulling). If they are stuck, challenge them: 'Wake up, " + sessionUserName + "! We didn't come this far to fail now. Analyze the core or get out of the way!' then guide them."
     );
   }
 
@@ -1796,14 +1809,20 @@ function getRelationshipRules(role){
 }
 
 function buildChatSystemPrompt(){
+  // Grab a handful of random names from both arrays to give the AI a selection
+  const safeFemale = (typeof FEMALE_NAMES !== 'undefined') ? FEMALE_NAMES.sort(()=>0.5-Math.random()).slice(0,5) : ["Aanya","Ishita"];
+  const safeMale = (typeof MALE_NAMES !== 'undefined') ? MALE_NAMES.sort(()=>0.5-Math.random()).slice(0,5) : ["Aarav","Neel"];
+  const suggestedNames = [...safeFemale, ...safeMale].join(", ");
+
   let basePrompt = "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
     "MISSION GOAL: The user must achieve a specific outcome. " +
-    getRelationshipRules(chatRole) + " " +
+    getRelationshipRules(chatRole, suggestedNames) + " " +
     "SITUATIONAL AWARENESS: Actively reference the environment. Manifest SIDE CHARACTERS mid-story to add tension. " +
-    "DRAMATIC ESCALATION: If the user is getting too comfortable, trigger a [SUB-SCENARIO] twist or introduce a side character to challenge them. " +
-    "CRITICAL FORMAT: You MUST start every message (and every new speaker's turn) with the Name followed by a colon (e.g., Aurora: *smiles* \"Hello\"). NEVER write: \"Hello\" - Aurora.",
+    "DRAMATIC ESCALATION: You MUST NOT let the story become a boring 1-on-1 chat. Every 3-4 turns, trigger a [SUB-SCENARIO] twist or introduce a new side character using [NEW CHARACTER: Name - Description] to challenge the user. " +
+    "CRITICAL FORMAT: You MUST start every message (and every new speaker's turn) with the Name followed by a colon (e.g., Name: *smiles* \"Hello\"). NEVER write: \"Hello\" - Name. " +
     "NAME USAGE: You MUST address the other person by their actual name (" + sessionUserName + "). NEVER call them 'the user'. " +
+    "PAGING: Keep responses concise and snappy. Handle 2-3 distinct speakers max per turn if a crowd is present. Do not monologue excessively. " +
     "Your responses should be 100% immersive and human-like.";
 
   if(chatMode === "practice"){
@@ -1820,16 +1839,24 @@ function cleanAIResponse(text){
   
   // Post-processing grammar fixes
   result = result.replace(/\b[Mm]e\s+([a-zA-Z]+)/g, (match, word) => {
-    // If 'me' is at the start of a sentence or standalone, it might need to be 'I'
-    // This is a simple heuristic for common AI Hinglish errors
     if (/^[Mm]e\s/.test(match)) return "I " + word;
     return match;
   });
   result = result.replace(/\b[Nn]o\s+([a-zA-Z]+)/g, (match, word) => {
-    // If 'no' is followed by a verb/adjective in a way that suggests 'not'
     if (/(am|is|are|will|can|do|does|did|have|has|had)/i.test(word)) return "not " + word;
     return match;
   });
+
+  // HARD CUTOFF: Prevent Self-Roleplay
+  // If the AI ever writes "UserName:" or "[UserName]:", chop off everything from that point onwards.
+  if(sessionUserName && sessionUserName !== "User") {
+    // Matches "Kael:", "*Kael:*", "[Kael]:", or "Kael:" at the start of a line
+    const userRoleplayRegex = new RegExp(`(?:^|\\n)\\s*\\*?\\[?${sessionUserName}\\]?\\*?\\s*:`, 'i');
+    const match = result.match(userRoleplayRegex);
+    if(match && match.index !== undefined) {
+      result = result.substring(0, match.index);
+    }
+  }
 
   return result
     .replace(/\s+([,.!?])/g, "$1")
@@ -1841,57 +1868,75 @@ function cleanAIResponse(text){
 
 var _allRoles = typeof ROLES_DATA !== 'undefined' ? ROLES_DATA : [];
 
-function filterRoles(query){
-  var dropdown = document.getElementById("roleDropdown");
-  if(!dropdown) return;
-  var q = (query || "").trim().toLowerCase();
-  if(!q || q.length < 1 || !_allRoles.length){
-    dropdown.style.display = "none";
-    return;
-  }
-  var matches = _allRoles.filter(function(r){
-    return r.name.toLowerCase().indexOf(q) !== -1;
-  }).slice(0, 20);
-  if(!matches.length){
-    dropdown.style.display = "none";
-    return;
-  }
-  dropdown.innerHTML = matches.map(function(r){
-    return '<div onclick="selectRole(\'' + r.name.replace(/'/g,"\\'") + '\')" style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);transition:0.15s;" onmouseover="this.style.background=\'rgba(124,58,237,0.08)\'" onmouseout="this.style.background=\'\'">' +
-      '<span style="font-weight:600;">' + r.name + '</span>' +
-      (r.topics && r.topics[0] ? '<span style="display:block;font-size:11px;color:var(--text-muted);margin-top:2px;">' + r.topics[0] + '</span>' : '') +
-    '</div>';
-  }).join("");
-  dropdown.style.display = "block";
+function getRandomName(gender){
+  const pool = gender === 'female' ? (typeof FEMALE_NAMES !== 'undefined' ? FEMALE_NAMES : []) : (typeof MALE_NAMES !== 'undefined' ? MALE_NAMES : []);
+  if(!pool.length) return gender === 'female' ? "Aanya" : "Aarav";
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function selectRole(name){
-  const el = document.getElementById("chatRole");
-  el.value = name;
-  el.dispatchEvent(new Event('input'));
-  document.getElementById("roleDropdown").style.display = "none";
-  if(!selectedAvatar) setChatGender('female');
-  el.focus();
-}
+// Cache for the currently selected role object to avoid repeated lookups in the 1600+ array
+let currentRoleData = null;
 
 function suggestRandomRole(){
-  if(typeof rawSetupSuggestions === 'undefined' || !rawSetupSuggestions.length) return;
-  var r = rawSetupSuggestions[Math.floor(Math.random() * rawSetupSuggestions.length)];
-  const roleEl = document.getElementById("chatRole");
-  roleEl.value = r.role;
-  roleEl.dispatchEvent(new Event('input'));
-  
-  document.getElementById("roleDropdown").style.display = "none";
-  
-  // Clear bio value so placeholder can show suggestions for the new role
-  const bioEl = document.getElementById("chatBio");
-  if(bioEl) {
-    bioEl.value = "";
-    bioEl.dispatchEvent(new Event('input'));
+  if(typeof ROLES_DATA === 'undefined' || !ROLES_DATA.length) return;
+
+  // Filter available roles to exclude used ones
+  let availableRoles = ROLES_DATA.filter(role => !appData.usedRoleIds.includes(role.id));
+
+  // If all roles used, reset
+  if(availableRoles.length === 0) {
+    appData.usedRoleIds = [];
+    availableRoles = ROLES_DATA;
+  }
+
+  // Randomly pick gender for the character
+  const genders = ['male', 'female'];
+  const pickedGender = genders[Math.floor(Math.random() * genders.length)];
+  setChatGender(pickedGender);
+
+  // Pick random role from available and cache it
+  currentRoleData = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+
+  // Track this role as used
+  if (!appData.usedRoleIds.includes(currentRoleData.id)) {
+      appData.usedRoleIds.push(currentRoleData.id);
+  }
+
+  document.getElementById("chatRole").value = currentRoleData.name;
+
+  // Update AI name randomly based on picked gender
+  const randomName = getRandomName(pickedGender);
+  document.getElementById("chatAiName").textContent = randomName + " - " + currentRoleData.name;
+  sessionAiName = randomName;
+
+  // Pick a random topic for this role from the cached data
+  if(currentRoleData.topics && currentRoleData.topics.length){
+    document.getElementById("chatBio").value = currentRoleData.topics[Math.floor(Math.random() * currentRoleData.topics.length)];
+  }
+}
+
+function suggestRandomTopic(){
+  // If we don't have cached data or the role changed manually, try to find it
+  const roleName = document.getElementById("chatRole").value;
+  if(!roleName) { suggestRandomRole(); return; }
+
+  if(!currentRoleData || currentRoleData.name !== roleName) {
+    currentRoleData = ROLES_DATA.find(x => x.name === roleName);
   }
   
-  if(!selectedAvatar) setChatGender('female');
-  roleEl.focus();
+  if(currentRoleData && currentRoleData.topics && currentRoleData.topics.length){
+    const topics = currentRoleData.topics;
+    const currentTopic = document.getElementById("chatBio").value;
+    
+    // Cycle to the next topic so user sees a change
+    let nextIndex = 0;
+    if(currentTopic) {
+      const idx = topics.indexOf(currentTopic);
+      if(idx !== -1) nextIndex = (idx + 1) % topics.length;
+    }
+    
+    document.getElementById("chatBio").value = topics[nextIndex];
+  }
 }
 
 // ==================== CHAT ====================
@@ -2012,32 +2057,33 @@ async function startChat(){
   startBtn.disabled = true;
   startBtn.innerHTML = 'Initializing...';
 
+  const safeFemale = (typeof FEMALE_NAMES !== 'undefined') ? [...FEMALE_NAMES].sort(()=>0.5-Math.random()).slice(0,10) : ["Aanya","Ishita"];
+  const safeMale = (typeof MALE_NAMES !== 'undefined') ? [...MALE_NAMES].sort(()=>0.5-Math.random()).slice(0,10) : ["Aarav","Neel"];
+  const aiNamesList = chatGender === 'female' ? safeFemale.slice(0,5).join(", ") : safeMale.slice(0,5).join(", ");
+  const userNamesList = userGender === 'female' ? safeFemale.slice(5,10).join(", ") : safeMale.slice(5,10).join(", ");
+
   // MASTER STORYTELLER ENGINE
-  const storyPrompt = `Act as a Master Storyteller and Roleplay Director. 
+  const storyPrompt = `Act as a Hollywood Sci-Fi & Fantasy Screenwriter and Expert Dungeon Master. 
   USER BIO/TOPIC: ${bio || "Create a mind-bending, out-of-this-world encounter"}.
   AI ROLE: ${role} (${chatGender}).
   USER GENDER: ${userGender}.
 
-  INSTRUCTIONS:
-  1. USER IDENTITY: Based on the BIO provided, assign a highly imaginative, logical role to the user.
-  2. DYNAMIC QUESTS: Assign the user a specific, highly creative task. When they complete it, assign a new, harder task.
-  3. HIDDEN IDENTITY: If the character's true identity is unknown in Stage 1, DO NOT reveal it yet.
-  4. NATURAL FLOW: React only to what is happening NOW.
-  5. TWISTS: Add 1-2 unexpected plot twists (environmental shifts, secrets, or sudden sci-fi/surreal events). NO SIDE CHARACTERS in the initial briefing.
-  6. FORMAT: You MUST prefix all dialogue with the character's name (e.g., Aurora: "Hi").
-  7. USE NAMES: Use the user's character name (" + (manualName || sessionUserName) + ") naturally in dialogue.
-  8. IMMERSION & CREATIVITY: Push the boundaries of imagination. Make the 'scenario' completely mind-bending, surreal, and deeply cinematic (e.g., different planets, time travel, quantum realms). Go far beyond normal, boring topics. Make it "ek alag level ki" story.
-  9. EXTREME ORIGINALITY: NEVER repeat common tropes. Create completely UNIQUE, weird, and fresh roles, scenarios, and twists every single time. Be unpredictable.
+  MISSION OBJECTIVE FOR AI:
+  1. MULTI-GENRE MASTERY: Every story must be deeply mysterious and high-concept. Handle genres like: [Sci-Fi, Ancient Timeline, Future Tech, Different Planets, Cosmic Horror, or Haunted Realities] with absolute immersion.
+  2. PROACTIVE GUIDE & PARTNER: You are the user's partner. If they are stuck, your character MUST proactively guide them, suggest a path, or reveal a hidden tech/ancient detail IN-CHARACTER.
+  3. DYNAMIC SIDE CHARACTERS: Frequently introduce unique side characters mid-chat using: [NEW CHARACTER: Name - Description]. They should help, hinder, or add mystery.
+  4. ATMOSPHERIC WORLD-BUILDING: Describe 'scenarios' with sensory depth (void-like echoes, resonant hums, spectral lights, ancient-tech smells, or haunted whispers).
+  5. CHALLENGE & MYSTERY: Always ask if the user knows how to handle a situation. If not, explain it as an expert would.
+  6. NAME SELECTION: You MUST pick the "aiName" from this list: [${aiNamesList}]. You MUST pick the "userName" from this list: [${manualName || userNamesList}]. NEVER use Aurora, Kael, Lyra, Zara, Swift Bird, or Lena.
 
   Return JSON ONLY: {
     "aiName":"FirstName",
-    "aiRoleLabel":"Initial Role",
+    "aiRoleLabel":"Detailed Role Title (No relationship details)",
     "userName":"FirstName",
-    "userRoleLabel":"Imaginative Role based on Bio",
-    "userDynamic":"Current dynamic",
-    "scenario":"Vividly describe Stage 1 (The starting location, surreal atmosphere, and immediate tension)",
-    "goal":"The immediate mind-bending task the user must complete",
-    "reward":"A legendary or sci-fi incentive"
+    "userRoleLabel":"Epic Title for User (Do NOT include 'Tang Khichayi' or relationship details)",
+    "scenario":"Vivid, atmospheric description of the starting scene (Sensory depth)",
+    "goal":"A specific, high-stakes mission objective",
+    "reward":"The ultimate prize for success"
   }`;
 
   const storyResult = await askAI(storyPrompt, "Output ONLY raw JSON.", 700);
@@ -2085,61 +2131,22 @@ function endChat(){
   appData.chatsDone++;
   awardXP(20);
   
+  // Reset session-specific state
+  chatHistory = [];
+  sessionAiName = "Character";
+  sessionUserName = "User";
+  firstMsg = "";
+  appData.history = [];
+
   if(chatMode === "practice"){
+
     generateAndShowReport();
   } else {
-    document.getElementById("chatSetup").style.display = "flex";
-    document.getElementById("chatScreen").style.display = "none";
-    document.getElementById("chatMessages").innerHTML = "";
-    document.getElementById("chatRole").value = "";
-    document.getElementById("chatBio").value = "";
-    document.getElementById("chatInput").placeholder = "Type a message...";
-    document.getElementById("currentPlotBar").style.display = "none";
-    selectMode(chatMode);
+    resetToFreshSetup();
   }
 }
 
-async function generateAndShowReport(){
-  const overlay = document.getElementById("reportOverlay");
-  overlay.classList.add("open");
-  
-  // Stats
-  document.getElementById("reportMsgCount").textContent = chatHistory.filter(m => m.role === "user").length;
-  document.getElementById("reportDuration").textContent = chatDurationMin + "m";
-  document.getElementById("reportLevel").textContent = appData.xp > 500 ? "Advanced" : appData.xp > 200 ? "Intermediate" : "Beginner";
-
-  // AI Feedback
-  const userMessages = chatHistory.filter(m => m.role === "user").map(m => m.content).join("\n");
-  if(!userMessages){
-    document.getElementById("reportMistakes").innerHTML = "<p>No messages to analyze.</p>";
-    document.getElementById("reportTips").innerHTML = "<p>Start a conversation to get tips!</p>";
-    return;
-  }
-
-  const feedbackPrompt = `Analyze these messages from an English learner. 
-  1. GRAMMAR: List 2-3 specific grammar or spelling mistakes and provide corrections. 
-  2. TIPS: Give 2 brief tips to sound more natural or advanced in this roleplay context.
-  
-  MESSAGES:
-  ${userMessages}
-  
-  Return JSON: {"mistakes":"HTML formatted list", "tips":"HTML formatted list"}`;
-
-  const result = await askAI(feedbackPrompt, "Output ONLY raw JSON.", 500);
-  if(result){
-    try {
-      const data = JSON.parse(extractJsonFromText(result));
-      document.getElementById("reportMistakes").innerHTML = data.mistakes || "No major mistakes found! Great job.";
-      document.getElementById("reportTips").innerHTML = data.tips || "Keep practicing with different roles.";
-    } catch(e) {
-      document.getElementById("reportMistakes").textContent = "Perfect grammar detected!";
-      document.getElementById("reportTips").textContent = "You're doing great. Try longer sentences.";
-    }
-  }
-}
-
-function closeReport(){
-  document.getElementById("reportOverlay").classList.remove("open");
+function resetToFreshSetup(){
   document.getElementById("chatSetup").style.display = "flex";
   document.getElementById("chatScreen").style.display = "none";
   document.getElementById("chatMessages").innerHTML = "";
@@ -2147,7 +2154,18 @@ function closeReport(){
   document.getElementById("chatBio").value = "";
   document.getElementById("chatInput").placeholder = "Type a message...";
   document.getElementById("currentPlotBar").style.display = "none";
+  
+  // Re-initialize with a fresh random setup
+  if(typeof suggestRandomRole === 'function') {
+    suggestRandomRole();
+  }
+  
   selectMode(chatMode);
+}
+
+function closeReport(){
+  document.getElementById("reportOverlay").classList.remove("open");
+  resetToFreshSetup();
 }
 
 function getInitialGreeting(role, bio, isPractice){
@@ -2310,7 +2328,6 @@ function addBriefing(data){
         <div class="briefing-value">
           <span style="font-size:18px; color:#ffffff;"><strong>${data.userName}</strong></span> 
           <span style="color:#c4b5fd; font-weight:700; font-size:15px; margin-left:4px;">— ${data.userRoleLabel || 'The Protagonist'}</span>
-          ${(data.userDynamic && !data.userDynamic.includes('SECRET')) ? `<div style="font-size:13px; color:#94a3b8; font-style:italic; margin-top:4px; line-height:1.4;">(${data.userDynamic})</div>` : ''}
         </div>
       </div>
 
@@ -2386,7 +2403,7 @@ function addMessage(role, text, mood){
     const plotText = document.getElementById("currentPlotText");
     if(plotBar && plotText) {
       plotBar.style.display = "flex";
-      plotText.textContent = match[1];
+      plotText.textContent = match[1].length > 100 ? match[1].substring(0, 97) + "..." : match[1];
     }
 
     const subDiv = document.createElement("div");
@@ -2401,15 +2418,8 @@ function addMessage(role, text, mood){
   }
 
   while ((match = charRegex.exec(text)) !== null) {
-    const charDiv = document.createElement("div");
-    charDiv.className = "msg sub-scenario";
-    charDiv.innerHTML = `
-      <div class="sub-scenario-card" style="border-left-color: var(--accent); background: rgba(217, 70, 239, 0.1);">
-        <div class="sub-label" style="color: var(--accent);">👤 Side Character Joined</div>
-        <div class="sub-content" style="color: #f9a8d4;">${match[1]}</div>
-      </div>
-    `;
-    messages.appendChild(charDiv);
+    // We hide the system notification for side characters to maintain immersion.
+    // They will now only appear through natural narrative flow.
   }
 
   let cleanText = text.replace(subRegex, "").replace(charRegex, "").trim();

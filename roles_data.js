@@ -13944,6 +13944,1971 @@ const ROLES_DATA = [
       "Humanity finally gets close to discovering it"
     ]
   }
+,
+  {
+    id: 1521,
+    name: "Keeper of the Dead Suns",
+    topics: [
+      "Cemetery of extinct stars",
+      "Civilizations trapped inside dying suns",
+      "The star that remembers every universe"
+    ]
+  },
+  {
+    id: 1522,
+    name: "Cartographer of Lost Realities",
+    topics: [
+      "Mapping erased worlds",
+      "Oceans between universes",
+      "The continent that escaped reality"
+    ]
+  },
+  {
+    id: 1523,
+    name: "Hunter of Forgotten Gods",
+    topics: [
+      "Gods hiding as humans",
+      "The last divine war",
+      "A god imprisoned inside a moon"
+    ]
+  },
+  {
+    id: 1524,
+    name: "Warden of the Black Ocean",
+    topics: [
+      "Sea beyond space",
+      "Ships sailing between galaxies",
+      "Monsters older than time"
+    ]
+  },
+  {
+    id: 1525,
+    name: "Explorer of the First Universe",
+    topics: [
+      "Reality before the Big Bang",
+      "Ancient creators",
+      "The original Earth"
+    ]
+  },
+  {
+    id: 1526,
+    name: "Guardian of the Final Door",
+    topics: [
+      "Gate at the edge of existence",
+      "Prisoners from dead universes",
+      "The key to creation"
+    ]
+  },
+  {
+    id: 1527,
+    name: "Collector of Impossible Creatures",
+    topics: [
+      "Animals from deleted timelines",
+      "Dragons from parallel worlds",
+      "The last cosmic beast"
+    ]
+  },
+  {
+    id: 1528,
+    name: "Emperor of the Hollow Planet",
+    topics: [
+      "Civilization inside a giant world",
+      "Artificial suns underground",
+      "Ancient machine gods"
+    ]
+  },
+  {
+    id: 1529,
+    name: "Survivor of the End Timeline",
+    topics: [
+      "Last human alive",
+      "Collapsing timelines",
+      "Escape from reality's death"
+    ]
+  },
+  {
+    id: 1530,
+    name: "Archaeologist of the Future",
+    topics: [
+      "Ruins not yet built",
+      "Future civilizations",
+      "Humanity's final city"
+    ]
+  },
+  {
+    id: 1531,
+    name: "Dream Realm Navigator",
+    topics: [
+      "Continents inside dreams",
+      "Dream kingdoms",
+      "Nightmare invasions"
+    ]
+  },
+  {
+    id: 1532,
+    name: "Merchant of Memories",
+    topics: [
+      "Buying ancient lives",
+      "Lost civilizations through memory",
+      "Black market of identities"
+    ]
+  },
+  {
+    id: 1533,
+    name: "Commander of the Void Fleet",
+    topics: [
+      "Battles beyond galaxies",
+      "Ships powered by stars",
+      "War against cosmic entities"
+    ]
+  },
+  {
+    id: 1534,
+    name: "Librarian of Forbidden Histories",
+    topics: [
+      "Books that rewrite reality",
+      "Deleted human eras",
+      "Secret history of Earth"
+    ]
+  },
+  {
+    id: 1535,
+    name: "Last Dragon Emperor",
+    topics: [
+      "Dragon civilization",
+      "Ancient dragon wars",
+      "Rise of the final dragon king"
+    ]
+  },
+  {
+    id: 1536,
+    name: "Watcher Beyond Time",
+    topics: [
+      "Observing all timelines",
+      "Future invasions",
+      "Time predators"
+    ]
+  },
+  {
+    id: 1537,
+    name: "Keeper of the World Engine",
+    topics: [
+      "Machine controlling Earth",
+      "Planet maintenance systems",
+      "Failure of reality"
+    ]
+  },
+  {
+    id: 1538,
+    name: "Explorer of the Silent Galaxy",
+    topics: [
+      "Dead civilizations",
+      "Empty planets",
+      "The force that wiped them out"
+    ]
+  },
+  {
+    id: 1539,
+    name: "Judge of Civilizations",
+    topics: [
+      "Testing intelligent species",
+      "Galactic court",
+      "Earth's final evaluation"
+    ]
+  },
+  {
+    id: 1540,
+    name: "Prison Breaker of the Cosmos",
+    topics: [
+      "Escape from universe-sized prison",
+      "Ancient inmates",
+      "The jailer of existence"
+    ]
+  },
+  {
+    id: 1541,
+    name: "Builder of Artificial Worlds",
+    topics: [
+      "Manufactured planets",
+      "Synthetic ecosystems",
+      "Planet factories"
+    ]
+  },
+  {
+    id: 1542,
+    name: "Captain of the Infinity Train",
+    topics: [
+      "Stations in different universes",
+      "Infinite passengers",
+      "The final destination"
+    ]
+  },
+  {
+    id: 1543,
+    name: "Seeker of the Missing Dimension",
+    topics: [
+      "Lost layer of reality",
+      "Hidden civilizations",
+      "Dimension collapse"
+    ]
+  },
+  {
+    id: 1544,
+    name: "King of the Floating Continents",
+    topics: [
+      "Sky nations",
+      "Flying oceans",
+      "Ancient cloud cities"
+    ]
+  },
+  {
+    id: 1545,
+    name: "Speaker to Living Planets",
+    topics: [
+      "Conscious worlds",
+      "Planetary politics",
+      "The oldest living planet"
+    ]
+  },
+  {
+    id: 1546,
+    name: "Warden of the Nightmare Vault",
+    topics: [
+      "Locked cosmic horrors",
+      "Nightmare creatures",
+      "Escaped entities"
+    ]
+  },
+  {
+    id: 1547,
+    name: "Explorer of the Mirror Universe",
+    topics: [
+      "Opposite Earth",
+      "Reversed history",
+      "War between realities"
+    ]
+  },
+  {
+    id: 1548,
+    name: "Collector of Extinct Futures",
+    topics: [
+      "Dead timelines",
+      "Failed civilizations",
+      "Future museums"
+    ]
+  },
+  {
+    id: 1549,
+    name: "Guardian of the Cosmic Tree",
+    topics: [
+      "Tree connecting universes",
+      "Branch worlds",
+      "Parasites eating reality"
+    ]
+  },
+  {
+    id: 1550,
+    name: "Emperor of the Machine Stars",
+    topics: [
+      "AI galaxies",
+      "Mechanical suns",
+      "Human-machine war"
+    ]
+  },
+  {
+    id: 1551,
+    name: "Diver of the Bottomless Sea",
+    topics: [
+      "Endless ocean",
+      "Hidden continents",
+      "Creatures from before creation"
+    ]
+  },
+  {
+    id: 1552,
+    name: "Master of Probability",
+    topics: [
+      "Controlling luck",
+      "Impossible events",
+      "Collapse of statistics"
+    ]
+  },
+  {
+    id: 1553,
+    name: "Keeper of the Ancient Signal",
+    topics: [
+      "Message older than Earth",
+      "Cosmic warning",
+      "Lost sender civilization"
+    ]
+  },
+  {
+    id: 1554,
+    name: "Survivor of Planet Zero",
+    topics: [
+      "First world ever created",
+      "Ruins of creators",
+      "Birthplace of life"
+    ]
+  },
+  {
+    id: 1555,
+    name: "Hunter of Reality Glitches",
+    topics: [
+      "Broken physics",
+      "Duplicate cities",
+      "People from other timelines"
+    ]
+  },
+  {
+    id: 1556,
+    name: "Commander of the Shadow Army",
+    topics: [
+      "Soldiers made of darkness",
+      "Shadow kingdoms",
+      "Invasion from below reality"
+    ]
+  },
+  {
+    id: 1557,
+    name: "Cartographer of the Infinite Maze",
+    topics: [
+      "Endless labyrinth world",
+      "Lost empires",
+      "Center of the maze"
+    ]
+  },
+  {
+    id: 1558,
+    name: "Explorer of the Star Graveyard",
+    topics: [
+      "Dead suns",
+      "Ancient spacecraft",
+      "Buried civilizations"
+    ]
+  },
+  {
+    id: 1559,
+    name: "Guardian of the Origin Vault",
+    topics: [
+      "Secret of creation",
+      "First intelligent species",
+      "Blueprint of existence"
+    ]
+  },
+  {
+    id: 1560,
+    name: "Last Witness of Creation",
+    topics: [
+      "Birth of universes",
+      "Creator entities",
+      "End of existence"
+    ]
+  },
+  {
+    id: 1561,
+    name: "Architect of Broken Universes",
+    topics: [
+      "Universes shattered by war",
+      "Repairing reality fractures",
+      "The universe that refuses to be fixed"
+    ]
+  },
+  {
+    id: 1562,
+    name: "Shepherd of Cosmic Beasts",
+    topics: [
+      "Planet-sized creatures",
+      "Migration of star whales",
+      "Beast that devours galaxies"
+    ]
+  },
+  {
+    id: 1563,
+    name: "Explorer of the Endless Desert",
+    topics: [
+      "Desert larger than a universe",
+      "Buried civilizations",
+      "The moving city of sand"
+    ]
+  },
+  {
+    id: 1564,
+    name: "Keeper of the Moon Archives",
+    topics: [
+      "Hidden lunar libraries",
+      "Records of extinct species",
+      "The final chapter of humanity"
+    ]
+  },
+  {
+    id: 1565,
+    name: "Hunter of the Last Mystery",
+    topics: [
+      "Unsolved cosmic puzzle",
+      "Ancient clues across galaxies",
+      "The answer reality hides"
+    ]
+  },
+  {
+    id: 1566,
+    name: "Warden of the Frozen Stars",
+    topics: [
+      "Stars trapped in ice",
+      "Civilization beneath frozen suns",
+      "The melting catastrophe"
+    ]
+  },
+  {
+    id: 1567,
+    name: "Navigator of the Crimson Sea",
+    topics: [
+      "Blood-red cosmic ocean",
+      "Lost fleets",
+      "Creatures beneath the waves"
+    ]
+  },
+  {
+    id: 1568,
+    name: "Collector of Ancient Curses",
+    topics: [
+      "World-ending curses",
+      "Forgotten curse-makers",
+      "The strongest curse ever created"
+    ]
+  },
+  {
+    id: 1569,
+    name: "Emperor of the Forgotten Kingdoms",
+    topics: [
+      "Lost empires",
+      "Ancient crowns",
+      "Kingdoms erased from history"
+    ]
+  },
+  {
+    id: 1570,
+    name: "Seeker of the First Dragon",
+    topics: [
+      "Origin of dragons",
+      "Dragon gods",
+      "Dragon civilization before humanity"
+    ]
+  },
+  {
+    id: 1571,
+    name: "Builder of Time Cities",
+    topics: [
+      "Cities existing in multiple eras",
+      "Time architecture",
+      "The city that escaped history"
+    ]
+  },
+  {
+    id: 1572,
+    name: "Guardian of the Silent Library",
+    topics: [
+      "Books nobody can read",
+      "Knowledge that kills",
+      "The final forbidden volume"
+    ]
+  },
+  {
+    id: 1573,
+    name: "Explorer of the Dark Continent",
+    topics: [
+      "Land beyond maps",
+      "Hidden civilizations",
+      "Ancient monsters"
+    ]
+  },
+  {
+    id: 1574,
+    name: "Judge of Lost Souls",
+    topics: [
+      "Souls without afterlife",
+      "Cosmic justice system",
+      "The rebellion of the dead"
+    ]
+  },
+  {
+    id: 1575,
+    name: "Captain of the Star Ark",
+    topics: [
+      "Civilization ships",
+      "Journey between galaxies",
+      "Last survivors of Earth"
+    ]
+  },
+  {
+    id: 1576,
+    name: "Master of Dream Gates",
+    topics: [
+      "Travel through dreams",
+      "Dream civilizations",
+      "Nightmare kingdoms"
+    ]
+  },
+  {
+    id: 1577,
+    name: "Survivor of the Dead Galaxy",
+    topics: [
+      "Galaxy-wide extinction",
+      "Hidden survivors",
+      "Mystery of the collapse"
+    ]
+  },
+  {
+    id: 1578,
+    name: "Keeper of the Eternal Flame",
+    topics: [
+      "Fire older than stars",
+      "Ancient worshippers",
+      "Flame that powers reality"
+    ]
+  },
+  {
+    id: 1579,
+    name: "Cartographer of Heaven",
+    topics: [
+      "Mapping divine realms",
+      "Lost heavens",
+      "War among celestial kingdoms"
+    ]
+  },
+  {
+    id: 1580,
+    name: "Guardian of the Last Ocean",
+    topics: [
+      "Final body of water in existence",
+      "Ocean civilizations",
+      "Secret beneath the deepest trench"
+    ]
+  },
+  {
+    id: 1581,
+    name: "Explorer of the Machine World",
+    topics: [
+      "Artificial planet",
+      "Robotic civilizations",
+      "Ancient machine creators"
+    ]
+  },
+  {
+    id: 1582,
+    name: "Hunter of Cosmic Parasites",
+    topics: [
+      "Creatures feeding on universes",
+      "Hidden infestations",
+      "The largest parasite ever found"
+    ]
+  },
+  {
+    id: 1583,
+    name: "Emperor of the Sky Cities",
+    topics: [
+      "Floating civilizations",
+      "Airship wars",
+      "Lost city above the clouds"
+    ]
+  },
+  {
+    id: 1584,
+    name: "Seeker of the Missing Sun",
+    topics: [
+      "Star that vanished",
+      "Ancient records",
+      "The truth behind its disappearance"
+    ]
+  },
+  {
+    id: 1585,
+    name: "Guardian of the World Roots",
+    topics: [
+      "Roots connecting planets",
+      "Ancient life network",
+      "The disease spreading through it"
+    ]
+  },
+  {
+    id: 1586,
+    name: "Librarian of Infinite Books",
+    topics: [
+      "Endless library",
+      "Books from alternate realities",
+      "The book containing reality"
+    ]
+  },
+  {
+    id: 1587,
+    name: "Diver into the Black Trench",
+    topics: [
+      "Ocean deeper than physics allows",
+      "Ancient cities",
+      "Entity sleeping below"
+    ]
+  },
+  {
+    id: 1588,
+    name: "Builder of Living Worlds",
+    topics: [
+      "Biological planets",
+      "Engineered ecosystems",
+      "Civilization farming"
+    ]
+  },
+  {
+    id: 1589,
+    name: "Watcher of the Cosmic Clock",
+    topics: [
+      "Countdown of existence",
+      "Ancient timekeepers",
+      "The final tick"
+    ]
+  },
+  {
+    id: 1590,
+    name: "Explorer of the White Void",
+    topics: [
+      "Empty reality",
+      "Lost dimensions",
+      "Beings made of light"
+    ]
+  },
+  {
+    id: 1591,
+    name: "Warden of the Abyss Gate",
+    topics: [
+      "Portal to unknown depths",
+      "Escaped horrors",
+      "The original jailers"
+    ]
+  },
+  {
+    id: 1592,
+    name: "King of the Crystal Empire",
+    topics: [
+      "Civilization inside giant crystals",
+      "Energy wars",
+      "Crystal gods"
+    ]
+  },
+  {
+    id: 1593,
+    name: "Seeker of the Hidden Earth",
+    topics: [
+      "Second Earth",
+      "Parallel civilization",
+      "Secret history"
+    ]
+  },
+  {
+    id: 1594,
+    name: "Hunter of Star Giants",
+    topics: [
+      "Colossal beings among stars",
+      "Ancient hunters",
+      "The king of giants"
+    ]
+  },
+  {
+    id: 1595,
+    name: "Captain of the Reality Ship",
+    topics: [
+      "Sailing between universes",
+      "Cosmic storms",
+      "Lost realities"
+    ]
+  },
+  {
+    id: 1596,
+    name: "Guardian of the Infinite Bridge",
+    topics: [
+      "Structure connecting worlds",
+      "Travelers from beyond",
+      "Collapse of the bridge"
+    ]
+  },
+  {
+    id: 1597,
+    name: "Explorer of the Final Mountain",
+    topics: [
+      "Peak beyond reality",
+      "Ancient monks",
+      "Secret at the summit"
+    ]
+  },
+  {
+    id: 1598,
+    name: "Master of Forgotten Names",
+    topics: [
+      "Names with power",
+      "Erased identities",
+      "The first name ever spoken"
+    ]
+  },
+  {
+    id: 1599,
+    name: "Survivor of the Last Universe",
+    topics: [
+      "Final reality",
+      "End of all timelines",
+      "Search for a new beginning"
+    ]
+  },
+  {
+    id: 1600,
+    name: "Keeper of the Ultimate Secret",
+    topics: [
+      "Truth behind existence",
+      "Hidden creators",
+      "Why reality was made"
+    ]
+  }
+,
+  {
+    id: 1601,
+    name: "Curator of the Last Museum",
+    topics: [
+      "Museum containing the remains of extinct universes",
+      "Exhibits from realities that never existed",
+      "The final exhibit is Earth"
+    ]
+  },
+  {
+    id: 1602,
+    name: "The Civilization That Lives in Numbers",
+    topics: [
+      "Intelligent beings hidden inside mathematics",
+      "Prime numbers as messages",
+      "War between physical and mathematical life"
+    ]
+  },
+  {
+    id: 1603,
+    name: "Ambassador to the End of the Universe",
+    topics: [
+      "Diplomatic mission to the final surviving civilization",
+      "Negotiations at the end of time",
+      "The secret of why universes die"
+    ]
+  },
+  {
+    id: 1604,
+    name: "Keeper of the Dead Internet",
+    topics: [
+      "Lost websites become their own world",
+      "Digital ghosts",
+      "An AI civilization hiding in abandoned networks"
+    ]
+  },
+  {
+    id: 1605,
+    name: "The Planet That Dreams New Worlds",
+    topics: [
+      "Every dream creates a real universe",
+      "Dream-born civilizations",
+      "A nightmare becomes real"
+    ]
+  },
+  {
+    id: 1606,
+    name: "Judge of Artificial Souls",
+    topics: [
+      "AI demanding recognition as living beings",
+      "Soul creation technology",
+      "Human vs synthetic consciousness"
+    ]
+  },
+  {
+    id: 1607,
+    name: "Explorer of the Memory Planet",
+    topics: [
+      "Entire world made from memories",
+      "Forgotten people still living there",
+      "History becoming physical"
+    ]
+  },
+  {
+    id: 1608,
+    name: "The Last Translator",
+    topics: [
+      "Language spoken before reality existed",
+      "Communication with creator entities",
+      "Words that alter existence"
+    ]
+  },
+  {
+    id: 1609,
+    name: "Collector of Impossible Laws",
+    topics: [
+      "Worlds with different physics",
+      "Stolen laws of nature",
+      "Reality black market"
+    ]
+  },
+  {
+    id: 1610,
+    name: "The Architect of Heaven",
+    topics: [
+      "Artificial afterlife",
+      "Engineering paradise",
+      "Rebellion against the creators"
+    ]
+  },
+  {
+    id: 1611,
+    name: "Warden of the Multiverse Prison",
+    topics: [
+      "Criminals from destroyed universes",
+      "Escape attempt across realities",
+      "The prisoner everyone fears"
+    ]
+  },
+  {
+    id: 1612,
+    name: "Explorer of the Living Moon",
+    topics: [
+      "Moon revealed as a living organism",
+      "Ancient lunar consciousness",
+      "Moon's hidden purpose"
+    ]
+  },
+  {
+    id: 1613,
+    name: "Hunter of World-Eaters",
+    topics: [
+      "Creatures consuming civilizations",
+      "Interstellar survival",
+      "The largest predator in existence"
+    ]
+  },
+  {
+    id: 1614,
+    name: "Librarian of Future Histories",
+    topics: [
+      "Books recording future events",
+      "Timeline manipulation",
+      "Histories competing to become real"
+    ]
+  },
+  {
+    id: 1615,
+    name: "Survivor of the First Apocalypse",
+    topics: [
+      "Evidence humanity already ended once",
+      "Rebuilt civilization",
+      "Hidden survivors"
+    ]
+  },
+  {
+    id: 1616,
+    name: "The Ocean Beyond Space",
+    topics: [
+      "Sea connecting galaxies",
+      "Ancient sailors of the cosmos",
+      "Islands made from dead stars"
+    ]
+  },
+  {
+    id: 1617,
+    name: "The Empire of Clones",
+    topics: [
+      "Entire civilization of copies",
+      "Identity wars",
+      "Search for the original human"
+    ]
+  },
+  {
+    id: 1618,
+    name: "Keeper of the Last Question",
+    topics: [
+      "One question nobody can answer",
+      "Ancient civilizations obsessed with it",
+      "The answer changes reality"
+    ]
+  },
+  {
+    id: 1619,
+    name: "Explorer of the Creator's Workshop",
+    topics: [
+      "Place where worlds are manufactured",
+      "Unfinished universes",
+      "Blueprints of existence"
+    ]
+  },
+  {
+    id: 1620,
+    name: "The City at the End of Reality",
+    topics: [
+      "Final settlement before the void",
+      "Refugees from collapsing universes",
+      "The last battle for existence"
+    ]
+  },
+  {
+    id: 1621,
+    name: "Keeper of the Missing Coordinates",
+    topics: [
+      "Coordinates found in every ancient culture",
+      "Location doesn't exist on Earth",
+      "Every expedition vanishes there"
+    ]
+  },
+  {
+    id: 1622,
+    name: "The Village That Appears on No Map",
+    topics: [
+      "Travelers accidentally find it",
+      "Residents know future events",
+      "Village disappears after visitors leave"
+    ]
+  },
+  {
+    id: 1623,
+    name: "Explorer of the World's Forgotten Border",
+    topics: [
+      "A boundary removed from history books",
+      "Strange checkpoints in remote regions",
+      "Something lies beyond it"
+    ]
+  },
+  {
+    id: 1624,
+    name: "The Archive Buried Under Every City",
+    topics: [
+      "Hidden chambers beneath major cities",
+      "Identical symbols worldwide",
+      "Records from before known history"
+    ]
+  },
+  {
+    id: 1625,
+    name: "The Railway to the Unrecorded Land",
+    topics: [
+      "Train line absent from all records",
+      "Tickets appear mysteriously",
+      "Destination isn't on any continent"
+    ]
+  },
+  {
+    id: 1626,
+    name: "The Mountain with Four Shadows",
+    topics: [
+      "Impossible astronomical phenomenon",
+      "Ancient observatory at the summit",
+      "Lost knowledge hidden inside"
+    ]
+  },
+  {
+    id: 1627,
+    name: "The Harbor of Lost Ships",
+    topics: [
+      "Missing vessels from different centuries",
+      "Crew members unchanged by time",
+      "A sea route nobody remembers"
+    ]
+  },
+  {
+    id: 1628,
+    name: "The Doorway Beneath the Desert",
+    topics: [
+      "Entrance uncovered by a sandstorm",
+      "Underground nation",
+      "Evidence of forgotten migration"
+    ]
+  },
+  {
+    id: 1629,
+    name: "The Observatory That Watches Earth",
+    topics: [
+      "Ancient structure aimed inward, not outward",
+      "Records of unknown civilizations",
+      "Someone has been observing humanity"
+    ]
+  },
+  {
+    id: 1630,
+    name: "The Bridge Between Continents",
+    topics: [
+      "Ancient bridge hidden underwater",
+      "Connects lost cultures",
+      "Something still crosses it"
+    ]
+  },
+  {
+    id: 1631,
+    name: "The Library of Unwritten Books",
+    topics: [
+      "Books describing events before they happen",
+      "Missing authors",
+      "One book describes the explorer"
+    ]
+  },
+  {
+    id: 1632,
+    name: "The Expedition to the Blank Region",
+    topics: [
+      "Satellite images show a blank area",
+      "Instruments fail nearby",
+      "Entire ecosystems hidden there"
+    ]
+  },
+  {
+    id: 1633,
+    name: "The City That Moves at Night",
+    topics: [
+      "Different location every dawn",
+      "Ancient architecture",
+      "Residents refuse to explain"
+    ]
+  },
+  {
+    id: 1634,
+    name: "The Island Built from Ruins",
+    topics: [
+      "Formed from fragments of lost civilizations",
+      "Artifacts from different eras",
+      "A mystery tying them together"
+    ]
+  },
+  {
+    id: 1635,
+    name: "The Map Hidden in Languages",
+    topics: [
+      "Clues embedded across world languages",
+      "Secret route revealed by translation",
+      "Destination predates civilization"
+    ]
+  },
+  {
+    id: 1636,
+    name: "The Valley of Missing Explorers",
+    topics: [
+      "Hundreds disappeared there",
+      "Strange journals recovered",
+      "Survivors tell conflicting stories"
+    ]
+  },
+  {
+    id: 1637,
+    name: "The Stairway Under the Ocean",
+    topics: [
+      "Structure descending beyond known depths",
+      "Ancient inscriptions",
+      "A world below the seabed"
+    ]
+  },
+  {
+    id: 1638,
+    name: "The Kingdom Behind the Storm Wall",
+    topics: [
+      "Permanent ring of storms",
+      "Isolated civilization",
+      "Technology/history unknown to the outside world"
+    ]
+  },
+  {
+    id: 1639,
+    name: "The Final Marker on Earth's Edge",
+    topics: [
+      "Ancient boundary stone",
+      "Last unexplored route",
+      "The truth about the world's shape"
+    ]
+  },
+  {
+    id: 1640,
+    name: "Finder of the Missing Year",
+    topics: [
+      "Entire world lost one year",
+      "Nobody remembers it",
+      "Evidence says humanity lived through something impossible"
+    ]
+  },
+  {
+    id: 1641,
+    name: "Explorer of the World's Locked Region",
+    topics: [
+      "Area visible on maps but unreachable",
+      "Every expedition disappears",
+      "Ancient civilization still survives there"
+    ]
+  },
+  {
+    id: 1642,
+    name: "Keeper of the Last Unknown Map",
+    topics: [
+      "Final unmapped location on Earth",
+      "Cartographers hunted for centuries",
+      "Something doesn't want it found"
+    ]
+  },
+  {
+    id: 1643,
+    name: "The Mountain Nobody Can Reach",
+    topics: [
+      "Peak visible from everywhere",
+      "Nobody can physically arrive there",
+      "Strange lights from the summit"
+    ]
+  },
+  {
+    id: 1644,
+    name: "Collector of Lost Expeditions",
+    topics: [
+      "Every missing expedition recorded",
+      "Hidden connection between them",
+      "They all reached the same place"
+    ]
+  },
+  {
+    id: 1645,
+    name: "Explorer of the World Beneath Caves",
+    topics: [
+      "Endless cave network",
+      "Underground oceans",
+      "Civilization older than history"
+    ]
+  },
+  {
+    id: 1646,
+    name: "The Lighthouse Beyond the Sea",
+    topics: [
+      "Lighthouse appears on no map",
+      "Ships vanish near it",
+      "Light comes from another world"
+    ]
+  },
+  {
+    id: 1647,
+    name: "Hunter of Impossible Islands",
+    topics: [
+      "Islands that appear and disappear",
+      "Different laws of nature",
+      "Ancient inhabitants"
+    ]
+  },
+  {
+    id: 1648,
+    name: "The Last Explorer's Journal",
+    topics: [
+      "Diary from a missing explorer",
+      "Descriptions of impossible places",
+      "Final page still being written"
+    ]
+  },
+  {
+    id: 1649,
+    name: "Keeper of the Hidden Horizon",
+    topics: [
+      "Horizon hiding another world",
+      "Ancient navigation secrets",
+      "Discovery that changes geography"
+    ]
+  },
+  {
+    id: 1650,
+    name: "The City Found in Every Age",
+    topics: [
+      "Same city appears throughout history",
+      "Never ages",
+      "Nobody knows its origin"
+    ]
+  },
+  {
+    id: 1651,
+    name: "Explorer of the Forgotten Ocean Route",
+    topics: [
+      "Ancient route connecting civilizations",
+      "Lost for thousands of years",
+      "Leads somewhere impossible"
+    ]
+  },
+  {
+    id: 1652,
+    name: "The Door Found in Every Continent",
+    topics: [
+      "Identical door on every continent",
+      "Ancient symbols",
+      "Nobody has opened one"
+    ]
+  },
+  {
+    id: 1653,
+    name: "Keeper of the World's First Map",
+    topics: [
+      "Map older than civilization",
+      "Shows places that shouldn't exist",
+      "Missing final section"
+    ]
+  },
+  {
+    id: 1654,
+    name: "The Island Outside Geography",
+    topics: [
+      "Island moves across oceans",
+      "Satellites cannot track it",
+      "Civilization trapped there"
+    ]
+  },
+  {
+    id: 1655,
+    name: "Explorer of the Sleeping Continent",
+    topics: [
+      "Entire continent hidden",
+      "Appears once every century",
+      "Ancient empire awakens with it"
+    ]
+  },
+  {
+    id: 1656,
+    name: "The Ocean That Shouldn't Exist",
+    topics: [
+      "New ocean discovered",
+      "Missing from all records",
+      "Strange ecosystems"
+    ]
+  },
+  {
+    id: 1657,
+    name: "The Civilization Behind the Maps",
+    topics: [
+      "Secret group controlling geography",
+      "Hidden locations removed from maps",
+      "True shape of the world"
+    ]
+  },
+  {
+    id: 1658,
+    name: "The Last Place Humanity Never Reached",
+    topics: [
+      "Final unexplored region",
+      "Hundreds of failed expeditions",
+      "Something waiting there"
+    ]
+  },
+  {
+    id: 1659,
+    name: "Seeker of the World's Hidden Side",
+    topics: [
+      "Earth has a hidden half",
+      "Ancient civilizations knew it",
+      "Humanity was never meant to find it"
+    ]
+  },
+  {
+    id: 1660,
+    name: "The Expedition That Returned After 300 Years",
+    topics: [
+      "Missing explorers",
+      "Unchanged survivors",
+      "Unknown land beyond maps"
+    ]
+  },
+  {
+    id: 1661,
+    name: "The Continent Removed from History",
+    topics: [
+      "Missing landmass",
+      "Erased civilization",
+      "Forbidden records"
+    ]
+  },
+  {
+    id: 1662,
+    name: "The Ship Found in the Desert",
+    topics: [
+      "Ancient vessel",
+      "Impossible voyage",
+      "Lost ocean"
+    ]
+  },
+  {
+    id: 1663,
+    name: "The Mountain Hidden by Clouds",
+    topics: [
+      "Invisible kingdom",
+      "Ancient guardians",
+      "Forbidden summit"
+    ]
+  },
+  {
+    id: 1664,
+    name: "The City Beneath Every Capital",
+    topics: [
+      "Underground network",
+      "Secret civilization",
+      "Ancient rulers"
+    ]
+  },
+  {
+    id: 1665,
+    name: "The Last Page of the World Atlas",
+    topics: [
+      "Missing atlas page",
+      "Hidden regions",
+      "Final destination"
+    ]
+  },
+  {
+    id: 1666,
+    name: "The Ocean Route Nobody Survives",
+    topics: [
+      "Vanishing fleets",
+      "Lost islands",
+      "Unknown sea"
+    ]
+  },
+  {
+    id: 1667,
+    name: "The Civilization Inside the Crater",
+    topics: [
+      "Giant impact site",
+      "Hidden empire",
+      "Ancient technology"
+    ]
+  },
+  {
+    id: 1668,
+    name: "The Cave That Leads Elsewhere",
+    topics: [
+      "Impossible geography",
+      "Lost worlds",
+      "Missing expeditions"
+    ]
+  },
+  {
+    id: 1669,
+    name: "The Kingdom Found Under Ice",
+    topics: [
+      "Frozen empire",
+      "Ancient kings",
+      "Awakening civilization"
+    ]
+  },
+  {
+    id: 1670,
+    name: "The Lighthouse at the End of Maps",
+    topics: [
+      "Uncharted waters",
+      "Strange signals",
+      "Hidden coast"
+    ]
+  },
+  {
+    id: 1671,
+    name: "The Forest Missing from Satellites",
+    topics: [
+      "Invisible ecosystem",
+      "Ancient inhabitants",
+      "Living secrets"
+    ]
+  },
+  {
+    id: 1672,
+    name: "The Road That Appears Once a Year",
+    topics: [
+      "Temporary pathway",
+      "Lost destination",
+      "Ancient travelers"
+    ]
+  },
+  {
+    id: 1673,
+    name: "The Valley Where History Stops",
+    topics: [
+      "No historical records",
+      "Isolated civilization",
+      "Hidden truth"
+    ]
+  },
+  {
+    id: 1674,
+    name: "The Expedition to Earth's Oldest City",
+    topics: [
+      "Prehistoric metropolis",
+      "Forgotten technology",
+      "Ancient catastrophe"
+    ]
+  },
+  {
+    id: 1675,
+    name: "The Island Hidden by Time",
+    topics: [
+      "Appears periodically",
+      "Lost cultures",
+      "Time anomalies"
+    ]
+  },
+  {
+    id: 1676,
+    name: "The River That Flows the Wrong Way",
+    topics: [
+      "Impossible geography",
+      "Hidden continent",
+      "Ancient route"
+    ]
+  },
+  {
+    id: 1677,
+    name: "The World Beneath the Ocean Floor",
+    topics: [
+      "Deep civilization",
+      "Underground seas",
+      "Ancient species"
+    ]
+  },
+  {
+    id: 1678,
+    name: "The Map Drawn Before Humanity",
+    topics: [
+      "Impossible cartography",
+      "Lost creators",
+      "Hidden locations"
+    ]
+  },
+  {
+    id: 1679,
+    name: "The Last Expedition Beyond the Horizon",
+    topics: [
+      "Final unknown region",
+      "Missing explorers",
+      "World's greatest secret"
+    ]
+  }
+,
+  {
+    id: 1682,
+    name: "Keeper of the Missing Coordinates",
+    topics: [
+      "Coordinates found in every ancient culture",
+      "Location doesn't exist on Earth",
+      "Every expedition vanishes there"
+    ]
+  },
+  {
+    id: 1683,
+    name: "The Village That Appears on No Map",
+    topics: [
+      "Travelers accidentally find it",
+      "Residents know future events",
+      "Village disappears after visitors leave"
+    ]
+  },
+  {
+    id: 1684,
+    name: "Explorer of the World's Forgotten Border",
+    topics: [
+      "A boundary removed from history books",
+      "Strange checkpoints in remote regions",
+      "Something lies beyond it"
+    ]
+  },
+  {
+    id: 1685,
+    name: "The Archive Buried Under Every City",
+    topics: [
+      "Hidden chambers beneath major cities",
+      "Identical symbols worldwide",
+      "Records from before known history"
+    ]
+  },
+  {
+    id: 1686,
+    name: "The Railway to the Unrecorded Land",
+    topics: [
+      "Train line absent from all records",
+      "Tickets appear mysteriously",
+      "Destination isn't on any continent"
+    ]
+  },
+  {
+    id: 1687,
+    name: "The Mountain with Four Shadows",
+    topics: [
+      "Impossible astronomical phenomenon",
+      "Ancient observatory at the summit",
+      "Lost knowledge hidden inside"
+    ]
+  },
+  {
+    id: 1688,
+    name: "The Harbor of Lost Ships",
+    topics: [
+      "Missing vessels from different centuries",
+      "Crew members unchanged by time",
+      "A sea route nobody remembers"
+    ]
+  },
+  {
+    id: 1689,
+    name: "The Doorway Beneath the Desert",
+    topics: [
+      "Entrance uncovered by a sandstorm",
+      "Underground nation",
+      "Evidence of forgotten migration"
+    ]
+  },
+  {
+    id: 1690,
+    name: "The Observatory That Watches Earth",
+    topics: [
+      "Ancient structure aimed inward, not outward",
+      "Records of unknown civilizations",
+      "Someone has been observing humanity"
+    ]
+  },
+  {
+    id: 1691,
+    name: "The Bridge Between Continents",
+    topics: [
+      "Ancient bridge hidden underwater",
+      "Connects lost cultures",
+      "Something still crosses it"
+    ]
+  },
+  {
+    id: 1692,
+    name: "The Library of Unwritten Books",
+    topics: [
+      "Books describing events before they happen",
+      "Missing authors",
+      "One book describes the explorer"
+    ]
+  },
+  {
+    id: 1693,
+    name: "The Expedition to the Blank Region",
+    topics: [
+      "Satellite images show a blank area",
+      "Instruments fail nearby",
+      "Entire ecosystems hidden there"
+    ]
+  },
+  {
+    id: 1694,
+    name: "The City That Moves at Night",
+    topics: [
+      "Different location every dawn",
+      "Ancient architecture",
+      "Residents refuse to explain"
+    ]
+  },
+  {
+    id: 1695,
+    name: "The Island Built from Ruins",
+    topics: [
+      "Formed from fragments of lost civilizations",
+      "Artifacts from different eras",
+      "A mystery tying them together"
+    ]
+  },
+  {
+    id: 1696,
+    name: "The Map Hidden in Languages",
+    topics: [
+      "Clues embedded across world languages",
+      "Secret route revealed by translation",
+      "Destination predates civilization"
+    ]
+  },
+  {
+    id: 1697,
+    name: "The Valley of Missing Explorers",
+    topics: [
+      "Hundreds disappeared there",
+      "Strange journals recovered",
+      "Survivors tell conflicting stories"
+    ]
+  },
+  {
+    id: 1698,
+    name: "The Stairway Under the Ocean",
+    topics: [
+      "Structure descending beyond known depths",
+      "Ancient inscriptions",
+      "A world below the seabed"
+    ]
+  },
+  {
+    id: 1699,
+    name: "The Kingdom Behind the Storm Wall",
+    topics: [
+      "Permanent ring of storms",
+      "Isolated civilization",
+      "Technology/history unknown to the outside world"
+    ]
+  },
+  {
+    id: 1700,
+    name: "The Final Marker on Earth's Edge",
+    topics: [
+      "Ancient boundary stone",
+      "Last unexplored route",
+      "The truth about the world's shape"
+    ]
+  },
+  {
+    id: 1681,
+    name: "Finder of the Missing Year",
+    topics: [
+      "Entire world lost one year",
+      "Nobody remembers it",
+      "Evidence says humanity lived through something impossible"
+    ]
+  },
+  {
+    id: 1682,
+    name: "Explorer of the World's Locked Region",
+    topics: [
+      "Area visible on maps but unreachable",
+      "Every expedition disappears",
+      "Ancient civilization still survives there"
+    ]
+  },
+  {
+    id: 1683,
+    name: "Keeper of the Last Unknown Map",
+    topics: [
+      "Final unmapped location on Earth",
+      "Cartographers hunted for centuries",
+      "Something doesn't want it found"
+    ]
+  },
+  {
+    id: 1684,
+    name: "The Mountain Nobody Can Reach",
+    topics: [
+      "Peak visible from everywhere",
+      "Nobody can physically arrive there",
+      "Strange lights from the summit"
+    ]
+  },
+  {
+    id: 1685,
+    name: "Collector of Lost Expeditions",
+    topics: [
+      "Every missing expedition recorded",
+      "Hidden connection between them",
+      "They all reached the same place"
+    ]
+  },
+  {
+    id: 1686,
+    name: "Explorer of the World Beneath Caves",
+    topics: [
+      "Endless cave network",
+      "Underground oceans",
+      "Civilization older than history"
+    ]
+  },
+  {
+    id: 1687,
+    name: "The Lighthouse Beyond the Sea",
+    topics: [
+      "Lighthouse appears on no map",
+      "Ships vanish near it",
+      "Light comes from another world"
+    ]
+  },
+  {
+    id: 1688,
+    name: "Hunter of Impossible Islands",
+    topics: [
+      "Islands that appear and disappear",
+      "Different laws of nature",
+      "Ancient inhabitants"
+    ]
+  },
+  {
+    id: 1689,
+    name: "The Last Explorer's Journal",
+    topics: [
+      "Diary from a missing explorer",
+      "Descriptions of impossible places",
+      "Final page still being written"
+    ]
+  },
+  {
+    id: 1690,
+    name: "Keeper of the Hidden Horizon",
+    topics: [
+      "Horizon hiding another world",
+      "Ancient navigation secrets",
+      "Discovery that changes geography"
+    ]
+  },
+  {
+    id: 1691,
+    name: "The City Found in Every Age",
+    topics: [
+      "Same city appears throughout history",
+      "Never ages",
+      "Nobody knows its origin"
+    ]
+  },
+  {
+    id: 1692,
+    name: "Explorer of the Forgotten Ocean Route",
+    topics: [
+      "Ancient route connecting civilizations",
+      "Lost for thousands of years",
+      "Leads somewhere impossible"
+    ]
+  },
+  {
+    id: 1693,
+    name: "The Door Found in Every Continent",
+    topics: [
+      "Identical door on every continent",
+      "Ancient symbols",
+      "Nobody has opened one"
+    ]
+  },
+  {
+    id: 1694,
+    name: "Keeper of the World's First Map",
+    topics: [
+      "Map older than civilization",
+      "Shows places that shouldn't exist",
+      "Missing final section"
+    ]
+  },
+  {
+    id: 1695,
+    name: "The Island Outside Geography",
+    topics: [
+      "Island moves across oceans",
+      "Satellites cannot track it",
+      "Civilization trapped there"
+    ]
+  },
+  {
+    id: 1696,
+    name: "Explorer of the Sleeping Continent",
+    topics: [
+      "Entire continent hidden",
+      "Appears once every century",
+      "Ancient empire awakens with it"
+    ]
+  },
+  {
+    id: 1697,
+    name: "The Ocean That Shouldn't Exist",
+    topics: [
+      "New ocean discovered",
+      "Missing from all records",
+      "Strange ecosystems"
+    ]
+  },
+  {
+    id: 1698,
+    name: "The Civilization Behind the Maps",
+    topics: [
+      "Secret group controlling geography",
+      "Hidden locations removed from maps",
+      "True shape of the world"
+    ]
+  },
+  {
+    id: 1699,
+    name: "The Last Place Humanity Never Reached",
+    topics: [
+      "Final unexplored region",
+      "Hundreds of failed expeditions",
+      "Something waiting there"
+    ]
+  },
+  {
+    id: 1700,
+    name: "Seeker of the World's Hidden Side",
+    topics: [
+      "Earth has a hidden half",
+      "Ancient civilizations knew it",
+      "Humanity was never meant to find it"
+    ]
+  },
+  {
+    id: 1701,
+    name: "The Expedition That Returned After 300 Years",
+    topics: [
+      "Missing explorers",
+      "Unchanged survivors",
+      "Unknown land beyond maps"
+    ]
+  },
+  {
+    id: 1702,
+    name: "The Continent Removed from History",
+    topics: [
+      "Missing landmass",
+      "Erased civilization",
+      "Forbidden records"
+    ]
+  },
+  {
+    id: 1703,
+    name: "The Ship Found in the Desert",
+    topics: [
+      "Ancient vessel",
+      "Impossible voyage",
+      "Lost ocean"
+    ]
+  },
+  {
+    id: 1704,
+    name: "The Mountain Hidden by Clouds",
+    topics: [
+      "Invisible kingdom",
+      "Ancient guardians",
+      "Forbidden summit"
+    ]
+  },
+  {
+    id: 1705,
+    name: "The City Beneath Every Capital",
+    topics: [
+      "Underground network",
+      "Secret civilization",
+      "Ancient rulers"
+    ]
+  },
+  {
+    id: 1706,
+    name: "The Last Page of the World Atlas",
+    topics: [
+      "Missing atlas page",
+      "Hidden regions",
+      "Final destination"
+    ]
+  },
+  {
+    id: 1707,
+    name: "The Ocean Route Nobody Survives",
+    topics: [
+      "Vanishing fleets",
+      "Lost islands",
+      "Unknown sea"
+    ]
+  },
+  {
+    id: 1708,
+    name: "The Civilization Inside the Crater",
+    topics: [
+      "Giant impact site",
+      "Hidden empire",
+      "Ancient technology"
+    ]
+  },
+  {
+    id: 1709,
+    name: "The Cave That Leads Elsewhere",
+    topics: [
+      "Impossible geography",
+      "Lost worlds",
+      "Missing expeditions"
+    ]
+  },
+  {
+    id: 1710,
+    name: "The Kingdom Found Under Ice",
+    topics: [
+      "Frozen empire",
+      "Ancient kings",
+      "Awakening civilization"
+    ]
+  },
+  {
+    id: 1711,
+    name: "The Lighthouse at the End of Maps",
+    topics: [
+      "Uncharted waters",
+      "Strange signals",
+      "Hidden coast"
+    ]
+  },
+  {
+    id: 1712,
+    name: "The Forest Missing from Satellites",
+    topics: [
+      "Invisible ecosystem",
+      "Ancient inhabitants",
+      "Living secrets"
+    ]
+  },
+  {
+    id: 1713,
+    name: "The Road That Appears Once a Year",
+    topics: [
+      "Temporary pathway",
+      "Lost destination",
+      "Ancient travelers"
+    ]
+  },
+  {
+    id: 1714,
+    name: "The Valley Where History Stops",
+    topics: [
+      "No historical records",
+      "Isolated civilization",
+      "Hidden truth"
+    ]
+  },
+  {
+    id: 1715,
+    name: "The Expedition to Earth's Oldest City",
+    topics: [
+      "Prehistoric metropolis",
+      "Forgotten technology",
+      "Ancient catastrophe"
+    ]
+  },
+  {
+    id: 1716,
+    name: "The Island Hidden by Time",
+    topics: [
+      "Appears periodically",
+      "Lost cultures",
+      "Time anomalies"
+    ]
+  },
+  {
+    id: 1717,
+    name: "The River That Flows the Wrong Way",
+    topics: [
+      "Impossible geography",
+      "Hidden continent",
+      "Ancient route"
+    ]
+  },
+  {
+    id: 1718,
+    name: "The World Beneath the Ocean Floor",
+    topics: [
+      "Deep civilization",
+      "Underground seas",
+      "Ancient species"
+    ]
+  },
+  {
+    id: 1719,
+    name: "The Map Drawn Before Humanity",
+    topics: [
+      "Impossible cartography",
+      "Lost creators",
+      "Hidden locations"
+    ]
+  },
+  {
+    id: 1720,
+    name: "The Last Expedition Beyond the Horizon",
+    topics: [
+      "Final unknown region",
+      "Missing explorers",
+      "World's greatest secret"
+    ]
+  }
 ];
 
 // =============================================================================
