@@ -70,7 +70,7 @@ context.md
 AiPrompt.txt
 raw_roles.txt
 characterName.txt
-story_notes.txt
+ 
 
 # Added from .geminiignore
 GEMINI.md

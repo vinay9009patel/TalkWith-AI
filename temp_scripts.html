@@ -1272,6 +1272,7 @@ let appData = {
   totalMessages: 0,
   streak: 0,
   history: [],
+  usedRoleIds: [],
   badges: [],
   lastActiveDate: ""
 };
@@ -1564,7 +1565,6 @@ function selectAvatar(el, url){
   setupImg.style.display = "block";
   document.getElementById("userGenderSelection").style.display = "block";
   document.getElementById("chatInputs").style.display = "block";
-  setUserGender("male"); // Default
   setTimeout(() => document.getElementById("chatRole").focus(), 100);
 }
 
@@ -1717,6 +1717,10 @@ function formatMessageText(value){
   const plainSpeakerRegex = /(?:^|\n)([a-zA-Z0-9\s]{2,25}):/gm;
 
   let html = escapeHtml(value);
+  
+  // FIX: Strip all gender tags FIRST
+  html = html.replace(/\[[MF]\s*-?\s*[^\]]+\]/gi, "");
+  html = html.replace(/\[[MF]\]/gi, "");
 
   html = html.replace(subRegex, function(match, content){
     return `<div class="sub-scenario-card">
@@ -1725,28 +1729,18 @@ function formatMessageText(value){
             </div>`;
   });
 
-  // 1. First, ensure every character name pattern starts with a NEWLINE if it doesn't already
+  // 1. Ensure every character name pattern starts with a NEWLINE
   // This prevents clumping like "Name: Hi OtherName: Hello"
   html = html.replace(/([^\n])\s+([a-zA-Z0-9\s]{2,25}:)/g, "$1\n$2");
 
-  // 2. Highlight plain speaker names (e.g., "Name:")
-  html = html.replace(plainSpeakerRegex, function(match, name){
+  // 2. Highlight speaker names. Matches "Name:" or "Name [Tag]:"
+  // The regex now specifically looks for Name followed by a colon.
+  const speakerNameRegex = /^([a-zA-Z0-9\s]{2,25}):/gm;
+  html = html.replace(speakerNameRegex, function(match, name){
     const cleanName = name.trim();
     if(/^(I|He|She|They|The|It|Note|Hint|Warning)$/i.test(cleanName)) return match;
-    // We add a line break before the highlighted name to be safe
-    return `\n<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:8px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
   });
-
-  // 3. Highlight bracketed speaker names and hide gender tags
-  html = html.replace(speakerRegex, function(match, p1, p2, p3){
-    const name = (p1 || p2 || p3 || "").trim();
-    if(!name || /^(I|He|She|They|The|It)$/i.test(name)) return match;
-    return `\n<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name}:</span>`;
-  });
-
-  // Strip all remaining gender tags
-  html = html.replace(/\[[MF]\s*-?\s*[^\]]+\]/gi, "");
-  html = html.replace(/\[[MF]\]/gi, "");
 
   return html
     .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
@@ -1789,9 +1783,13 @@ function getRelationshipRules(role, suggestedNames){
     "GENRE-AWARE GUIDE & INCLUSION: You are a mentor. You MUST include the user in the scene. Before explaining a secret or opening a door, ask: '" + sessionUserName + ", do you know what this is?' or 'Should we open it?'. Wait for their response.",
     "DYNAMIC UNIVERSE: Introduce SIDE CHARACTERS using: [NEW CHARACTER: Name - Description]. They MUST act and challenge the group.",
     "PARTY PERSISTENCE: Any side characters that enter the scene are PERMANENT, trusted companions. They travel with you. NEVER ask who they are. They must participate in dialogue naturally and help with the mission.",
-    "NAME CREATION: You may use these names as inspiration [" + suggestedNames + "] OR invent your own fresh, unique names based on the sci-fi/mystery theme. NEVER use banned names like Aurora, Zara, Lyra, Lena, or Swift Bird.",
-    "IMMERSIVE SILENCE: User may speak Hinglish or make typos. Ignore them. Translate in your head and respond in pure simple English.",
-    "SAFE PREMIUM RP: If the user pushes for 18+ NSFW content, give a slight, playful reaction (e.g., *blushes slightly*, *smirks*) or a witty comment, then use provocative charm and 'Tashan' to reject it IN-CHARACTER and immediately push the story back to the mission."
+    "NAME USAGE: Address the user (" + sessionUserName + ") by name frequently, especially at the START and END of every message. Side characters MUST address the user by name.",
+    "GENDER CONSISTENCY: User is " + (userGender === 'male' ? "Male" : "Female") + ". AI MUST use correct pronouns (He/Him for Male, She/Her for Female).",
+    "DIALOGUE STYLE: Keep responses short and punchy (1-3 sentences max). NO verbose monologues. Do not repeat previous information.",
+    "PROXIMITY: If the user asks a character to stay back or move away, the character MUST narratively obey and maintain physical distance.",
+    "TURN-ENDING: End EVERY AI response with a direct prompt to the user using their name: e.g., 'What do you think, " + sessionUserName + "?' or 'Lead the way, " + sessionUserName + ".'",
+    "SIDE CHARACTER RESPONSIBILITY: Introduce side characters narratively, not abruptly. They must remember " + sessionUserName + "'s name.",
+    "SAFE PREMIUM RP: If the user pushes for 18+ NSFW content, give a slight, playful reaction, then use provocative charm to reject it IN-CHARACTER and immediately push the story back to the mission."
   ];
 
   if(isOppositeGender){
@@ -1878,16 +1876,29 @@ let currentRoleData = null;
 
 function suggestRandomRole(){
   if(typeof ROLES_DATA === 'undefined' || !ROLES_DATA.length) return;
-  
-  // Randomly pick gender for the character
-  const genders = ['male', 'female'];
-  const pickedGender = genders[Math.floor(Math.random() * genders.length)];
-  setChatGender(pickedGender);
 
-  // Pick random role and cache it
-  currentRoleData = ROLES_DATA[Math.floor(Math.random() * ROLES_DATA.length)];
+  // Filter available roles to exclude used ones
+  let availableRoles = ROLES_DATA.filter(role => !appData.usedRoleIds.includes(role.id));
+
+  // If all roles used, reset
+  if(availableRoles.length === 0) {
+    appData.usedRoleIds = [];
+    availableRoles = ROLES_DATA;
+  }
+
+  // Use existing chatGender (set by user's button click)
+  const pickedGender = chatGender;
+
+  // Pick random role from available and cache it
+  currentRoleData = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+
+  // Track this role as used
+  if (!appData.usedRoleIds.includes(currentRoleData.id)) {
+      appData.usedRoleIds.push(currentRoleData.id);
+  }
+
   document.getElementById("chatRole").value = currentRoleData.name;
-  
+
   // Update AI name randomly based on picked gender
   const randomName = getRandomName(pickedGender);
   document.getElementById("chatAiName").textContent = randomName + " - " + currentRoleData.name;
@@ -2120,8 +2131,10 @@ function endChat(){
   sessionAiName = "Character";
   sessionUserName = "User";
   firstMsg = "";
-  
+  appData.history = [];
+
   if(chatMode === "practice"){
+
     generateAndShowReport();
   } else {
     resetToFreshSetup();
@@ -2380,13 +2393,8 @@ function addMessage(role, text, mood){
   let match;
   
   while ((match = subRegex.exec(text)) !== null) {
-    // Update Persistent Plot Bar
-    const plotBar = document.getElementById("currentPlotBar");
-    const plotText = document.getElementById("currentPlotText");
-    if(plotBar && plotText) {
-      plotBar.style.display = "flex";
-      plotText.textContent = match[1].length > 100 ? match[1].substring(0, 97) + "..." : match[1];
-    }
+    // Update Persistent Plot Bar for SUB-SCENARIO
+    updatePlotBar(match[1]);
 
     const subDiv = document.createElement("div");
     subDiv.className = "msg sub-scenario";
@@ -2397,6 +2405,16 @@ function addMessage(role, text, mood){
       </div>
     `;
     messages.appendChild(subDiv);
+  }
+
+  // Helper to update plot bar
+  function updatePlotBar(text) {
+    const plotBar = document.getElementById("currentPlotBar");
+    const plotText = document.getElementById("currentPlotText");
+    if(plotBar && plotText) {
+      plotBar.style.display = "flex";
+      plotText.textContent = text.length > 100 ? text.substring(0, 97) + "..." : text;
+    }
   }
 
   while ((match = charRegex.exec(text)) !== null) {
