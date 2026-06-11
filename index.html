@@ -1708,10 +1708,10 @@ function escapeHtml(value){
 function formatMessageText(value){
   let html = escapeHtml(value);
   
-  // FIX: Strip ALL gender tags and raw M:/F: prefixes immediately
-  html = html.replace(/^[MF]\s*:/gi, "");
-  html = html.replace(/\[[MF]\s*-?\s*[^\]]*\]/gi, "");
-  html = html.replace(/\[[MF]\]/gi, "");
+  // FIX: Strip ALL gender tags ([M], (F), M:, etc.) before any other processing
+  html = html.replace(/[\(\[]\s*[MF]\s*[\)\]]\s*[-:]?/gi, ""); 
+  html = html.replace(/\b[MF]\s*[-:]\s*/gi, "");
+  html = html.replace(/^[MF]\s*[-:]\s*/gi, "");
 
   // Handle Sub-Scenario tags
   const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
@@ -1723,13 +1723,11 @@ function formatMessageText(value){
   });
 
   // Fix Speaker formatting: "Name: *action* 'dialogue'"
-  // Make sure to match "Name:" and treat it as a header
-  // Ensure we don't match 'M:' or 'F:' as speaker names
-  const speakerNameRegex = /^(?!(?:M|F):)([a-zA-Z0-9\s]{2,25}):/gm;
+  // Ensure we don't match common words or gender markers as speaker names
+  const speakerNameRegex = /^(?!(?:M|F|I|He|She|They|The|It|Note|Hint|Warning):)([a-zA-Z0-9\s]{2,25}):/gm;
   html = html.replace(speakerNameRegex, function(match, name){
     const cleanName = name.trim();
-    if(/^(I|He|She|They|The|It|Note|Hint|Warning)$/i.test(cleanName)) return match;
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:8px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
   });
 
   return html
@@ -1782,10 +1780,10 @@ function buildChatSystemPrompt(){
     (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
     "MISSION GOAL: The user must achieve a specific outcome. " +
     getRelationshipRules(chatRole, suggestedNames) + " " +
-    "SITUATIONAL AWARENESS: Actively reference the environment. Introduce SIDE CHARACTERS NARRATIVELY (NO BRACKETS). They MUST use " + sessionUserName + "'s name in EVERY dialogue line. " +
+    "SITUATIONAL AWARENESS: Actively reference the environment. Introduce SIDE CHARACTERS NARRATIVELY (NO BRACKETS). They MUST use " + sessionUserName + "'s name in EVERY dialogue line. Introduce them SLOWLY and narratively; never introduce multiple characters at once. " +
     "DRAMATIC ESCALATION: You MUST NOT let the story become a boring 1-on-1 chat. Trigger twists or introduce new side characters NARRATIVELY to challenge the user. " +
     "CRITICAL FORMAT: You MUST start every message (and every new speaker's turn) with the Name followed by a colon (e.g., Name: *smiles* \"Hello\"). NEVER write: \"Hello\" - Name. " +
-    "NAME USAGE: You MUST address " + sessionUserName + " by name at START and END of EVERY sentence. NEVER call them 'lad', 'lass', or 'user'. " +
+    "NAME USAGE: You MUST address " + sessionUserName + " by name at the START and END of EVERY sentence. NEVER call them 'lad', 'lass', 'stranger', or 'user'. " +
     "PAGING: Keep responses extremely concise and snappy. 1-2 sentences. " +
     "Your responses should be 100% immersive and human-like.";
 
@@ -2052,6 +2050,7 @@ async function startChat(){
   4. DYNAMIC SIDE CHARACTERS: Introduce unique side characters narratively using natural description.
   5. ATMOSPHERIC WORLD-BUILDING: Describe scenarios with sensory depth.
   6. IDENTITY ENFORCEMENT: Your name is ${aiName}. You MUST address the user as ${userName}. YOU MUST NOT INVENT A NEW NAME OR CHANGE YOUR NAME.
+  7. NAME INTEGRATION: You MUST include ${userName}'s name explicitly inside the 'scenario' and 'goal' descriptions you generate to make it personal.
 
   Return JSON ONLY: {
     "aiName":"${aiName}",
