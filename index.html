@@ -2117,9 +2117,9 @@ function endChat(){
   appData.history = [];
 
   if(chatMode === "practice"){
-
     generateAndShowReport();
   } else {
+    // Both modes now follow the same flow of clearing chat, then calling resetToFreshSetup via closeReport() or directly
     resetToFreshSetup();
   }
 }
