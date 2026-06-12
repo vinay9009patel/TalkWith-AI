@@ -1653,21 +1653,88 @@ let lastSummary = "";
 const SUMMARY_INTERVAL = 20;
 
 const AVATAR_MALE = [
-  "https://i.pinimg.com/736x/ed/6b/06/ed6b060d4023e387c10b240974b7c62d.jpg",
-  "https://i.pinimg.com/736x/87/42/bd/8742bd6857144e82414704040a455a29.jpg",
-  "https://i.pinimg.com/736x/76/34/00/763430372df3427f4d762f0f4229646c.jpg",
-  "https://i.pinimg.com/736x/1a/00/98/1a009852f5569429712952f4007357c3.jpg",
-  "https://i.pinimg.com/736x/32/74/4b/32744ba07844051065609385d345511b.jpg",
-  "https://i.pinimg.com/736x/4d/91/92/4d919245229676e1f0e47021e1a82f34.jpg"
+  "https://i.pinimg.com/736x/e9/15/84/e915847ef72e9f8ae96dd9e7ee665be2.jpg",
+  "https://i.pinimg.com/736x/62/68/1a/62681a9dc66c168bc019198d85e6a081.jpg",
+  "https://i.pinimg.com/736x/b8/2f/a4/b82fa48063ccacd911f9aad37247d719.jpg",
+  "https://i.pinimg.com/736x/b6/e3/3c/b6e33cd44e91be36faccc8829b6fc7e8.jpg",
+  "https://i.pinimg.com/736x/0c/25/75/0c257519fd1a35450c5f859f6447c746.jpg",
+  "https://i.pinimg.com/736x/14/07/95/1407956a4712fab32804ade8970f093a.jpg",
+  "https://i.pinimg.com/736x/8d/e2/a8/8de2a80387b4d65d0226f39fe639cd61.jpg",
+  "https://i.pinimg.com/736x/e4/2b/be/e42bbeb7b644df58d17adf09736bb6e7.jpg",
+  "https://i.pinimg.com/736x/84/bc/5d/84bc5ddf90c315ddf7271e74940c730d.jpg",
+  "https://i.pinimg.com/736x/d6/b0/a7/d6b0a760c6ad11fb4f5e82bb8493f9d5.jpg",
+  "https://i.pinimg.com/736x/19/92/17/1992171869e41afbb689c7d50000df1d.jpg",
+  "https://i.pinimg.com/736x/42/57/9f/42579fb80783a61cc9db7714a39e8baa.jpg",
+  "https://i.pinimg.com/736x/7f/a6/65/7fa665c80252fb6778728d64d7e93734.jpg",
+  "https://i.pinimg.com/736x/0b/2e/04/0b2e0415089bb3c3718a4cd2ecd13e39.jpg",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1542178243-bc20204b1694?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1501196351651-0390a8a950cb?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1480429370139-e0132c086e2a?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1474176857210-7287d38d27c6?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1508243529287-e21914733111?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1463453091185-61582044d556?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1509460913899-515f1df34fea?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=500&h=500&fit=crop"
 ];
 
 const AVATAR_FEMALE = [
-  "https://i.pinimg.com/736x/3c/30/29/3c30292e9750d4b3a922f0a6e1892ab1.jpg",
-  "https://i.pinimg.com/736x/91/2c/3e/912c3e1e90a9b83b99971842946c1a82.jpg",
-  "https://i.pinimg.com/736x/6f/a0/0b/6fa00b3e55c3c0a559868e82a46c1a82.jpg",
-  "https://i.pinimg.com/736x/82/30/29/823029e9750d4b3a922f0a6e1892ab1.jpg",
-  "https://i.pinimg.com/736x/ed/30/29/ed3029e9750d4b3a922f0a6e1892ab1.jpg",
-  "https://i.pinimg.com/736x/f1/30/29/f13029e9750d4b3a922f0a6e1892ab1.jpg"
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1521119989659-a83dee015942?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1521119989659-a83dee015942?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
+  "https://i.pinimg.com/736x/8d/cf/72/8dcf721c5d2e7b2765fd54c6fcac22dc.jpg",
+  "https://i.pinimg.com/736x/4f/37/0f/4f370fe3014e982b5c1a89d0c77ca4bc.jpg",
+  "https://i.pinimg.com/736x/cd/08/26/cd0826bdb5a949752cd339fe21b5dae4.jpg",
+  "https://i.pinimg.com/736x/b8/c1/c8/b8c1c8c3e8fa8e583f2d2cade6962cbd.jpg",
+  "https://i.pinimg.com/736x/d5/73/06/d573061e9bf91c70d904b4f4693fe0e0.jpg",
+  "https://i.pinimg.com/736x/02/3f/74/023f7440e562023e503d6104a0248034.jpg",
+  "https://i.pinimg.com/736x/f0/fa/26/f0fa267498c5c2ac2a9130b594d36b66.jpg",
+  "https://i.pinimg.com/736x/f8/fa/67/f8fa678bf29fc8855d49b81337c23610.jpg",
+  "https://i.pinimg.com/736x/b2/0b/ea/b20bea7c2ac653bd5f41f4a82a609dd0.jpg",
+  "https://i.pinimg.com/736x/f6/2f/8b/f62f8b86111bc503d75ec1a9ecdf1821.jpg",
+  "https://i.pinimg.com/736x/12/f9/0e/12f90ecd9713580a02bf3a2441ef03c2.jpg",
+  "https://i.pinimg.com/736x/ac/c5/9b/acc59bdb98731ba1df25241522217ad.jpg",
+  "https://i.pinimg.com/736x/9d/d2/90/9dd29024be0951e90130c65760ae216f.jpg",
+  "https://i.pinimg.com/736x/09/55/c0/0955c0e124f5163fcb0106e92fa2f37c.jpg"
 ];
 
 function getRandomName(gender){
@@ -1688,8 +1755,15 @@ function setChatGender(gender){
   // ... (rest of function)
   const pool = gender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
   const grid = document.getElementById("avatarGridItems");
+  
+  // Expanded full-width grid logic
+  grid.style.maxWidth = "none";
+  grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(150px, 1fr))";
+  grid.style.gap = "20px";
+  grid.style.width = "100%";
+
   grid.innerHTML = pool.map((url, i) => `
-    <div onclick="selectAvatar(this, '${url}')" style="aspect-ratio:1/1;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all 0.25s;${i === 0 ? 'border-color:rgba(124,58,237,0.4);' : ''}">
+    <div onclick="selectAvatar(this, '${url}')" style="aspect-ratio:1/1;border-radius:24px;overflow:hidden;cursor:pointer;border:4px solid transparent;transition:all 0.3s cubic-bezier(0.23, 1, 0.32, 1);${i === 0 ? 'border-color:rgba(124,58,237,0.4);' : ''}">
       <img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'" loading="lazy">
     </div>
   `).join("");
@@ -1947,8 +2021,10 @@ RULES:
 3. USER AGENCY: Anything ${sessionUserName} introduces (items, facts, scenarios) is IMMEDIATELY canon. Never ignore or overwrite user contributions; build upon them naturally in the very next line.
 4. NO USER CONTROL: Never speak, act, think, or make decisions for ${sessionUserName}.
 5. SIDE CHARACTERS: A side character must be noticed or introduced narratively before speaking for the first time. Reuse existing side characters before creating new ones. Max one new character per response.
-6. STYLE: Maintain engaging stakes. Increase tension, mystery, danger, humor, or emotional depth only when appropriate to the scene. Mention ${sessionUserName}'s name naturally once per response.
-7. CONSISTENCY: Avoid repeating the same emotions, compliments, warnings, or dialogue patterns.
+6. NAME USAGE: Mention ${sessionUserName} naturally at least once per response when appropriate.
+7. BREVITY: Strictly 1-2 short action/dialogue lines per character. Never exceed 3 sentences total. Keep it fast-paced.
+8. EMOTIONAL EXPRESSION: Use emojis naturally when they fit the emotion and dialogue. Use at most one emoji per response. Do not force emojis; serious, tense, or dramatic scenes should use no emoji at all.
+9. CONSISTENCY: Avoid repeating the same emotions, compliments, warnings, or dialogue patterns.
 
 AVOID:
 - Narrative paragraphs without dialogue.

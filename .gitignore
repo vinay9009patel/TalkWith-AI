@@ -75,3 +75,7 @@ emoji.txt
 
 # Added from .geminiignore
 GEMINI.md
+
+# Avatar source files
+maleImage.txt
+femaleImage.txt
