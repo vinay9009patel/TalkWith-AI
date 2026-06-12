@@ -1902,6 +1902,11 @@ function showPage(pageId, navEl){
   if(pageId === 'chat') {
     setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
   }
+
+  // Refresh dashboard data whenever it's shown
+  if(pageId === 'dashboard') {
+    updateUI();
+  }
 }
 
 // ==================== UI HELPERS ====================
