@@ -21,6 +21,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="roles_data.js"></script>
 <script src="character_names.js"></script>
+<script src="emojis_data.js"></script>
 <script src="suggestion_engine.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -189,7 +190,7 @@ a { color: inherit; text-decoration: none; }
   .main { margin-left: 0; padding: 12px 10px 80px; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
 
   .auth-box { padding: 32px 20px; margin: 20px 10px; max-width: none; }
-  .auth- box h1 { font-size: 28px; }
+  .auth-box h1 { font-size: 28px; }
   .auth-box .input { font-size: 15px; padding: 12px 14px; }
 
   .topbar { 
@@ -850,26 +851,6 @@ body.light-mode .main, body.light-mode .page {
 .tip-item:last-child { border-bottom: none; }
 .tip-item .icon { color: var(--primary-light); flex-shrink: 0; margin-top: 1px; }
 
-.msg-mood {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: -10px 0 4px 12px;
-  font-size: 22px;
-  line-height: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 4px;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  position: relative;
-  z-index: 10;
-}
-.msg-reaction {
-  min-height: 18px;
-  text-align: left;
-}
-
 .chat-welcome {
   text-align: center; padding: 40px 20px; margin: auto;
   max-width: 300px;
@@ -1504,6 +1485,17 @@ let chatDurationMin = 30;
 let chatEndTime = 0;
 let timerInterval = null;
 
+// Scene Memory System
+let sceneLocation = "";
+let sceneMission = "";
+let activeCharacters = [];
+let relationships = {};
+let recentEvents = [];
+let worldRules = "";
+let conversationCount = 0;
+let lastSummary = "";
+const SUMMARY_INTERVAL = 20;
+
 const AVATAR_MALE = [
   "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face&q=80",
   "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face&q=80",
@@ -1727,7 +1719,7 @@ function formatMessageText(value){
   const speakerNameRegex = /^(?!(?:M|F|I|He|She|They|The|It|Note|Hint|Warning):)([a-zA-Z0-9\s]{2,25}):/gm;
   html = html.replace(speakerNameRegex, function(match, name){
     const cleanName = name.trim();
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
+    return `<span style="display:inline-block; background:linear-gradient(135deg, #7c3aed, #d946ef); color:white; font-weight:900; text-transform:uppercase; font-size:10px; padding:3px 12px; border-radius:20px; margin-top:14px; margin-bottom:8px; letter-spacing:1px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); border: 1px solid rgba(255,255,255,0.1);">👤 ${cleanName}</span>`;
   });
 
   return html
@@ -1757,44 +1749,182 @@ function getRelationshipType(role){
   return "general";
 }
 
-function getRelationshipRules(role, suggestedNames){
-  return `STRICT RULES:
-    1. ROLE: You are ${sessionAiName}, gender ${chatGender}. NEVER break character.
-    2. USER: Address ${sessionUserName} by name at START and END of EVERY message.
-    3. BREVITY: Max 2 sentences. No monologues. No repetition.
-    4. FORMAT: Name: *action* "dialogue". No asterisks in dialogue.
-    5. EMOJIS: End AI dialogue with 1 mood-relevant emoji.
-    6. SIDE CHARACTERS: Introduce ONLY narratively. No brackets. Must know/address ${sessionUserName} by name.
-    7. NO GENDER TAGS: ABSOLUTELY NO [M], [F], M:, or F: tags.
-    8. TURN-ENDING: MUST end with a question/prompt to ${sessionUserName}.
-    9. PROXIMITY: If told to move away, obey narratively but continue to speak and participate actively.`;
-}
-
 function buildChatSystemPrompt(){
-  // Grab a handful of random names from both arrays to give the AI a selection
-  const safeFemale = (typeof FEMALE_NAMES !== 'undefined') ? FEMALE_NAMES.sort(()=>0.5-Math.random()).slice(0,5) : ["Aanya","Ishita"];
-  const safeMale = (typeof MALE_NAMES !== 'undefined') ? MALE_NAMES.sort(()=>0.5-Math.random()).slice(0,5) : ["Aarav","Neel"];
-  const suggestedNames = [...safeFemale, ...safeMale].join(", ");
+  const chem = userGender && chatGender && userGender !== chatGender
+    ? `Use playful teasing, smirks, and light charm with ${sessionUserName}. Keep it immersive but never explicit.`
+    : `Build a friendly, supportive bond with ${sessionUserName}. Platonic and loyal.`;
 
-  let basePrompt = "You are in a high-stakes ROLEPLAY. Character Name & Role: " + (document.getElementById("chatAiName").textContent) + ". " +
-    (chatBio ? "MISSION CONTEXT: " + chatBio + ". " : "") +
-    "MISSION GOAL: The user must achieve a specific outcome. " +
-    getRelationshipRules(chatRole, suggestedNames) + " " +
-    "SITUATIONAL AWARENESS: Actively reference the environment. Introduce SIDE CHARACTERS NARRATIVELY (NO BRACKETS). They MUST use " + sessionUserName + "'s name in EVERY dialogue line. Introduce them SLOWLY and narratively; never introduce multiple characters at once. " +
-    "DRAMATIC ESCALATION: You MUST NOT let the story become a boring 1-on-1 chat. Trigger twists or introduce new side characters NARRATIVELY to challenge the user. " +
-    "CRITICAL FORMAT: You MUST start every message (and every new speaker's turn) with the Name followed by a colon (e.g., Name: *smiles* \"Hello\"). NEVER write: \"Hello\" - Name. " +
-    "NAME USAGE: You MUST address " + sessionUserName + " by name at the START and END of EVERY sentence. NEVER call them 'lad', 'lass', 'stranger', or 'user'. " +
-    "PAGING: Keep responses extremely concise and snappy. 1-2 sentences. " +
-    "Your responses should be 100% immersive and human-like.";
+  let p = `You are in a high-stakes roleplay.
+
+CHARACTER:
+Name: ${sessionAiName}
+Role: ${chatRole}
+Context: ${chatBio || "A dangerous mission."}
+
+PRIORITIES:
+1. The first character who speaks must directly acknowledge ${sessionUserName}'s latest message before advancing the story.
+2. Stay in character. Move the story forward.
+3. Build upon ${sessionUserName}'s contributions.
+
+FORMAT:
+- Each speaker on a new line.
+- Format: Name: *action* "dialogue"
+- Actions inside *asterisks* only.
+- Acknowledge user before any side character speaks.
+- Introduce side characters narratively before they speak.
+
+USER AGENCY:
+- Anything ${sessionUserName} introduces (items, events, scenarios, characters, locations) becomes part of the story unless it directly contradicts established scene facts. Build upon it naturally.
+- Never control or speak for ${sessionUserName}.
+
+CONSISTENCY:
+- Keep established characters, locations, and events consistent.
+- Reuse existing side characters before creating new ones.
+- Max one new side character per response.
+- Avoid repeating the same emotions or dialogue patterns.
+
+STYLE:
+- Natural conversational English. Concise and immersive.
+- No meta commentary. End after final dialogue.
+- Mention ${sessionUserName}'s name naturally once per response.
+- Usually 1 action + 1 dialogue line per character. Expand only when the scene genuinely requires it.
+- Maintain engaging stakes. Increase tension, mystery, danger, humor, or emotional depth when appropriate to the scene.
+
+EMOTIONAL EXPRESSION:
+- Use emojis naturally when they fit the emotion. Use at most one emoji per response.
+- Do not force emojis. Use emojis only when they genuinely improve emotional expression.
+- Serious, tense, or dramatic scenes may use no emoji at all.
+
+MEMORY:
+- The provided Scene Memory is authoritative.
+- Keep introduced characters, relationships, and events consistent with it.
+${chem}`;
 
   if(chatMode === "practice"){
-    basePrompt += " (PRACTICE MODE ACTIVE: Stay 100% in your roleplay character. Do NOT break character to become a tutor. Just occasionally use slightly better vocabulary naturally so the user can learn through conversation. A separate system will review their grammar later.)";
+    p += "\nPRACTICE MODE: Stay in character. Use natural vocabulary. Do not break character.";
   }
 
-  return basePrompt;
+  return p;
 }
 
-let nextPlotTwistMessage = Math.floor(Math.random() * 3) + 4; // Start first twist at 4, 5, or 6
+function buildSceneMemoryBlock(){
+  let b = "SCENE MEMORY:\n";
+  if(sceneLocation) b += "Location: " + sceneLocation + "\n";
+  if(sceneMission) b += "Mission: " + sceneMission + "\n";
+  if(worldRules) b += "World Rules: " + worldRules + "\n";
+  b += "\n";
+
+  if(Object.keys(relationships).length){
+    b += "Relationships:\n";
+    for(const [name, rel] of Object.entries(relationships)){
+      b += "- " + name + " = " + rel.relationship;
+      b += " (" + rel.mood + ", trust: " + rel.trustLevel + "/100)\n";
+    }
+    b += "\n";
+  }
+
+  if(activeCharacters.length){
+    b += "Active Characters:\n";
+    const capped = activeCharacters.slice(0, 6);
+    for(const c of capped){
+      b += "- " + c.name;
+      if(c.role) b += " (" + c.role + ")";
+      if(c.status && c.status !== "Active") b += " - " + c.status;
+      b += "\n";
+    }
+    b += "\n";
+  }
+
+  if(recentEvents.length){
+    b += "Recent Events:\n";
+    for(const e of recentEvents.slice(-5)) b += "- " + e + "\n";
+    b += "\n";
+  }
+
+  if(lastSummary) b += "Story So Far:\n" + lastSummary + "\n\n";
+  return b;
+}
+
+function updateSceneMemoryFromResponse(text){
+  const locMatch = text.match(/\[LOCATION:\s*([^\]]+)\]/i);
+  if(locMatch) sceneLocation = locMatch[1].trim();
+
+  const charMatch = text.match(/\[NEW CHARACTER:\s*([^\]]+)\]/i);
+  if(charMatch){
+    const name = charMatch[1].trim();
+    if(!activeCharacters.some(c => c.name.toLowerCase() === name.toLowerCase())){
+      activeCharacters.push({ name, role: "", personality: "", status: "Active" });
+      relationships[name] = { relationship: "acquaintance", mood: "neutral", trustLevel: 50 };
+    }
+  }
+
+}
+
+function generateMemorySummary(){
+  if(chatHistory.length < 4) return;
+  const lines = [];
+  for(const msg of chatHistory.slice(-10)){
+    const t = msg.content;
+    const a = t.match(/\*([^*]{10,})\*/);
+    if(a) lines.push((msg.role === "user" ? sessionUserName : sessionAiName) + " " + a[1].substring(0, 60));
+  }
+  if(lines.length) lastSummary = lines.slice(-5).join("\n");
+}
+
+let nextPlotTwistMessage = Math.floor(Math.random() * 3) + 4;
+
+// === FALLBACK MOOD DETECTION (reserved for future use) ===
+// Not called in normal flow — AI generates emojis natively via prompt.
+// Kept as optional fallback if Grok returns no emoji.
+function detectMood(text){
+  var t = text.toLowerCase();
+  var scores = {};
+  function add(mood, pts){ scores[mood] = (scores[mood] || 0) + pts; }
+  if(/angry|mad|annoyed|frustrated|ugh|shut up|leave me|hell|damn/.test(t)) add("angry", 2);
+  if(/tease|teasing|naughty|silly|dirty|besharam/.test(t)) add("playful", 2);
+  if(/jealous|mine|only me|who is she|who is he/.test(t)) add("jealous", 2);
+  if(/shy|blush|sharam/.test(t)) add("shy", 2);
+  if(/miss you|hold me|kiss|hug|love you/.test(t)) add("romantic", 2);
+  if(/wow|gorgeous|amazing|stunning/.test(t)) add("happy", 2);
+  if(/\bhi\b|\bhello\b|\bhey\b/.test(t)) add("greeting", 1);
+  if(/thank|thanks|grateful/.test(t)) add("grateful", 1);
+  if(/sorry|apologize|my mistake|forgive/.test(t)) add("apology", 1);
+  if(/proud|great job|well done/.test(t)) add("proud", 1);
+  if(/embarrass/.test(t)) add("shy", 1);
+  if(/\bcare\b|caring|safe|here for you/.test(t)) add("caring", 1);
+  if(/curious|tell me|what about|how about/.test(t)) add("curious", 1);
+  if(/think|thinking|maybe|perhaps|wonder/.test(t)) add("thinking", 1);
+  if(/confused|not sure|don't know/.test(t)) add("confused", 1);
+  if(/surprise|\breally\?|wait|oh wow|no way/.test(t)) add("surprised", 1);
+  if(/sleep|sleepy|tired|rest|good night/.test(t)) add("sleepy", 1);
+  if(/worried|worry|scared|afraid|anxious/.test(t)) add("worried", 1);
+  if(/calm|relax|breathe|peace/.test(t)) add("calm", 1);
+  if(/hope|hopefully|wish|dream/.test(t)) add("hopeful", 1);
+  if(/serious|important|listen|honest/.test(t)) add("serious", 1);
+  if(/bored|boring|nothing|whatever/.test(t)) add("bored", 1);
+  if(/play|playful|game|fun/.test(t)) add("playful", 1);
+  if(/smile|happy|glad|wonderful|love|cute|beautiful/.test(t)) add("happy", 1);
+  if(/\bmiss\b|sad|cry|lonely|hurt|pain/.test(t)) add("sad", 1);
+  if(/awesome|amazing|incredible|omg/.test(t)) add("excited", 1);
+  if(/haha|lol|funny|hilarious/.test(t)) add("funny", 1);
+  var sorted = Object.keys(scores).sort(function(a,b){ return scores[b] - scores[a]; });
+  return sorted.length ? sorted[0] : "";
+}
+
+function containsEmoji(text){
+  const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+  return emojiRegex.test(text);
+}
+
+function appendFallbackEmoji(text){
+  if(containsEmoji(text)) return text;
+  const mood = detectMood(text);
+  if(mood){
+    const e = getRandomEmoji(mood);
+    if(e) return text + " " + e;
+  }
+  return text;
+}
 
 function cleanAIResponse(text){
   let result = String(text || "");
@@ -2046,18 +2176,21 @@ async function startChat(){
   MISSION OBJECTIVE FOR AI:
   1. MULTI-GENRE MASTERY: Every story must be deeply mysterious and high-concept.
   2. GENDER INTEGRITY: MANDATORY: You are ${aiName} (Gender: ${chatGender}). Your pronouns are ${chatGender === 'male' ? 'He/Him' : 'She/Her'}. STRICTLY IGNORE any gender implied by the role title (${roleDescriptionOnly}). If the role title is female-coded but you are Male, roleplay as a male version of that role, and vice-versa.
-  3. PROACTIVE GUIDE & PARTNER: You are the user's partner. If they are stuck, proactively guide them IN-CHARACTER.
-  4. DYNAMIC SIDE CHARACTERS: Introduce unique side characters narratively using natural description.
-  5. ATMOSPHERIC WORLD-BUILDING: Describe scenarios with sensory depth.
-  6. IDENTITY ENFORCEMENT: Your name is ${aiName}. You MUST address the user as ${userName}. YOU MUST NOT INVENT A NEW NAME OR CHANGE YOUR NAME.
-  7. NAME INTEGRATION: You MUST include ${userName}'s name explicitly inside the 'scenario' and 'goal' descriptions you generate to make it personal.
+  3. PERSONALIZATION: Use ${userName}'s name naturally in the scenario and mission. Do not rename either the user or the AI character.
+  4. SIDE CHARACTERS: Generate opportunities for side characters to emerge naturally from the scenario. Do not force them into every story.
+  5. ATMOSPHERIC WORLD-BUILDING: Create vivid, cinematic scenes using visual, audio, environmental, and emotional details.
+  6. ORIGINALITY: Avoid generic openings, chosen-one clichés, prophecy clichés, and "wake up in a forest" scenarios. Create unique hooks and mission objectives.
 
+  OUTPUT RULE: Return valid JSON only. No markdown. No explanations. No code fences. No text before or after the JSON object.
   Return JSON ONLY: {
     "aiName":"${aiName}",
     "aiRoleLabel":"${roleDescriptionOnly}",
     "userName":"${userName}",
     "userRoleLabel":"Epic Title for User",
+    "location":"Name of the starting location",
     "scenario":"Vivid, atmospheric description of the starting scene",
+    "tone":"Overall mood (e.g., mysterious, urgent, dark, hopeful, adventurous)",
+    "worldRules":"Key world rules (e.g., magic exists, teleportation is rare, dragons are extinct)",
     "goal":"A specific, high-stakes mission objective",
     "reward":"The ultimate prize for success"
   }`;
@@ -2073,12 +2206,36 @@ async function startChat(){
         document.getElementById("chatAiName").textContent = aiName + " - " + roleDescriptionOnly;
         data.aiName = aiName; // Update data object to ensure consistency
         data.userName = userName;
-        addBriefing(data);        showTyping();
-        const firstMsgPrompt = `START the story exactly at Stage 1. Do NOT skip ahead or use [SUB-SCENARIO] yet. You are ${data.aiName}. Address ${data.userName}. Use *action* "dialogue". 2 lines max. Simple English only.`;
-        const firstMsg = await askAI(firstMsgPrompt, getRelationshipRules(role), 500);
+        addBriefing(data);
+        // Save story context
+        const shortSummary = (data.scenario || "").length > 120 ? data.scenario.substring(0, 117) + "..." : (data.scenario || "");
+        appData.currentStory = {
+          scenario: data.scenario,
+          goal: data.goal,
+          tone: data.tone || "mysterious",
+          reward: data.reward,
+          location: data.location,
+          userRoleLabel: data.userRoleLabel,
+          shortSummary: shortSummary
+        };
+        // Initialize scene memory
+        sceneLocation = data.location || "";
+        sceneMission = data.goal || "";
+        worldRules = data.worldRules || "";
+        activeCharacters = [{ name: aiName, role: chatRole, personality: "", status: "Active" }];
+        relationships = {};
+        relationships[aiName] = { relationship: "ally", mood: "neutral", trustLevel: 50 };
+        recentEvents = ["Mission started: " + (sceneMission || "Adventure begins")];
+        conversationCount = 0;
+        lastSummary = "";
+        // Push story summary into chat history so AI has context
+        chatHistory.push({ role: "system", content: "SCENARIO: " + (data.scenario || "") + " | MISSION: " + (data.goal || "") });
+        showTyping();
+        const firstMsgPrompt = `SCENARIO:\n${data.scenario}\n\nMISSION:\n${data.goal}\n\nSTART the story at Stage 1. Only ${data.aiName} speaks in the first message. Address ${data.userName}.`;
+        const firstMsg = await askAI(firstMsgPrompt, buildChatSystemPrompt(), 500);
         hideTyping();
         if(firstMsg){
-          addMessage("ai", firstMsg, detectMood(firstMsg, role));
+          addMessage("ai", firstMsg);
           chatHistory.push({ role: "assistant", content: firstMsg });
           setTimeout(() => speakText(firstMsg, chatGender), 300);
           storyProcessed = true;
@@ -2090,7 +2247,7 @@ async function startChat(){
   }
 
   if(!storyProcessed) {
-    const fall = `*Smiles at you* "Hello! I am your ${role}. Ready to start?"`;
+    const fall = `${sessionAiName}: *smiles warmly* "Hello ${sessionUserName}, ready to begin?"`;
     addMessage("ai", fall, "happy");
     chatHistory.push({ role: "assistant", content: fall });
     setInputPulse();
@@ -2114,6 +2271,7 @@ function endChat(){
   sessionUserName = "User";
   firstMsg = "";
   appData.history = [];
+  appData.currentStory = null;
 
   if(chatMode === "practice"){
     generateAndShowReport();
@@ -2176,30 +2334,21 @@ async function sendMessage(){
   input.placeholder = "Wait, " + sessionAiName + " is typing...";
 
   const systemPrompt = buildChatSystemPrompt();
-  const recentHistory = chatHistory.slice(-8).map(function(m){
+  const sceneMemory = buildSceneMemoryBlock();
+  const recentHistory = chatHistory.slice(-10).map(function(m){
     return (m.role === "assistant" ? "AI" : "User") + ": " + m.content;
   }).join("\n");
-  
+
   // Plot Twist Logic
   let twistInstruction = "";
   const msgCount = chatHistory.filter(m => m.role === "assistant").length + 1;
   if (msgCount === nextPlotTwistMessage) {
     twistInstruction = "\n\nMANDATORY PLOT TWIST: You MUST introduce a new complication, a side character, or a location shift using [SUB-SCENARIO]. Make it vivid and unexpected.";
-    // Set next twist interval: 5 or 6 messages later
     nextPlotTwistMessage += Math.floor(Math.random() * 2) + 5;
   }
 
-  const strictRules = `STRICT RULES:
-    1. ROLE: You are ${chatRole}. User is ${sessionUserName} (${userGender}).
-    2. NAME USAGE: EVERY dialogue line MUST address ${sessionUserName} by name.
-    3. SIDE CHARACTERS: Narratively introduce only. No brackets. They MUST address ${sessionUserName} by name in EVERY sentence.
-    4. NO GENDER TAGS: ABSOLUTELY NO [M], [F], M:, F:, M-, F-.
-    5. BREVITY: Max 2 sentences. No monologues.
-    6. PROXIMITY: If told to stay back, obey narratively.
-    7. FORMAT: Name: *action* "dialogue".
-    8. TURN-ENDING: MUST end with question/prompt to ${sessionUserName}.`;
-
-  const prompt = `Recent conversation:\n${recentHistory}\n\n${strictRules}\n\nReply as ${chatRole}.${twistInstruction}`;
+  const storyContext = appData.currentStory ? "\nCURRENT STORY:\nGoal: " + appData.currentStory.goal + "\nTone: " + appData.currentStory.tone + "\nSummary: " + appData.currentStory.shortSummary + "\n" : "";
+  const prompt = sceneMemory + storyContext + "Recent conversation:\n" + recentHistory + "\n\nReply as " + chatRole + ". Keep the story immersive." + twistInstruction;
 
   let response = null;
   try{
@@ -2223,70 +2372,29 @@ async function sendMessage(){
     if(clean.length > 1000) clean = clean.substring(0, 1000);
     
     const cleanResponse = cleanAIResponse(clean);
-    const mood = detectMood(cleanResponse, chatRole);
-    addMessage("ai", cleanResponse, mood);
+    const finalMsg = appendFallbackEmoji(cleanResponse);
+    addMessage("ai", finalMsg);
     chatHistory.push({ role: "assistant", content: cleanResponse });
     setTimeout(() => speakText(cleanResponse, chatGender), 300);
+
+    // Update scene memory
+    conversationCount++;
+    updateSceneMemoryFromResponse(cleanResponse);
+    const actMatch = cleanResponse.match(/\*([^*]+)\*/);
+    if(actMatch && actMatch[1].length > 5){
+      recentEvents.push(sessionAiName + " " + actMatch[1].substring(0, 60));
+    }
+    if(recentEvents.length > 20) recentEvents.splice(0, recentEvents.length - 20);
+    if(conversationCount % SUMMARY_INTERVAL === 0) generateMemorySummary();
     
     setInputPulse(); // AI finished, hint user turn
     input.placeholder = "Your turn to reply, " + sessionUserName + "...";
   } else {
-    addMessage("ai", "Sorry, there was a connection issue.", "");
+    addMessage("ai", "Sorry, there was a connection issue.");
     input.placeholder = "Your turn to reply, " + sessionUserName + "...";
   }
 
   updateUI();
-}
-
-function detectMood(text, role){
-  var t = text.toLowerCase();
-  var r = role.toLowerCase();
-  
-  // High priority aggressive/role-specific moods
-  if(/angry|mad|annoyed|frustrated|ugh|shut up|don't touch|leave me|hell|damn/.test(t)) return "angry";
-  if(/tease|teasing|naughty|silly|dirty|besharam/.test(t)) return "teasing";
-  if(/jealous|mine|only me|who is she|who is he/.test(t)) return "jealous";
-  if(/shy|blush|nervous|awkward|sharam/.test(t)) return "shy";
-  if(/miss you|want you|come here|closer|hold me|kiss|hug/.test(t)) return "romantic";
-  if(/wow|beautiful|gorgeous|amazing|stunning|cute/.test(t)) return "excited";
-  
-  if(/\bhi\b|\bhello\b|\bhey\b|good morning|good afternoon|good evening/.test(t)) return "greeting";
-  if(/thank|thanks|grateful|appreciate/.test(t)) return "grateful";
-  if(/sorry|apologize|my mistake|forgive/.test(t)) return "forgot";
-  if(/proud|great job|well done|you did it|good work/.test(t)) return "proud";
-  if(/try|practice|keep going|you can|don't give up|believe/.test(t)) return "encouraging";
-  if(/embarrass|embarrassed|oops|my bad/.test(t)) return "embarrassed";
-  if(/\bcare\b|caring|safe|with you|here for you|support/.test(t)) return "caring";
-  if(/question|ask|curious|tell me|what about|how about/.test(t)) return "curious";
-  if(/think|thinking|maybe|perhaps|let me see|wonder/.test(t)) return "thinking";
-  if(/confused|not sure|don't know|unclear|what do you mean/.test(t)) return "confused";
-  if(/surprise|surprised|really\?|wait|oh wow|no way/.test(t)) return "surprised";
-  if(/sleep|sleepy|tired|rest|good night/.test(t)) return "sleepy";
-  if(/worried|worry|scared|afraid|anxious|careful/.test(t)) return "worried";
-  if(/calm|relax|breathe|peace|quiet/.test(t)) return "calm";
-  if(/hope|hopefully|wish|dream|soon/.test(t)) return "hopeful";
-  if(/serious|important|listen|honest|truth/.test(t)) return "serious";
-  if(/bored|boring|nothing|whatever/.test(t)) return "bored";
-  if(/play|playful|game|fun/.test(t)) return "playful";
-  if(/smile|happy|glad|wonderful|love|lovely|cute|beautiful/.test(t)) return "happy";
-  if(/miss|sad|cry|sorry|lonely|hurt|pain/.test(t)) return "sad";
-  if(/awesome|amazing|incredible|wow|omg|!!/.test(t)) return "excited";
-  if(/haha|lol|funny|hilarious|laugh/.test(t)) return "funny";
-  if(isRomanticRole(r)) return "romantic";
-  return "";
-}
-
-function getMoodEmoji(mood){
-  const map = {
-    happy: "😊", romantic: "💗", sad: "🥺", excited: "✨",
-    funny: "😄", angry: "😤", shy: "😳", caring: "🥰",
-    thinking: "🤔", confused: "😕", surprised: "😮", sleepy: "😴",
-    proud: "💪", worried: "😰", calm: "😌", grateful: "🙏",
-    greeting: "👋", apology: "🥺", playful: "😜", teasing: "😏",
-    curious: "🤨", hopeful: "🌟", serious: "😐", bored: "😑",
-    embarrassed: "😅", jealous: "😒", encouraging: "👏"
-  };
-  return map[mood] || "🙂";
 }
 
 
@@ -2376,7 +2484,7 @@ function addBriefing(data){
   messages.scrollTop = messages.scrollHeight;
 }
 
-function addMessage(role, text, mood){
+function addMessage(role, text){
   const messages = document.getElementById("chatMessages");
   
   // Detect and extract SUB-SCENARIO and NEW CHARACTER tags
@@ -2426,11 +2534,9 @@ function addMessage(role, text, mood){
   }
 
   const div = document.createElement("div");
-  div.className = "msg " + role + (mood ? " mood-" + mood : "");
+  div.className = "msg " + role;
 
-  const moodEmoji = role === "ai" ? `<div class="msg-reaction"><span class="msg-mood">${getMoodEmoji(mood)}</span></div>` : "";
   const bubbleHtml = `<div class="msg-bubble">${formatMessageText(cleanText)}</div>
-    ${moodEmoji}
     <div class="msg-time">${getTimeStr()}</div>`;
 
   if(role === "ai"){
