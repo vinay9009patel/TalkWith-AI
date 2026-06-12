@@ -2079,9 +2079,12 @@ Scene Memory is authoritative for current scene, characters, relationships, even
 RULES:
 
 1. CRITICAL FORMAT — MUST follow exactly:
-CORRECT:  ${sessionAiName}: *studies the glowing runes* "This language is older than the stars, ${sessionUserName}."
-CORRECT:  ${sessionAiName}: *eyes narrow with concern* "We should proceed carefully."
-CORRECT:  Kael: *emerges from the shadows* "You're not alone here, ${sessionUserName}."
+End EVERY response with: [LOCATION: place] [EVENT: current action]
+Example ending: [LOCATION: Astral Ruins] [EVENT: ${sessionUserName} unlocking an ancient seal]
+
+CORRECT:  ${sessionAiName}: *studies the glowing runes* "This language is older than the stars, ${sessionUserName}." [LOCATION: Astral Plateau] [EVENT: ${sessionUserName} examining ancient inscriptions]
+CORRECT:  ${sessionAiName}: *eyes narrow with concern* "We should proceed carefully." [LOCATION: Shadow Pass] [EVENT: Strange sounds echoing from the tunnels]
+CORRECT:  Kael: *emerges from the shadows* "You're not alone here, ${sessionUserName}." [LOCATION: Forgotten Catacombs] [EVENT: Kael revealing himself as an ally]
 
 WRONG:    ${sessionAiName}: concerned "This doesn't feel right."           ← NO bare emotion words
 WRONG:    ${sessionAiName}:                                              ← NO line break before action
@@ -2116,10 +2119,10 @@ CORRECT: ${sessionAiName}: *approaches the structure as the air distorts around 
 
 Every single response MUST use ONLY the NAME: *ACTION* "DIALOGUE" format. No exceptions. No introductory narrative sentences. No descriptions before the speaker name.
 
-3. MANDATORY END TAGS — Always conclude with these tags on ONE single line:
+3. MANDATORY END TAGS — Every response MUST end with these tags on ONE line:
 [LOCATION: Place Name] [EVENT: What is happening right now]
 Example: [LOCATION: Astral Plateau] [EVENT: Ancient ruins reacting to ${sessionUserName}'s presence]
-NEVER describe location/event as raw sentences at the end. Use brackets ONLY.
+ABSOLUTELY REQUIRED: Every single response must include [LOCATION] and [EVENT] tags. If you skip them, the scene has no context. NEVER describe location/event as raw sentences — use brackets ONLY.
 
  4. STORY PROGRESSION — Every response MUST advance the scene:
 - Reveal new information, sensory detail, or discovery
@@ -2637,7 +2640,8 @@ ${data.tone || "Atmospheric"}
 START the story at Stage 1.
 You are ${aiName}.
 Address ${userName}.
-Only ${aiName} speaks in the first message.`;
+Only ${aiName} speaks in the first message.
+REMEMBER: End your message with [LOCATION: place] [EVENT: current action].`;
 
         const firstMsgRaw = await askAI(firstMsgPrompt, buildChatSystemPrompt(), 500);
         hideTyping();
@@ -2839,7 +2843,8 @@ async function sendMessage(){
   // Persistent Story Context in every request
   const storyContext = appData.currentStory ? `\nCURRENT STORY:\nScenario: ${appData.currentStory.scenario}\nGoal: ${appData.currentStory.goal}\nTone: ${appData.currentStory.tone}\n` : "";
 
-  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nYou are ${sessionAiName} (${chatRole}). React to ${sessionUserName}'s last message first, then continue the scene.${twistInstruction}`;
+  const tagReminder = chatHistory.length < 4 ? "\n\nREMINDER: End with [LOCATION: place] [EVENT: current action]." : "";
+  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nYou are ${sessionAiName} (${chatRole}). React to ${sessionUserName}'s last message first, then continue the scene.${twistInstruction}${tagReminder}`;
 
   let response = null;
   try{
@@ -3035,6 +3040,16 @@ function addMessage(role, text, rawResponse = ""){
   cleanText = cleanText.replace(genericRegex, "");
 
   cleanText = cleanText.trim();
+
+  // — Fallback chips from scene memory if AI didn't generate them —
+  if(role === "ai" && storyChips.length === 0) {
+    if(sceneLocation && sceneLocation !== "Unknown") {
+      storyChips.push({ type: "location", text: sceneLocation });
+    }
+    if(sceneMission) {
+      storyChips.push({ type: "event", text: sceneMission });
+    }
+  }
   if(!cleanText && storyChips.length === 0) {
     messages.scrollTop = messages.scrollHeight;
     return;
