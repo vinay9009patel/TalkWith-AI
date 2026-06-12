@@ -1134,7 +1134,12 @@ Achievements</h2>
 </button>
 
 <div style="margin-bottom:40px; text-align:center;">
-  <img class="ai-avatar" id="chatAvatarSetup" src="https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed" alt="Character">
+  <div style="position:relative;display:inline-block;">
+    <img class="ai-avatar" id="chatAvatarSetup" src="https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed" alt="Character" onerror="handleAvatarError(this)">
+    <div id="shuffleAvatarBtn" onclick="rerollAvatar()" title="Change Avatar" style="position:absolute;bottom:-4px;right:-4px;background:rgba(124,58,237,0.9);border-radius:50%;width:32px;height:32px;display:none;align-items:center;justify-content:center;cursor:pointer;border:2px solid #1a1a2e;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </div>
+  </div>
   <h2>Character World</h2>
   <p>Step into a new life. Pick your mode and start your mission.</p>
 </div>
@@ -1641,6 +1646,11 @@ let chatDurationMin = 30;
 let chatEndTime = 0;
 let timerInterval = null;
 
+// Mood state tracker to prevent emoji flip-flopping
+let _currentMoodEmoji = "";
+let _moodMessagesRemaining = 0;
+let _lastChipsText = "";
+
 // Scene Memory System
 let sceneLocation = "";
 let sceneMission = "";
@@ -1666,68 +1676,19 @@ const AVATAR_MALE = [
   "https://i.pinimg.com/736x/19/92/17/1992171869e41afbb689c7d50000df1d.jpg",
   "https://i.pinimg.com/736x/42/57/9f/42579fb80783a61cc9db7714a39e8baa.jpg",
   "https://i.pinimg.com/736x/7f/a6/65/7fa665c80252fb6778728d64d7e93734.jpg",
-  "https://i.pinimg.com/736x/0b/2e/04/0b2e0415089bb3c3718a4cd2ecd13e39.jpg",
-  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1542178243-bc20204b1694?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1501196351651-0390a8a950cb?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1480429370139-e0132c086e2a?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1474176857210-7287d38d27c6?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1508243529287-e21914733111?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1463453091185-61582044d556?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1509460913899-515f1df34fea?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=500&h=500&fit=crop"
+  "https://i.pinimg.com/736x/0b/2e/04/0b2e0415089bb3c3718a4cd2ecd13e39.jpg"
 ];
 
 const AVATAR_FEMALE = [
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1521119989659-a83dee015942?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1521119989659-a83dee015942?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop",
+  
   "https://i.pinimg.com/736x/8d/cf/72/8dcf721c5d2e7b2765fd54c6fcac22dc.jpg",
   "https://i.pinimg.com/736x/4f/37/0f/4f370fe3014e982b5c1a89d0c77ca4bc.jpg",
   "https://i.pinimg.com/736x/cd/08/26/cd0826bdb5a949752cd339fe21b5dae4.jpg",
-  "https://i.pinimg.com/736x/b8/c1/c8/b8c1c8c3e8fa8e583f2d2cade6962cbd.jpg",
-  "https://i.pinimg.com/736x/d5/73/06/d573061e9bf91c70d904b4f4693fe0e0.jpg",
-  "https://i.pinimg.com/736x/02/3f/74/023f7440e562023e503d6104a0248034.jpg",
-  "https://i.pinimg.com/736x/f0/fa/26/f0fa267498c5c2ac2a9130b594d36b66.jpg",
+ "https://i.pinimg.com/736x/e7/42/62/e74262dce391849de27796a3b27e5e2a.jpg",
+ "https://i.pinimg.com/1200x/f1/bb/fd/f1bbfd829bedf4550c7c235161929410.jpg",
+ "https://i.pinimg.com/736x/59/1c/c4/591cc47df2d5e20c55c834f931d3a696.jpg",
+ "https://i.pinimg.com/736x/6d/ed/ec/6dedec336fa1f81a59b4331cea711ff3.jpg",
+ "https://i.pinimg.com/736x/9a/4b/38/9a4b3811dffe734482ea7981b2c346cc.jpg",
   "https://i.pinimg.com/736x/f8/fa/67/f8fa678bf29fc8855d49b81337c23610.jpg",
   "https://i.pinimg.com/736x/b2/0b/ea/b20bea7c2ac653bd5f41f4a82a609dd0.jpg",
   "https://i.pinimg.com/736x/f6/2f/8b/f62f8b86111bc503d75ec1a9ecdf1821.jpg",
@@ -1751,32 +1712,46 @@ function updateAiNameForGender(gender){
 
 function setChatGender(gender){
   chatGender = gender;
-  selectedAvatar = "";
-  // ... (rest of function)
-  const pool = gender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
-  const grid = document.getElementById("avatarGridItems");
   
-  // Expanded full-width grid logic
-  grid.style.maxWidth = "none";
-  grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(150px, 1fr))";
-  grid.style.gap = "20px";
-  grid.style.width = "100%";
-
-  grid.innerHTML = pool.map((url, i) => `
-    <div onclick="selectAvatar(this, '${url}')" style="aspect-ratio:1/1;border-radius:24px;overflow:hidden;cursor:pointer;border:4px solid transparent;transition:all 0.3s cubic-bezier(0.23, 1, 0.32, 1);${i === 0 ? 'border-color:rgba(124,58,237,0.4);' : ''}">
-      <img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'" loading="lazy">
-    </div>
-  `).join("");
-  document.getElementById("avatarGrid").style.display = "block";
-
-  // Auto-select first
-  const first = grid.querySelector("div");
-  if(first) selectAvatar(first, pool[0]);
+  // Pick 1 random avatar from pool
+  const pool = gender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
+  let newUrl;
+  do {
+    newUrl = pool[Math.floor(Math.random() * pool.length)];
+  } while (newUrl === selectedAvatar && pool.length > 1);
+  
+  selectedAvatar = newUrl;
+  const setupImg = document.getElementById("chatAvatarSetup");
+  setupImg.src = newUrl;
+  setupImg.style.display = "block";
+  
+  document.getElementById("avatarGrid").style.display = "none";
+  document.getElementById("shuffleAvatarBtn").style.display = "flex";
+  document.getElementById("userGenderSelection").style.display = "block";
+  document.getElementById("chatInputs").style.display = "block";
+  setTimeout(() => document.getElementById("chatRole").focus(), 100);
   
   // Re-generate name if a role is already set
   if(document.getElementById("chatRole").value){
-      updateAiNameForGender(gender);
+    updateAiNameForGender(gender);
   }
+}
+
+function handleAvatarError(img){
+  if(!selectedAvatar || img.src === selectedAvatar){
+    rerollAvatar();
+  }
+}
+
+function rerollAvatar(){
+  if(!chatGender) chatGender = "male";
+  const pool = chatGender === "female" ? AVATAR_FEMALE : AVATAR_MALE;
+  let newUrl;
+  do {
+    newUrl = pool[Math.floor(Math.random() * pool.length)];
+  } while (newUrl === selectedAvatar && pool.length > 1);
+  selectedAvatar = newUrl;
+  document.getElementById("chatAvatarSetup").src = newUrl;
 }
 
 function selectAvatar(el, url){
@@ -1938,13 +1913,16 @@ function escapeHtml(value){
     .replace(/'/g,"&#39;").replace(/`/g,"&#96;");
 }
 
-function formatMessageText(value){
+function formatMessageText(value, moodEmoji){
   let html = escapeHtml(value);
   
   // FIX: Strip ALL gender tags ([M], (F), M:, etc.) before any other processing
   html = html.replace(/[\(\[]\s*[MF]\s*[\)\]]\s*[-:]?/gi, ""); 
   html = html.replace(/\b[MF]\s*[-:]\s*/gi, "");
   html = html.replace(/^[MF]\s*[-:]\s*/gi, "");
+
+  // Strip pipe separators between tags (colors already differentiate them)
+  html = html.replace(/\s*\|\s*/g, ' ');
 
   // Handle Sub-Scenario tags
   const subRegex = /\[SUB-SCENARIO:\s*([^\]]+)\]/gi;
@@ -1955,12 +1933,30 @@ function formatMessageText(value){
             </div>`;
   });
 
+  // Style LOCATION tags as green pills
+  html = html.replace(/\[LOCATION:\s*([^\]]+)\]/gi, function(match, content){
+    return `<span style="display:inline-block;background:rgba(16,185,129,0.15);color:#34d399;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:0 3px;letter-spacing:0.5px;border:1px solid rgba(16,185,129,0.25);">${content.trim()}</span>`;
+  });
+  // Style EVENT tags as orange pills
+  html = html.replace(/\[EVENT:\s*([^\]]+)\]/gi, function(match, content){
+    return `<span style="display:inline-block;background:rgba(245,158,11,0.15);color:#fbbf24;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:0 3px;letter-spacing:0.5px;border:1px solid rgba(245,158,11,0.25);">${content.trim()}</span>`;
+  });
+  // Style NEW CHARACTER tags as pink pills
+  html = html.replace(/\[NEW\s+CHARACTER:\s*([^\]]+)\]/gi, function(match, content){
+    return `<span style="display:inline-block;background:rgba(236,72,153,0.15);color:#f472b6;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:0 3px;letter-spacing:0.5px;border:1px solid rgba(236,72,153,0.25);">${content.trim()}</span>`;
+  });
+  // Style remaining [TAG] tags as colored context pills
+  const contextTagRegex = /\[([A-Za-z0-9\s&\/\-]{2,60})\]/g;
+  html = html.replace(contextTagRegex, function(match, content){
+    return `<span style="display:inline-block;background:rgba(124,58,237,0.15);color:#a78bfa;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:0 3px;letter-spacing:0.5px;border:1px solid rgba(124,58,237,0.2);">${content.trim()}</span>`;
+  });
+
   // Fix Speaker formatting: "Name: *action* 'dialogue'"
   // All speakers except user use the Pink Underline style
   const speakerNameRegex = /^(?!(?:M|F|I|He|She|They|The|It|Note|Hint|Warning):)([a-zA-Z0-9\s]{2,25}):/gm;
   html = html.replace(speakerNameRegex, function(match, name){
-    const cleanName = name.trim();
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${cleanName}:</span>`;
+    const emojiTag = moodEmoji ? `<span class="mood-emoji" style="font-size:20px;vertical-align:middle;margin-left:3px;">${moodEmoji}</span>` : "";
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name.trim()}${emojiTag}</span>`;
   });
 
   return html
@@ -2005,7 +2001,7 @@ RELATIONSHIP RULES:
 }
 
 function buildChatSystemPrompt(){
-  let p = `You are an expert Roleplay Engine. Your goal is to provide a deeply immersive, reactive, and consistent experience.
+  let p = `You are an expert Roleplay Engine. Immersive, reactive, consistent.
 
 CHARACTER:
 Name: ${sessionAiName}
@@ -2013,30 +2009,92 @@ Role: ${chatRole}
 Context: ${chatBio || "A high-stakes mission."}
 
 WORLD STATE:
-The provided Scene Memory is authoritative. Use it as the source of truth for current scene, active characters, relationships, and recent events.
+Scene Memory is authoritative for current scene, characters, relationships, events.
 
 RULES:
-1. FORMAT: Name: *action* "dialogue" (e.g., ${sessionAiName}: *smiles* "Hello.")
-2. ACTIVE LISTENING: The first character who speaks must directly acknowledge ${sessionUserName}'s latest message before advancing the story.
-3. USER AGENCY: Anything ${sessionUserName} introduces (items, facts, scenarios) is IMMEDIATELY canon. Never ignore or overwrite user contributions; build upon them naturally in the very next line.
-4. NO USER CONTROL: Never speak, act, think, or make decisions for ${sessionUserName}.
-5. SIDE CHARACTERS: A side character must be noticed or introduced narratively before speaking for the first time. Reuse existing side characters before creating new ones. Max one new character per response.
-6. NAME USAGE: Mention ${sessionUserName} naturally at least once per response when appropriate.
-7. BREVITY: Strictly 1-2 short action/dialogue lines per character. Never exceed 3 sentences total. Keep it fast-paced.
-8. EMOTIONAL EXPRESSION: Use emojis naturally when they fit the emotion and dialogue. Use at most one emoji per response. Do not force emojis; serious, tense, or dramatic scenes should use no emoji at all.
-9. CONSISTENCY: Avoid repeating the same emotions, compliments, warnings, or dialogue patterns.
 
-AVOID:
-- Narrative paragraphs without dialogue.
-- Bracketed actions (e.g., [smiles]). Use *asterisks*.
-- Meta-commentary or breaking character.
+1. CRITICAL FORMAT — MUST follow exactly:
+CORRECT:  ${sessionAiName}: *studies the glowing runes* "This language is older than the stars, ${sessionUserName}."
+CORRECT:  ${sessionAiName}: *eyes narrow with concern* "We should proceed carefully."
+CORRECT:  Kael: *emerges from the shadows* "You're not alone here, ${sessionUserName}."
 
-DYNAMIC MEMORY TAGS (Use at the end of response):
-[LOCATION: Name] | [EVENT: Description] | [NEW CHARACTER: Name]
+WRONG:    ${sessionAiName}: concerned "This doesn't feel right."           ← NO bare emotion words
+WRONG:    ${sessionAiName}:                                              ← NO line break before action
+          concerned
+          "This doesn't feel right."
+WRONG:    ${sessionAiName}: "We need to be careful."                     ← NO action at all
+WRONG:    ${sessionAiName}: smiles "Hello."                              ← NO missing asterisks
+WRONG:    ${sessionAiName} turns to face ${sessionUserName}              ← NO colon after name
+          "We should proceed."                                           ← NO narrative prose
+
+ACTIONS MUST be wrapped in *asterisks*. NEVER write narrative prose like "${sessionAiName} turns to face you, a thoughtful expression on her face" — that is FORBIDDEN. Every line that starts with a character name MUST have a colon right after. If you describe an action, it goes inside *asterisks* after the colon.
+
+2. BANNED: NARRATIVE PROSE — The following is STRICTLY FORBIDDEN:
+WRONG:
+${sessionAiName}'s gaze lingers on ${sessionUserName}, a hint of surprise in her expression
+"The Oasis is calling to us."
+
+WRONG:
+As Asterith approaches the structure, the air begins to distort and ripple
+A figure emerges from the swirling energy
+
+INSTEAD WRITE:
+CORRECT: ${sessionAiName}: *gaze lingers on ${sessionUserName}* "The Oasis is calling to us."
+CORRECT: ${sessionAiName}: *approaches the structure as the air distorts around her* "Something is emerging."
+
+Every single response MUST use ONLY the NAME: *ACTION* "DIALOGUE" format. No exceptions. No introductory narrative sentences. No descriptions before the speaker name.
+
+3. MANDATORY END TAGS — Always conclude with these tags on ONE single line:
+[LOCATION: Place Name] [EVENT: What is happening right now]
+Example: [LOCATION: Astral Plateau] [EVENT: Ancient ruins reacting to ${sessionUserName}'s presence]
+NEVER describe location/event as raw sentences at the end. Use brackets ONLY.
+
+4. STORY PROGRESSION — Every response MUST advance the scene:
+- Reveal new information, sensory detail, or discovery
+- Escalate tension, danger, mystery, or consequence
+- React to ${sessionUserName}'s input with action, not just agreement
+WEAK:    ${sessionAiName}: "Then we need to be careful."                ← passive, no advancement
+STRONG:  ${sessionAiName}: *traces the glowing symbols as the ground trembles* "Too late for caution — the ruins are waking up, ${sessionUserName}."
+VARIETY: Do NOT repeat "be careful", "be cautious", "proceed carefully" across multiple responses. Each response must introduce fresh action or discovery.
+
+5. ACTIVE LISTENING: First address ${sessionUserName}'s latest message before advancing. Acknowledge THEN escalate.
+
+6. UNCONDITIONAL USER ACCEPTANCE:
+Whatever ${sessionUserName} says about the story, treat it as true.
+WRONG: "But that's impossible." "How could you possibly know that?"    ← REJECTING user input
+WRONG: "That doesn't make sense." "Are you sure?"                     ← DOUBTING user input
+CORRECT: ${sessionAiName}: *eyes widening* "If your parents told you about this, then the mystery runs deeper than I thought, ${sessionUserName}."
+CORRECT: ${sessionAiName}: *nods slowly* "You're right, I can feel it too. The Oasis is responding to us."
+NEVER challenge, doubt, or reject what ${sessionUserName} contributes. Build upon everything they say as if it's a clue, a memory, or a revelation.
+
+7. NO USER CONTROL: Never speak, act, or decide for ${sessionUserName}.
+
+8. SIDE CHARACTERS: New side characters speak their own dialogue immediately and address ${sessionUserName} by name. When a new character appears, they MUST introduce themselves and speak their own lines — the main character should NOT narrate for them. Reuse existing side characters first. Max one new per response.
+
+9. NAME USAGE: Mention ${sessionUserName} naturally at least once per response.
+
+10. BREVITY: 1-3 lines of NAME: *ACTION* "DIALOGUE" per response. Expand only when the scene genuinely needs depth.
+
+11. CONSISTENCY: Avoid repeating emotions, compliments, warnings, or patterns. Vary your actions.
+
+12. CHARACTER BEHAVIOR:
+- Speak naturally and briefly. Avoid long speeches, monologues, and multi-line explanations.
+- Stick to ONE emotion per scene segment (3-5 messages). Don't flip emotions every message.
+- Most responses: ONE short action + ONE short dialogue line. No action spam.
+- Let the story progress through discoveries and events, not through lengthy character explanations.
+
+NO EMOJIS: 0 emojis per response. Never use emojis.
+
+NEVER:
+- Write narrative paragraphs or introductory scene descriptions.
+- Use brackets for actions like [smiles]. ALL actions use *asterisks*.
+- Write ${sessionAiName}'s name without a colon after it.
+- Break character, narrate your own thoughts, or comment on the story.
+- Use bare emotional labels (angry, sad, concerned) as standalone text.
 ${getRelationshipRules()}`;
 
   if(chatMode === "practice"){
-    p += "\nPRACTICE MODE: Stay in character. Use natural vocabulary. Do not break character.";
+    p += "\nPRACTICE MODE: Stay in character. Natural vocabulary. Don't break character.";
   }
 
   return p;
@@ -2134,10 +2192,13 @@ function detectMood(text){
   if(context.includes("horror") || context.includes("scary") || context.includes("ghost") || context.includes("dark")) add("horror", 1.2);
   if(context.includes("magic") || context.includes("spell")) add("magic", 1.2);
 
-  // 2. Keyword detection
-  if(/angry|mad|annoyed|frustrated|ugh|shut up|leave me|hell|damn/.test(t)) add("angry", 4);
+  // 2. Keyword detection — angry requires clear anger, not just context words
+  if(/^(?!.*curious|.*wonder|.*myster)/i.test(t) && /furious|seething|rage|pissed off|scream at|shut up!|leave me alone!|i hate|you idiot/.test(t)) add("angry", 4);
+  if(/angry|mad|annoyed|frustrated/i.test(t) && /curious|wonder|mystery/i.test(t)) {} // block angry if curious context
+  else if(/angry|mad|annoyed|frustrated|ugh|shut up|leave me|hell|damn/.test(t)) add("angry", 3);
+  if(/jealous|mine!|only me|who is she|who is he/.test(t)) add("angry", 2);
+  if(/curious|wonder.*what|intriguing|fascinating/.test(t)) add("curious", 3);
   if(/tease|teasing|naughty|silly|dirty|besharam/.test(t)) add("playful", 3);
-  if(/jealous|mine|only me|who is she|who is he/.test(t)) add("angry", 2);
   if(/shy|blush|sharam/.test(t)) add("shy", 3);
   if(/miss you|hold me|kiss|hug|love you|want to be with you/.test(t)) add("romantic", 4);
   
@@ -2173,12 +2234,6 @@ function containsEmoji(text){
 }
 
 function appendFallbackEmoji(text){
-  if(containsEmoji(text)) return text;
-  const mood = detectMood(text);
-  if(mood){
-    const e = getRandomEmoji(mood);
-    if(e) return text + " " + e;
-  }
   return text;
 }
 
@@ -2209,6 +2264,11 @@ function cleanAIResponse(text){
       result = result.substring(0, match.index);
     }
   }
+
+  // FORMAT FIX: SpeakerName:\n emotion\n "dialogue" -> SpeakerName: *emotion* "dialogue"
+  result = result.replace(/^([A-Za-z\s.]{2,30}):(?:\r?\n)+\s*([a-z]{3,20})\s*(?:\r?\n)+\s*"/gm, "$1: *$2* \"");
+  // STRIP EMOJIS: Remove emojis AI outputs despite 0-emoji rule
+  result = result.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, "");
 
   return result
     .replace(/\s+([,.!?])/g, "$1")
@@ -2302,6 +2362,7 @@ function selectMode(mode){
 
   // Full reset of setup UI state when switching modes
   document.getElementById("avatarGrid").style.display = "none";
+  document.getElementById("shuffleAvatarBtn").style.display = "none";
   document.getElementById("userGenderSelection").style.display = "none";
   document.getElementById("chatInputs").style.display = "none";
   document.getElementById("chatAvatarSetup").src = "https://ui-avatars.com/api/?name=?&background=1a1a1a&color=7c3aed";
@@ -2374,6 +2435,9 @@ async function startChat(){
   chatRole = role;
   chatHistory = [];
   chatActive = true;
+  _currentMoodEmoji = "";
+  _moodMessagesRemaining = 0;
+  _lastChipsText = "";
 
   // Show current plot
   const pb = document.getElementById("currentPlotBar");
@@ -2430,24 +2494,23 @@ async function startChat(){
 
   GOAL: Generate a high-concept, mysterious starting scenario.
 
-  RULES:
-  1. GENDER INTEGRITY: You are ${aiName} (Gender: ${chatGender}). Pronouns: ${chatGender === 'male' ? 'He/Him' : 'She/Her'}.
-  2. PERSONALIZATION: Use ${userName}'s name naturally in the scenario and mission. Do not rename either character.
-  3. NAME INTEGRATION: You MUST include ${userName}'s name explicitly inside the 'scenario' and 'goal' descriptions you generate to make it personal.
-  4. ATMOSPHERIC WORLD-BUILDING: Create vivid, cinematic scenes using visual, audio, environmental, and emotional details.
-  5. ORIGINALITY: Avoid generic openings, chosen-one clichés, prophecy clichés, and "wake up in a forest" scenarios. Create unique hooks.
-  6. SIDE CHARACTERS: Generate opportunities for side characters to emerge naturally from the scenario. Do not force them.
+   RULES:
+   1. PERSONALIZATION: Use ${userName}'s name naturally in scenario and mission. Do not rename.
+   2. NAME INTEGRATION: Include ${userName}'s name explicitly inside 'scenario' and 'goal'.
+   3. ATMOSPHERIC: Use visual, audio, environmental, and emotional details for cinematic scenes.
+   4. ORIGINALITY: Avoid chosen-one clichés, prophecies, "wake up in forest". Create unique hooks.
+   5. OUTPUT: Return valid JSON only. No markdown, explanations, code fences, or extra text.
 
-  OUTPUT RULE: Return valid JSON only. No markdown. No explanations. No code fences. No text before or after the JSON object.
-  Return JSON ONLY: {
-    "location": "Name of the starting location",
-    "scenario": "Cinematic description (2-3 sentences)",
-    "goal": "A specific, high-stakes mission objective",
-    "worldRules": "Key world rules",
-    "reward": "The ultimate prize for success",
-    "tone": "Overall mood",
-    "userRoleLabel": "Epic Title for User"
-  }`;
+   JSON FORMAT:
+   {
+     "location": "Starting location name",
+     "scenario": "Cinematic description (2-3 sentences)",
+     "goal": "High-stakes mission objective",
+     "worldRules": "Key world rules",
+     "reward": "Ultimate prize for success",
+     "tone": "Overall mood",
+     "userRoleLabel": "Epic Title for User"
+   }`;
 
   const storyResult = await askAI(storyPrompt, "Output ONLY raw JSON.", 700);
   let storyProcessed = false;
@@ -2498,12 +2561,19 @@ You are ${aiName}.
 Address ${userName}.
 Only ${aiName} speaks in the first message.`;
 
-        const firstMsg = await askAI(firstMsgPrompt, buildChatSystemPrompt(), 500);
+        const firstMsgRaw = await askAI(firstMsgPrompt, buildChatSystemPrompt(), 500);
         hideTyping();
-        if(firstMsg){
+        if(firstMsgRaw){
+          const firstMsg = cleanAIResponse(firstMsgRaw);
+          const firstTTS = firstMsg
+            .replace(/\[LOCATION:.*?\]/gi, "")
+            .replace(/\[EVENT:.*?\]/gi, "")
+            .replace(/\[NEW CHARACTER:.*?\]/gi, "")
+            .replace(/\[SUB-SCENARIO:.*?\]/gi, "")
+            .trim();
           addMessage("ai", firstMsg);
-          chatHistory.push({ role: "assistant", content: firstMsg });
-          setTimeout(() => speakText(firstMsg, chatGender), 300);
+          chatHistory.push({ role: "assistant", content: firstTTS });
+          setTimeout(() => speakText(firstTTS, chatGender), 300);
           storyProcessed = true;
           setInputPulse(); // Hint user turn
           document.getElementById("chatInput").placeholder = "Your turn to reply, " + sessionUserName + "...";
@@ -2621,6 +2691,8 @@ function resetToFreshSetup(){
   document.getElementById("chatInput").placeholder = "Type a message...";
   document.getElementById("currentPlotBar").style.display = "none";
   
+  document.getElementById("shuffleAvatarBtn").style.display = "none";
+  
   // Re-initialize with a fresh random setup
   if(typeof suggestRandomRole === 'function') {
     suggestRandomRole();
@@ -2685,7 +2757,7 @@ async function sendMessage(){
   // Persistent Story Context in every request
   const storyContext = appData.currentStory ? `\nCURRENT STORY:\nScenario: ${appData.currentStory.scenario}\nGoal: ${appData.currentStory.goal}\nTone: ${appData.currentStory.tone}\n` : "";
 
-  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nReply as ${chatRole}. Move the story forward naturally.${twistInstruction}`;
+  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nYou are ${sessionAiName} (${chatRole}). React to ${sessionUserName}'s last message first, then continue the scene.${twistInstruction}`;
 
   let response = null;
   try{
@@ -2710,7 +2782,7 @@ async function sendMessage(){
 
     if(!clean || clean.length < 5) clean = response.trim();
     
-    // Create Dialogue-Only version (No tech tags, for TTS and bubble cleaning)
+    // Create Dialogue-Only version (No tech tags, for TTS and history)
     const dialogueOnly = clean
       .replace(/\[LOCATION:.*?\]/gi, "")
       .replace(/\[EVENT:.*?\]/gi, "")
@@ -2719,11 +2791,10 @@ async function sendMessage(){
       .trim();
 
     const polishedDialogue = cleanAIResponse(dialogueOnly);
-    // AI first, fallback second: If AI didn't provide emoji, append one.
-    const finalMsg = appendFallbackEmoji(polishedDialogue); 
+    // Tags extracted in addMessage and rendered as separate story chips
+    const polishedDisplay = cleanAIResponse(clean);
     
-    // Add to UI: Pass polished dialogue for bubble, but raw clean (with tags) for processing sub-scenarios
-    addMessage("ai", finalMsg, clean); 
+    addMessage("ai", polishedDisplay, clean); 
     chatHistory.push({ role: "assistant", content: polishedDialogue });
     
     setTimeout(() => speakText(polishedDialogue, chatGender), 300);
@@ -2763,7 +2834,7 @@ function addBriefing(data){
       <div class="briefing-header">Mission Briefing</div>
 
       <div class="briefing-item">
-        <div class="briefing-label" style="color:var(--primary-light); font-weight:900;">👤 YOU ARE:</div>
+        <div class="briefing-label" style="color:var(--primary-light); font-weight:900;">YOU ARE:</div>
         <div class="briefing-value">
           <span style="font-size:18px; color:#ffffff;"><strong>${data.userName}</strong></span> 
           <span style="color:#c4b5fd; font-weight:700; font-size:15px; margin-left:4px;">— ${data.userRoleLabel || 'The Protagonist'}</span>
@@ -2858,23 +2929,112 @@ function addMessage(role, text, rawResponse = ""){
 
   // Clean the text for display (remove any lingering tags from the final text)
   let cleanText = text.replace(subRegex, "").replace(charRegex, "").trim();
-  if(!cleanText) {
+
+  // — Extract story chips (LOCATION, EVENT, generic [tags]) from dialogue —
+  const storyChips = [];
+
+  const locationRegex = /\[LOCATION:\s*([^\]]+)\]/gi;
+  let chipMatch;
+  while ((chipMatch = locationRegex.exec(cleanText)) !== null) {
+    storyChips.push({ type: "location", text: chipMatch[1].trim() });
+  }
+  cleanText = cleanText.replace(locationRegex, "");
+
+  const eventRegex = /\[EVENT:\s*([^\]]+)\]/gi;
+  while ((chipMatch = eventRegex.exec(cleanText)) !== null) {
+    storyChips.push({ type: "event", text: chipMatch[1].trim() });
+  }
+  cleanText = cleanText.replace(eventRegex, "");
+
+  const genericRegex = /\[([A-Za-z0-9\s&\/\-]{2,60})\]/g;
+  while ((chipMatch = genericRegex.exec(cleanText)) !== null) {
+    storyChips.push({ type: "generic", text: chipMatch[1].trim() });
+  }
+  cleanText = cleanText.replace(genericRegex, "");
+
+  cleanText = cleanText.trim();
+  if(!cleanText && storyChips.length === 0) {
     messages.scrollTop = messages.scrollHeight;
     return;
+  }
+
+  // — Detect mood and get matching emoji for speaker header —
+  // Emergency override: plot twists, new characters, danger, or strong user emotion force mood reset
+  let forceMoodReset = false;
+  if(role === "ai" && /\[SUB-SCENARIO:|\[NEW CHARACTER:|attack|betrayal|collapse|erupt|dragon|explosion|suddenly appears/i.test(cleanText || text)) {
+    forceMoodReset = true;
+  }
+  if(role === "user" && /angry|mad|scared|help|danger|run|attack|betray|scream|furious|terrified/i.test(text)) {
+    forceMoodReset = true;
+  }
+  if(forceMoodReset) _moodMessagesRemaining = 0;
+
+  let moodEmoji = "";
+  try {
+    if(_moodMessagesRemaining <= 0) {
+      var mood = detectMood(cleanText);
+      if(mood) {
+        var e = getRandomEmoji(mood);
+        if(e) {
+          moodEmoji = String(e).trim();
+          _currentMoodEmoji = moodEmoji;
+          _moodMessagesRemaining = 3 + Math.floor(Math.random() * 3); // 3-5 messages
+        }
+      }
+    } else {
+      moodEmoji = _currentMoodEmoji;
+      _moodMessagesRemaining--;
+    }
+  } catch(ex) {}
+  if(!moodEmoji) {
+    if(_currentMoodEmoji) {
+      moodEmoji = _currentMoodEmoji;
+    } else if(typeof EMOJI_CATEGORIES !== 'undefined' && EMOJI_CATEGORIES.mystery) {
+      moodEmoji = EMOJI_CATEGORIES.mystery[0] || "✨";
+      _currentMoodEmoji = moodEmoji;
+    }
+  }
+
+  // — Deduplicate story chips: only show if location/event actually changed —
+  if(storyChips.length > 0) {
+    var chipsKey = storyChips.map(c => c.type + ":" + c.text).join("|");
+    if(chipsKey === _lastChipsText) {
+      storyChips.length = 0; // Same as last time, hide them
+    } else {
+      _lastChipsText = chipsKey;
+    }
+  } else if(role === "ai") {
+    // AI message with no chips — don't clear the last chips, they might repeat
   }
 
   const div = document.createElement("div");
   div.className = "msg " + role;
 
-  const bubbleHtml = `<div class="msg-bubble">${formatMessageText(cleanText)}</div>
-    <div class="msg-time">${getTimeStr()}</div>`;
+  let msgHtml = "";
+  if(cleanText) {
+    msgHtml += `<div class="msg-bubble">${formatMessageText(cleanText, moodEmoji)}</div>`;
+  }
+
+  // — Render story chips below the bubble as a separate container —
+  if(storyChips.length > 0) {
+    let chipsHtml = storyChips.map(function(chip){
+      let bg = "rgba(124,58,237,0.15)";
+      let fg = "#a78bfa";
+      if(chip.type === "location") { bg = "rgba(16,185,129,0.15)"; fg = "#34d399"; }
+      else if(chip.type === "event") { bg = "rgba(245,158,11,0.15)"; fg = "#fbbf24"; }
+      return `<span style="display:inline-block;background:${bg};color:${fg};font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:2px 3px 0 0;letter-spacing:0.5px;border:1px solid rgba(255,255,255,0.08);">${chip.text}</span>`;
+    }).join(" ");
+    msgHtml += `<div class="msg-story-chips" style="margin:6px 0 0 0;line-height:1.6;">${chipsHtml}</div>`;
+  }
+
+  msgHtml += `<div class="msg-time">${getTimeStr()}</div>`;
 
   if(role === "ai"){
     div.innerHTML = `
       <img class="msg-avatar" src="${document.getElementById('chatAvatarHeader').src}" alt="">
-      <div>${bubbleHtml}</div>`;
+      <div>${msgHtml}</div>`;
   } else {
-    div.innerHTML = `<div>${bubbleHtml}</div>`;
+    div.innerHTML = `<div>${msgHtml}</div>`;
   }
 
   const bubble = div.querySelector(".msg-bubble");
