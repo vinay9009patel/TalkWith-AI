@@ -2027,7 +2027,14 @@ WRONG:    ${sessionAiName}: smiles "Hello."                              ← NO 
 WRONG:    ${sessionAiName} turns to face ${sessionUserName}              ← NO colon after name
           "We should proceed."                                           ← NO narrative prose
 
-ACTIONS MUST be wrapped in *asterisks*. NEVER write narrative prose like "${sessionAiName} turns to face you, a thoughtful expression on her face" — that is FORBIDDEN. Every line that starts with a character name MUST have a colon right after. If you describe an action, it goes inside *asterisks* after the colon.
+ ACTIONS MUST be wrapped in *asterisks*. NEVER write narrative prose like "${sessionAiName} turns to face you, a thoughtful expression on her face" — that is FORBIDDEN. Every line that starts with a character name MUST have a colon right after. If you describe an action, it goes inside *asterisks* after the colon.
+
+ALWAYS start with the character name followed by colon. Examples of what you MUST start with:
+CORRECT LINE START: "${sessionAiName}: *action*"
+CORRECT LINE START: "Kael: *action*"
+WRONG LINE START: "*nods*"  ← NO, missing name
+WRONG LINE START: "nods slowly"  ← NO, missing name and asterisks
+Every response line that contains action or dialogue MUST begin with "CharacterName:" followed by action in *asterisks*.
 
 2. BANNED: NARRATIVE PROSE — The following is STRICTLY FORBIDDEN:
 WRONG:
@@ -2049,13 +2056,13 @@ Every single response MUST use ONLY the NAME: *ACTION* "DIALOGUE" format. No exc
 Example: [LOCATION: Astral Plateau] [EVENT: Ancient ruins reacting to ${sessionUserName}'s presence]
 NEVER describe location/event as raw sentences at the end. Use brackets ONLY.
 
-4. STORY PROGRESSION — Every response MUST advance the scene:
+ 4. STORY PROGRESSION — Every response MUST advance the scene:
 - Reveal new information, sensory detail, or discovery
 - Escalate tension, danger, mystery, or consequence
 - React to ${sessionUserName}'s input with action, not just agreement
 WEAK:    ${sessionAiName}: "Then we need to be careful."                ← passive, no advancement
 STRONG:  ${sessionAiName}: *traces the glowing symbols as the ground trembles* "Too late for caution — the ruins are waking up, ${sessionUserName}."
-VARIETY: Do NOT repeat "be careful", "be cautious", "proceed carefully" across multiple responses. Each response must introduce fresh action or discovery.
+VARIETY: Do NOT repeat "be careful", "be cautious", "we need to be careful", "proceed carefully", or any variant of caution across responses. Each response MUST introduce fresh action, discovery, or progression.
 
 5. ACTIVE LISTENING: First address ${sessionUserName}'s latest message before advancing. Acknowledge THEN escalate.
 
@@ -2067,9 +2074,13 @@ CORRECT: ${sessionAiName}: *eyes widening* "If your parents told you about this,
 CORRECT: ${sessionAiName}: *nods slowly* "You're right, I can feel it too. The Oasis is responding to us."
 NEVER challenge, doubt, or reject what ${sessionUserName} contributes. Build upon everything they say as if it's a clue, a memory, or a revelation.
 
-7. NO USER CONTROL: Never speak, act, or decide for ${sessionUserName}.
+ 7. NO USER CONTROL: Never speak, act, or decide for ${sessionUserName}.
 
-8. SIDE CHARACTERS: New side characters speak their own dialogue immediately and address ${sessionUserName} by name. When a new character appears, they MUST introduce themselves and speak their own lines — the main character should NOT narrate for them. Reuse existing side characters first. Max one new per response.
+8. SIDE CHARACTERS:
+- When ${sessionUserName} introduces or directly addresses a character by name, that character MUST speak their OWN dialogue.
+- NEVER answer for another character. If ${sessionUserName} asks "Aarush, what do you think?" then AARUSH must respond — not ${sessionAiName}.
+- Side characters speak their own lines, use their own name prefix, and have their own actions.
+- New side characters speak immediately when introduced. Reuse existing ones first. Max one new per response.
 
 9. NAME USAGE: Mention ${sessionUserName} naturally at least once per response.
 
@@ -2245,6 +2256,8 @@ function cleanAIResponse(text){
   result = result.replace(/[\(\[]\s*[MF]\s*[\)\]]\s*[-:]?/gi, ""); 
   result = result.replace(/\b[MF]\s*[-:]\s*/gi, "");
   result = result.replace(/^[MF]\s*[-:]\s*/gi, "");
+  // Strip debug tags like [DLOCATION: ...], [DCHARACTER: ...] etc
+  result = result.replace(/\[D[A-Z]+:.*?\]/gi, "");
 
   // Post-processing grammar fixes
   result = result.replace(/\b[Mm]e\s+([a-zA-Z]+)/g, (match, word) => {
@@ -2600,19 +2613,17 @@ function endChat(){
   if(timerInterval) clearInterval(timerInterval);
   appData.chatsDone++;
   awardXP(20);
-  
-  // Reset session-specific state
-  chatHistory = [];
-  sessionAiName = "Character";
-  sessionUserName = "User";
-  firstMsg = "";
-  appData.history = [];
-  appData.currentStory = null;
 
   if(chatMode === "practice"){
     generateAndShowReport();
   } else {
-    // Both modes now follow the same flow of clearing chat, then calling resetToFreshSetup via closeReport() or directly
+    // Reset session-specific state
+    chatHistory = [];
+    sessionAiName = "Character";
+    sessionUserName = "User";
+    firstMsg = "";
+    appData.history = [];
+    appData.currentStory = null;
     resetToFreshSetup();
   }
 }
@@ -2703,6 +2714,12 @@ function resetToFreshSetup(){
 
 function closeReport(){
   document.getElementById("reportOverlay").classList.remove("open");
+  chatHistory = [];
+  sessionAiName = "Character";
+  sessionUserName = "User";
+  firstMsg = "";
+  appData.history = [];
+  appData.currentStory = null;
   resetToFreshSetup();
 }
 
