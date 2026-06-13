@@ -2017,11 +2017,11 @@ function formatMessageText(value, moodEmoji){
   });
 
   // Fix Speaker formatting: "Name: *action* 'dialogue'"
-  // All speakers except user use the Pink Underline style
-  const speakerNameRegex = /^(?!(?:M|F|I|He|She|They|The|It|Note|Hint|Warning):)([a-zA-Z0-9\s]{2,25}):/gm;
+  // All speakers except user use pill/badge style with gradient
+  const speakerNameRegex = /^(?!(?:M|F|I|He|She|They|The|It|Note|Hint|Warning):)([a-zA-Z0-9\s\.]{2,30}):/gm;
   html = html.replace(speakerNameRegex, function(match, name){
     const emojiTag = moodEmoji ? `<span class="mood-emoji" style="font-size:20px;vertical-align:middle;margin-left:3px;">${moodEmoji}</span>` : "";
-    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name.trim()}${emojiTag}</span>`;
+    return `<span style="color:#f472b6; font-weight:800; text-transform:uppercase; font-size:11px; display:block; margin-top:12px; margin-bottom:4px; letter-spacing:1px; border-bottom:1px solid rgba(244, 114, 182, 0.2); padding-bottom:2px;">👤 ${name.trim()}${emojiTag}:</span>`;
   });
 
   return html
@@ -2072,7 +2072,7 @@ function buildChatSystemPrompt(){
   let p = `You are ${sessionAiName} (${chatRole}). ${chatBio || "High-stakes mission."}
 
 CONSTRAINTS:
-* Keep responses concise.
+* Keep responses VERY short — 1-2 lines max. No long paragraphs.
 * Every response MUST contain at least one valid speaker line.
 * Use one consistent format throughout the scene.
 
@@ -2255,35 +2255,61 @@ function detectMood(text){
   if(context.includes("horror") || context.includes("scary") || context.includes("ghost") || context.includes("dark")) add("horror", 1.2);
   if(context.includes("magic") || context.includes("spell")) add("magic", 1.2);
 
-  // 2. Keyword detection — angry requires clear anger, not just context words
+  // 2. Narrative action detection — detect mood from *asterisk* actions
+  if(/\*smiles?\*|\*grins?\*|\*chuckles?\*|\*laughs?\*|\*beams?\*|\*cheer|\*giggles?\*|\*brightens?\*/i.test(t)) add("happy", 3);
+  if(/\*frowns?\*|\*sighs?\*|\*shakes? head\*|\*wipes? tear|\*whispers?\*|\*voice soften/i.test(t)) add("sad", 2);
+  if(/\*growls?\*|\*snarls?\*|\*eyes? narrow|\*clenches? fist|\*snaps?\*|\*hisses?\*|\*glare|\*scowl/i.test(t)) add("angry", 4);
+  if(/\*tilts? head\*|\*raises? eyebrow|\*peers? closer\*|\*studies?\*|\*examines?\*|\*curious|\*leans? in\*/i.test(t)) add("curious", 3);
+  if(/\*nods?\*|\*steps? forward\*|\*steels?|\*prepares?\*|\*readies?\*|\*braces?\*/i.test(t)) add("serious", 3);
+  if(/\*cautiously\*|\*careful|\*watch\s+out\*|\*alarmed\*|\*wary|\*darts?\*|\*spun? around\*/i.test(t)) add("worried", 3);
+  if(/\*rolls? eyes\*|\*smirks?\*|\*winks?\*|\*teases?\*|\*grins? sly/i.test(t)) add("playful", 3);
+  if(/\*blushes?\*|\*averts?\*|\*looks? away\*|\*fidgets?\*/i.test(t)) add("shy", 2);
+  if(/\*gasps?\*|\*staggers?\*|\*jaw drops?\*|\*freezes?\*/i.test(t)) add("surprised", 3);
+  if(/\*steps? closer\*|\*gazes?\*|\*touches? gently\*|\*caress|\*leans? in\*|\*soft smile/i.test(t) && /romantic|love|heart|beautiful|gorgeous/i.test(context)) add("romantic", 4);
+
+  // 3. Dialogue keyword detection — angry requires clear anger, not just context words
   if(/^(?!.*curious|.*wonder|.*myster)/i.test(t) && /furious|seething|rage|pissed off|scream at|shut up!|leave me alone!|i hate|you idiot/.test(t)) add("angry", 4);
   if(/angry|mad|annoyed|frustrated/i.test(t) && /curious|wonder|mystery/i.test(t)) {} // block angry if curious context
   else if(/angry|mad|annoyed|frustrated|ugh|shut up|leave me|hell|damn/.test(t)) add("angry", 3);
   if(/jealous|mine!|only me|who is she|who is he/.test(t)) add("angry", 2);
-  if(/curious|wonder.*what|intriguing|fascinating/.test(t)) add("curious", 3);
-  if(/tease|teasing|naughty|silly|dirty|besharam/.test(t)) add("playful", 3);
-  if(/shy|blush|sharam/.test(t)) add("shy", 3);
-  if(/miss you|hold me|kiss|hug|love you|want to be with you/.test(t)) add("romantic", 4);
+  if(/curious|wonder.*what|intriguing|fascinating|tell me more|explain|what is this/.test(t)) add("curious", 3);
+  if(/tease|teasing|naughty|silly|dirty|besharam|cheeky|flirt/.test(t)) add("playful", 3);
+  if(/shy|blush|sharam|embarrass|hesitate/.test(t)) add("shy", 3);
+  if(/miss you|hold me|kiss|hug|love you|want to be with you|my dear|sweetheart|darling/.test(t)) add("romantic", 4);
   
-  if(/\bhi\b|\bhello\b|\bhey\b/.test(t)) add("happy", 1);
-  if(/thank|thanks|grateful/.test(t)) add("happy", 1);
-  if(/sorry|apologize|my mistake|forgive/.test(t)) add("sad", 2);
+  if(/\bhi\b|\bhello\b|\bhey\b|\bgreetings\b/.test(t)) add("happy", 1);
+  if(/thank|thanks|grateful|appreciate/.test(t)) add("happy", 1);
+  if(/sorry|apologize|my mistake|forgive|regret/.test(t)) add("sad", 2);
   
-  if(/worried|worry|scared|afraid|anxious|emergency|help/.test(t)) add("worried", 3);
-  if(/surprise|\breally\?|wait|oh wow|no way/.test(t)) add("surprised", 3);
-  if(/think|thinking|maybe|perhaps|wonder/.test(t)) add("thinking", 2);
+  if(/worried|worry|scared|afraid|anxious|emergency|help|not safe|dangerous|be careful/.test(t)) add("worried", 3);
+  if(/surprise|\breally\?|wait|oh wow|no way|impossible|what\?|by the stars/.test(t)) add("surprised", 3);
+  if(/think|thinking|maybe|perhaps|wonder|consider|suppose/.test(t)) add("thinking", 2);
   
-  if(/\bmiss\b|sad|cry|lonely|hurt|pain/.test(t)) add("sad", 3);
-  if(/awesome|amazing|incredible|omg|wow/.test(t)) add("excited", 3);
-  if(/haha|lol|funny|hilarious/.test(t)) add("funny", 3);
-  if(/smile|happy|glad|wonderful|love|lovely/.test(t)) add("happy", 3);
+  if(/\bmiss\b|sad|cry|lonely|hurt|pain|mourn|grief/.test(t)) add("sad", 3);
+  if(/awesome|amazing|incredible|omg|wow|magnificent|glorious/.test(t)) add("excited", 3);
+  if(/haha|lol|funny|hilarious|absurd/.test(t)) add("funny", 3);
+  if(/smile|happy|glad|wonderful|love|lovely|thrilled|delight/.test(t)) add("happy", 3);
+  if(/fascinating|remarkable|extraordinary|unprecedented|never seen/.test(t)) add("curious", 2);
+
+  // 4. Context-aware fallback — use story tone if no keywords matched yet
+  if(Object.keys(scores).length === 0) {
+    if(context.includes("urgent") || context.includes("tense") || context.includes("danger") || context.includes("critical") || context.includes("battle")) add("worried", 1);
+    if(context.includes("mysterious") || context.includes("mystery") || context.includes("detective") || context.includes("unknown")) add("mystery", 1);
+    if(context.includes("romantic") || context.includes("love") || context.includes("passion")) add("romantic", 1);
+    if(context.includes("sci-fi") || context.includes("space") || context.includes("future") || context.includes("tech")) add("scifi", 1);
+    if(context.includes("fantasy") || context.includes("magic") || context.includes("medieval") || context.includes("wizard")) add("fantasy", 1);
+    if(context.includes("adventure") || context.includes("quest") || context.includes("explore")) add("adventure", 1);
+    if(context.includes("funny") || context.includes("comedy") || context.includes("humor")) add("funny", 1);
+    if(context.includes("heroic") || context.includes("action") || context.includes("victory")) add("proud", 1);
+    if(context.includes("horror") || context.includes("scary") || context.includes("ghost") || context.includes("dark")) add("horror", 1);
+  }
 
   // Map 'excited' to 'happy' if it won
   if(scores["excited"] && (scores["excited"] > (scores["happy"] || 0))) {
     add("happy", scores["excited"]);
   }
 
-  // 3. Role-based fallback
+  // 5. Role-based fallback
   const role = (chatRole || "").toLowerCase();
   if(/girlfriend|boyfriend|lover|bf|gf|crush|date|husband|wife/.test(role)) add("romantic", 0.5);
 
@@ -2321,12 +2347,15 @@ function cleanAIResponse(text){
     return match;
   });
 
-  // HARD CUTOFF: Prevent Self-Roleplay
+  // HARD CUTOFF: Prevent Self-Roleplay (remove ONLY the matched line, not everything after)
   if(sessionUserName && sessionUserName !== "User") {
     const userRoleplayRegex = new RegExp(`(?:^|\\n)\\s*\\*?\\[?${sessionUserName}\\]?\\*?\\s*:`, 'i');
     const match = result.match(userRoleplayRegex);
     if(match && match.index !== undefined) {
-      result = result.substring(0, match.index);
+      const fromPos = match.index;
+      const toPos = result.indexOf('\n', fromPos + 1);
+      const endPos = toPos !== -1 ? toPos + 1 : result.length;
+      result = result.substring(0, fromPos) + '\n' + result.substring(endPos).trimStart();
     }
   }
 
@@ -2340,45 +2369,46 @@ function cleanAIResponse(text){
   result = result.replace(/^([A-Za-z\s.]{2,30}:\s*)"\s*"\s*$/gm, "");
   result = result.replace(/^\s*"\s*"\s*$/gm, "");
 
-  // FIX 3: Same-speaker dedup — merge consecutive blocks from same speaker
+  // FIX 3: Same-speaker dedup — merge ALL consecutive same-speaker lines
   const lines = result.split('\n').filter(Boolean);
   const merged = [];
   for (let i = 0; i < lines.length; i++) {
-    const currentLine = lines[i].trim();
-    const nextLine = (i + 1 < lines.length) ? lines[i + 1].trim() : '';
+    let currentLine = lines[i].trim();
     const currentSpeaker = currentLine.match(/^([A-Za-z\s.]{2,30}):/);
-    const nextSpeaker = nextLine.match(/^([A-Za-z\s.]{2,30}):/);
-    if (currentSpeaker && nextSpeaker && currentSpeaker[1].trim().toLowerCase() === nextSpeaker[1].trim().toLowerCase()) {
-      // Check if current line has the tag ending
-      const hasTags = /\[LOCATION:|\[EVENT:/.test(nextLine);
-      if (!hasTags) {
-        // Merge: take action from next, append dialogue
-        const currentAction = currentLine.match(/\*([^*]*)\*/);
-        const nextAction = nextLine.match(/\*([^*]*)\*/);
-        const currentDialogue = currentLine.match(/"([^"]*)"/);
-        const nextDialogue = nextLine.match(/"([^"]*)"/);
-        let mergedLine = currentSpeaker[0] + ' ';
-        if (currentAction && nextAction) {
-          mergedLine += '*' + currentAction[1] + ', ' + nextAction[1] + '*';
-        } else if (currentAction) {
-          mergedLine += '*' + currentAction[1] + '*';
-        } else if (nextAction) {
-          mergedLine += '*' + nextAction[1] + '*';
-        }
-        if (currentDialogue && nextDialogue) {
-          mergedLine += ' "' + currentDialogue[1] + ' ' + nextDialogue[1] + '"';
-        } else if (currentDialogue) {
-          mergedLine += ' "' + currentDialogue[1] + '"';
-        } else if (nextDialogue) {
-          mergedLine += ' "' + nextDialogue[1] + '"';
-        }
-        // Check if next line has end tags
-        const tagsMatch = nextLine.match(/\[LOCATION:[^\]]*\]\s*\[EVENT:[^\]]*\]/);
-        if (tagsMatch) mergedLine += ' ' + tagsMatch[0];
-        merged.push(mergedLine);
-        i++; // skip next line
-        continue;
+    if (!currentSpeaker) {
+      merged.push(currentLine);
+      continue;
+    }
+    // Keep merging as long as next line has same speaker
+    while (i + 1 < lines.length) {
+      const nextLine = lines[i + 1].trim();
+      if (!nextLine) { i++; continue; }
+      const nextSpeaker = nextLine.match(/^([A-Za-z\s.]{2,30}):/);
+      if (!nextSpeaker || currentSpeaker[1].trim().toLowerCase() !== nextSpeaker[1].trim().toLowerCase()) break;
+      if (/\[LOCATION:|\[EVENT:/.test(nextLine)) break;
+      const currentAction = currentLine.match(/\*([^*]*)\*/);
+      const nextAction = nextLine.match(/\*([^*]*)\*/);
+      const currentDialogue = currentLine.match(/"([^"]*)"/);
+      const nextDialogue = nextLine.match(/"([^"]*)"/);
+      let mergedLine = currentSpeaker[0] + ' ';
+      if (currentAction && nextAction) {
+        mergedLine += '*' + currentAction[1] + ', ' + nextAction[1] + '*';
+      } else if (currentAction) {
+        mergedLine += '*' + currentAction[1] + '*';
+      } else if (nextAction) {
+        mergedLine += '*' + nextAction[1] + '*';
       }
+      if (currentDialogue && nextDialogue) {
+        mergedLine += ' "' + currentDialogue[1] + ' ' + nextDialogue[1] + '"';
+      } else if (currentDialogue) {
+        mergedLine += ' "' + currentDialogue[1] + '"';
+      } else if (nextDialogue) {
+        mergedLine += ' "' + nextDialogue[1] + '"';
+      }
+      const tagsMatch = nextLine.match(/\[LOCATION:[^\]]*\]\s*\[EVENT:[^\]]*\]/);
+      if (tagsMatch) mergedLine += ' ' + tagsMatch[0];
+      currentLine = mergedLine;
+      i++;
     }
     merged.push(currentLine);
   }
@@ -2915,6 +2945,7 @@ function enforceAIResponse(clean, userText) {
       if (firstQuote >= 0) { action = content.substring(0, firstQuote).trim(); dialogue = content.substring(firstQuote); }
       else { action = content; }
 
+      if (!action && !dialogue) { continue; }
       if (action && !action.startsWith('*')) action = '*' + action + '*';
       const parts = [];
       if (action) parts.push(action);
@@ -3310,10 +3341,8 @@ function addMessage(role, text, rawResponse = ""){
     }
   } catch(ex) {}
   if(!moodEmoji) {
-    if(_currentMoodEmoji) {
-      moodEmoji = _currentMoodEmoji;
-    } else if(typeof EMOJI_CATEGORIES !== 'undefined' && EMOJI_CATEGORIES.mystery) {
-      moodEmoji = EMOJI_CATEGORIES.mystery[0] || "✨";
+    moodEmoji = _currentMoodEmoji || "✨";
+    if(!_currentMoodEmoji) {
       _currentMoodEmoji = moodEmoji;
     }
   }
