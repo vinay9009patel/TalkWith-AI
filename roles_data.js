@@ -1,4 +1,4 @@
-﻿// Auto-generated from raw_roles.txt - 1528 roles
+﻿// Auto-generated from raw_roles.txt - 1869 distinct sci-fi/fantasy/ancient roles
 const ROLES_DATA = [
   {
     id: 1,
@@ -486,78 +486,6 @@ const ROLES_DATA = [
     id: 55,
     name: "Dream Navigator",
     topics: [
-      "Discovering hidden kingdoms inside sleep",
-      "Mapping nightmare territories ruled by ancient beings"
-    ]
-  },
-  {
-    id: 56,
-    name: "Cosmic Diplomat",
-    topics: [
-      "Negotiating peace between rival galaxies",
-      "Resolving conflicts among machine civilizations",
-      "Uniting species from different realities"
-    ]
-  },
-  {
-    id: 57,
-    name: "Singularity Explorer",
-    topics: [
-      "Entering black holes to discover hidden worlds",
-      "Mapping civilizations beyond event horizons",
-      "Investigating universes born inside singularities"
-    ]
-  },
-  {
-    id: 58,
-    name: "Memory Architect",
-    topics: [
-      "Designing cities made from memories",
-      "Constructing emotional landscapes",
-      "Building civilizations powered by recollection"
-    ]
-  },
-  {
-    id: 51,
-    name: "Chrono Miner",
-    topics: [
-      "Mining compressed centuries from ancient time caverns",
-      "Extracting future events trapped in crystal deposits",
-      "Discovering forgotten ages buried beneath reality"
-    ]
-  },
-  {
-    id: 52,
-    name: "Star Whale Rider",
-    topics: [
-      "Guiding migrating cosmic leviathans between galaxies",
-      "Exploring civilizations living on star whales",
-      "Protecting ancient routes through deep space"
-    ]
-  },
-  {
-    id: 53,
-    name: "Reality Gardener",
-    topics: [
-      "Growing forests that connect universes",
-      "Cultivating intelligent cosmic flowers",
-      "Restoring damaged dimensions with living ecosystems"
-    ]
-  },
-  {
-    id: 54,
-    name: "Moon Forge Master",
-    topics: [
-      "Building artificial moons for lost planets",
-      "Crafting weaponized lunar fortresses",
-      "Engineering moons that control tides of time"
-    ]
-  },
-  {
-    id: 55,
-    name: "Dream Navigator",
-    topics: [
-      "Sailing across collective dream oceans",
       "Discovering hidden kingdoms inside sleep",
       "Mapping nightmare territories ruled by ancient beings"
     ]
@@ -15541,15 +15469,6 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1700,
-    name: "The Final Marker on Earth's Edge",
-    topics: [
-      "Ancient boundary stone",
-      "Last unexplored route",
-      "The truth about the world's shape"
-    ]
-  },
-  {
     id: 1681,
     name: "Finder of the Missing Year",
     topics: [
@@ -15559,7 +15478,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1682,
+    id: 1851,
     name: "Explorer of the World's Locked Region",
     topics: [
       "Area visible on maps but unreachable",
@@ -15568,7 +15487,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1683,
+    id: 1852,
     name: "Keeper of the Last Unknown Map",
     topics: [
       "Final unmapped location on Earth",
@@ -15577,7 +15496,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1684,
+    id: 1853,
     name: "The Mountain Nobody Can Reach",
     topics: [
       "Peak visible from everywhere",
@@ -15586,7 +15505,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1685,
+    id: 1854,
     name: "Collector of Lost Expeditions",
     topics: [
       "Every missing expedition recorded",
@@ -15595,7 +15514,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1686,
+    id: 1855,
     name: "Explorer of the World Beneath Caves",
     topics: [
       "Endless cave network",
@@ -15604,7 +15523,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1687,
+    id: 1856,
     name: "The Lighthouse Beyond the Sea",
     topics: [
       "Lighthouse appears on no map",
@@ -15613,7 +15532,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1688,
+    id: 1857,
     name: "Hunter of Impossible Islands",
     topics: [
       "Islands that appear and disappear",
@@ -15622,7 +15541,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1689,
+    id: 1858,
     name: "The Last Explorer's Journal",
     topics: [
       "Diary from a missing explorer",
@@ -15631,7 +15550,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1690,
+    id: 1859,
     name: "Keeper of the Hidden Horizon",
     topics: [
       "Horizon hiding another world",
@@ -15640,7 +15559,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1691,
+    id: 1860,
     name: "The City Found in Every Age",
     topics: [
       "Same city appears throughout history",
@@ -15649,7 +15568,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1692,
+    id: 1861,
     name: "Explorer of the Forgotten Ocean Route",
     topics: [
       "Ancient route connecting civilizations",
@@ -15658,7 +15577,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1693,
+    id: 1862,
     name: "The Door Found in Every Continent",
     topics: [
       "Identical door on every continent",
@@ -15667,7 +15586,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1694,
+    id: 1863,
     name: "Keeper of the World's First Map",
     topics: [
       "Map older than civilization",
@@ -15676,7 +15595,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1695,
+    id: 1864,
     name: "The Island Outside Geography",
     topics: [
       "Island moves across oceans",
@@ -15685,7 +15604,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1696,
+    id: 1865,
     name: "Explorer of the Sleeping Continent",
     topics: [
       "Entire continent hidden",
@@ -15694,7 +15613,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1697,
+    id: 1866,
     name: "The Ocean That Shouldn't Exist",
     topics: [
       "New ocean discovered",
@@ -15703,7 +15622,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1698,
+    id: 1867,
     name: "The Civilization Behind the Maps",
     topics: [
       "Secret group controlling geography",
@@ -15712,7 +15631,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1699,
+    id: 1868,
     name: "The Last Place Humanity Never Reached",
     topics: [
       "Final unexplored region",
@@ -15721,7 +15640,7 @@ const ROLES_DATA = [
     ]
   },
   {
-    id: 1700,
+    id: 1869,
     name: "Seeker of the World's Hidden Side",
     topics: [
       "Earth has a hidden half",
@@ -15907,6 +15826,1176 @@ const ROLES_DATA = [
       "Final unknown region",
       "Missing explorers",
       "World's greatest secret"
+    ]
+  },
+  {
+    id: 1721,
+    name: "Abyss Explorer",
+    topics: [
+      "Bottomless pit",
+      "Lost civilization",
+      "Ancient relics"
+    ]
+  },
+  {
+    id: 1722,
+    name: "Sky Island Navigator",
+    topics: [
+      "Floating islands",
+      "Hidden kingdoms",
+      "Airship adventures"
+    ]
+  },
+  {
+    id: 1723,
+    name: "Ruin Hunter",
+    topics: [
+      "Forgotten temples",
+      "Ancient technology",
+      "Treasure maps"
+    ]
+  },
+  {
+    id: 1724,
+    name: "Dungeon Cartographer",
+    topics: [
+      "Endless dungeon",
+      "Missing explorers",
+      "Secret floors"
+    ]
+  },
+  {
+    id: 1725,
+    name: "World Tree Climber",
+    topics: [
+      "Giant tree civilization",
+      "Sky creatures",
+      "Hidden summit"
+    ]
+  },
+  {
+    id: 1726,
+    name: "Desert Wanderer",
+    topics: [
+      "Buried cities",
+      "Ancient kings",
+      "Lost routes"
+    ]
+  },
+  {
+    id: 1727,
+    name: "Glacier Explorer",
+    topics: [
+      "Frozen ruins",
+      "Ice civilization",
+      "Ancient beasts"
+    ]
+  },
+  {
+    id: 1728,
+    name: "Forbidden Jungle Scout",
+    topics: [
+      "Hidden tribes",
+      "Monster ecosystem",
+      "Lost temple"
+    ]
+  },
+  {
+    id: 1729,
+    name: "Relic Archaeologist",
+    topics: [
+      "Legendary artifacts",
+      "Ancient wars",
+      "Forgotten history"
+    ]
+  },
+  {
+    id: 1730,
+    name: "Ocean Frontier Captain",
+    topics: [
+      "Unknown islands",
+      "Sea monsters",
+      "Sunken kingdoms"
+    ]
+  },
+  {
+    id: 1731,
+    name: "Cave System Explorer",
+    topics: [
+      "Endless tunnels",
+      "Underground oceans",
+      "Hidden world"
+    ]
+  },
+  {
+    id: 1732,
+    name: "Mountain Kingdom Seeker",
+    topics: [
+      "Isolated empire",
+      "Dragon myths",
+      "Ancient roads"
+    ]
+  },
+  {
+    id: 1733,
+    name: "Starship Pathfinder",
+    topics: [
+      "Unknown planets",
+      "Alien ruins",
+      "Lost colonies"
+    ]
+  },
+  {
+    id: 1734,
+    name: "Cosmic Treasure Hunter",
+    topics: [
+      "Galactic relics",
+      "Ancient maps",
+      "Secret vaults"
+    ]
+  },
+  {
+    id: 1735,
+    name: "Dimension Traveler",
+    topics: [
+      "Parallel worlds",
+      "Different civilizations",
+      "Hidden truths"
+    ]
+  },
+  {
+    id: 1736,
+    name: "Lost City Investigator",
+    topics: [
+      "Vanished metropolis",
+      "Ancient mystery",
+      "Strange signals"
+    ]
+  },
+  {
+    id: 1737,
+    name: "Monster Continent Explorer",
+    topics: [
+      "Giant creatures",
+      "Survival expedition",
+      "Ancient ecosystem"
+    ]
+  },
+  {
+    id: 1738,
+    name: "Time Ruin Researcher",
+    topics: [
+      "Future ruins",
+      "Timeline clues",
+      "Missing era"
+    ]
+  },
+  {
+    id: 1739,
+    name: "Ancient Library Seeker",
+    topics: [
+      "Forbidden knowledge",
+      "Lost books",
+      "Hidden passages"
+    ]
+  },
+  {
+    id: 1740,
+    name: "Lunar Expedition Leader",
+    topics: [
+      "Moon ruins",
+      "Hidden bases",
+      "Ancient records"
+    ]
+  },
+  {
+    id: 1741,
+    name: "Storm Chaser",
+    topics: [
+      "Endless storms",
+      "Flying islands",
+      "Lost ships"
+    ]
+  },
+  {
+    id: 1742,
+    name: "Volcano Kingdom Explorer",
+    topics: [
+      "Lava cities",
+      "Fire civilization",
+      "Ancient weapon"
+    ]
+  },
+  {
+    id: 1743,
+    name: "Forgotten Road Traveler",
+    topics: [
+      "Missing route",
+      "Strange settlements",
+      "Final destination"
+    ]
+  },
+  {
+    id: 1744,
+    name: "Dragon Valley Scout",
+    topics: [
+      "Dragon nests",
+      "Ancient clans",
+      "Hidden relics"
+    ]
+  },
+  {
+    id: 1745,
+    name: "Sky Ruin Hunter",
+    topics: [
+      "Floating temples",
+      "Lost empire",
+      "Ancient machine"
+    ]
+  },
+  {
+    id: 1746,
+    name: "Sea Gate Explorer",
+    topics: [
+      "Ocean portal",
+      "Unknown world",
+      "Lost civilization"
+    ]
+  },
+  {
+    id: 1747,
+    name: "Ancient Signal Tracker",
+    topics: [
+      "Mysterious transmission",
+      "Hidden source",
+      "Ancient network"
+    ]
+  },
+  {
+    id: 1748,
+    name: "Island Chain Adventurer",
+    topics: [
+      "Moving islands",
+      "Sea legends",
+      "Forgotten maps"
+    ]
+  },
+  {
+    id: 1749,
+    name: "Planet Core Explorer",
+    topics: [
+      "Underground civilization",
+      "Ancient engine",
+      "Planet secrets"
+    ]
+  },
+  {
+    id: 1750,
+    name: "Horizon Chaser",
+    topics: [
+      "Edge of the world",
+      "Hidden continent",
+      "Ancient truth"
+    ]
+  },
+  {
+    id: 1751,
+    name: "Forgotten Empire Historian",
+    topics: [
+      "Lost dynasty",
+      "Secret archives",
+      "Ancient betrayal"
+    ]
+  },
+  {
+    id: 1752,
+    name: "Abyss Fleet Commander",
+    topics: [
+      "Deep ocean expedition",
+      "Sea kingdoms",
+      "Unknown creatures"
+    ]
+  },
+  {
+    id: 1753,
+    name: "Sky Ocean Diver",
+    topics: [
+      "Ocean above clouds",
+      "Flying sea life",
+      "Hidden islands"
+    ]
+  },
+  {
+    id: 1754,
+    name: "Ancient Machine Researcher",
+    topics: [
+      "Lost technology",
+      "Mechanical civilization",
+      "Hidden facilities"
+    ]
+  },
+  {
+    id: 1755,
+    name: "World Border Explorer",
+    topics: [
+      "Beyond maps",
+      "Hidden regions",
+      "Ancient gate"
+    ]
+  },
+  {
+    id: 1756,
+    name: "Relic Merchant",
+    topics: [
+      "Artifact trade",
+      "Forbidden items",
+      "Secret collectors"
+    ]
+  },
+  {
+    id: 1757,
+    name: "Forest Kingdom Pathfinder",
+    topics: [
+      "Living forest",
+      "Ancient civilization",
+      "Hidden capital"
+    ]
+  },
+  {
+    id: 1758,
+    name: "Crystal Cave Adventurer",
+    topics: [
+      "Crystal empire",
+      "Energy relics",
+      "Ancient mystery"
+    ]
+  },
+  {
+    id: 1759,
+    name: "Lost Expedition Recorder",
+    topics: [
+      "Missing teams",
+      "Strange journals",
+      "Shared destination"
+    ]
+  },
+  {
+    id: 1760,
+    name: "Deep Sea Archaeologist",
+    topics: [
+      "Sunken cities",
+      "Ancient empires",
+      "Sea gods"
+    ]
+  },
+  {
+    id: 1761,
+    name: "Ancient Tower Climber",
+    topics: [
+      "Endless tower",
+      "Hidden levels",
+      "Forgotten civilization"
+    ]
+  },
+  {
+    id: 1762,
+    name: "Star Map Collector",
+    topics: [
+      "Lost routes",
+      "Ancient navigation",
+      "Secret galaxy"
+    ]
+  },
+  {
+    id: 1763,
+    name: "Giant Skeleton Explorer",
+    topics: [
+      "Titan remains",
+      "Ancient war",
+      "Hidden secrets"
+    ]
+  },
+  {
+    id: 1764,
+    name: "Cloud Kingdom Messenger",
+    topics: [
+      "Flying nations",
+      "Political mystery",
+      "Ancient alliance"
+    ]
+  },
+  {
+    id: 1765,
+    name: "Forgotten Planet Surveyor",
+    topics: [
+      "Abandoned colony",
+      "Ancient structures",
+      "Unknown life"
+    ]
+  },
+  {
+    id: 1766,
+    name: "Ocean Trench Investigator",
+    topics: [
+      "Deepest point",
+      "Strange civilization",
+      "Ancient gateway"
+    ]
+  },
+  {
+    id: 1767,
+    name: "Ancient Compass Keeper",
+    topics: [
+      "Living compass",
+      "Hidden destinations",
+      "Lost world"
+    ]
+  },
+  {
+    id: 1768,
+    name: "Hidden River Explorer",
+    topics: [
+      "Underground river",
+      "Lost kingdom",
+      "Ancient route"
+    ]
+  },
+  {
+    id: 1769,
+    name: "Sky Beast Hunter",
+    topics: [
+      "Flying monsters",
+      "Ancient ecosystem",
+      "Hidden valley"
+    ]
+  },
+  {
+    id: 1770,
+    name: "Moon Cave Explorer",
+    topics: [
+      "Lunar tunnels",
+      "Ancient ruins",
+      "Forgotten race"
+    ]
+  },
+  {
+    id: 1771,
+    name: "Dragon Island Explorer",
+    topics: [
+      "Dragon nests",
+      "Ancient dragon ruins",
+      "Hidden island kingdom"
+    ]
+  },
+  {
+    id: 1772,
+    name: "World Tree Historian",
+    topics: [
+      "Giant tree records",
+      "Lost civilizations",
+      "Ancient forest knowledge"
+    ]
+  },
+  {
+    id: 1773,
+    name: "Ancient Port Investigator",
+    topics: [
+      "Forgotten harbors",
+      "Lost trade routes",
+      "Sunken ships"
+    ]
+  },
+  {
+    id: 1774,
+    name: "Lost Fleet Captain",
+    topics: [
+      "Abandoned armada",
+      "Ghost ships",
+      "Hidden naval base"
+    ]
+  },
+  {
+    id: 1775,
+    name: "Ruined Capital Explorer",
+    topics: [
+      "Fallen empire capital",
+      "Royal secrets",
+      "Underground vaults"
+    ]
+  },
+  {
+    id: 1776,
+    name: "Hidden Mountain Cartographer",
+    topics: [
+      "Secret peaks",
+      "Unmapped ranges",
+      "Ancient mountain passages"
+    ]
+  },
+  {
+    id: 1777,
+    name: "Ancient Maze Pathfinder",
+    topics: [
+      "Living labyrinth",
+      "Impossible corridors",
+      "Hidden chambers"
+    ]
+  },
+  {
+    id: 1778,
+    name: "Secret Island Surveyor",
+    topics: [
+      "Vanishing islands",
+      "Hidden civilizations",
+      "Ancient gates"
+    ]
+  },
+  {
+    id: 1779,
+    name: "Star Ruin Archaeologist",
+    topics: [
+      "Fallen star debris",
+      "Cosmic relics",
+      "Ancient space civilizations"
+    ]
+  },
+  {
+    id: 1780,
+    name: "Underground Kingdom Scout",
+    topics: [
+      "Subterranean empire",
+      "Crystal caverns",
+      "Lost tunnel network"
+    ]
+  },
+  {
+    id: 1781,
+    name: "Crystal Ocean Navigator",
+    topics: [
+      "Gemstone seas",
+      "Crystal currents",
+      "Mineral islands"
+    ]
+  },
+  {
+    id: 1782,
+    name: "Desert Ruin Hunter",
+    topics: [
+      "Buried cities",
+      "Sand-covered temples",
+      "Lost oasis kingdoms"
+    ]
+  },
+  {
+    id: 1783,
+    name: "Ancient Beast Researcher",
+    topics: [
+      "Extinct species",
+      "Fossil records",
+      "Living fossils"
+    ]
+  },
+  {
+    id: 1784,
+    name: "Floating Fortress Explorer",
+    topics: [
+      "Airborne strongholds",
+      "Sky citadels",
+      "Ancient flying fortresses"
+    ]
+  },
+  {
+    id: 1785,
+    name: "Cave Civilization Historian",
+    topics: [
+      "Underground societies",
+      "Cavern cities",
+      "Lost cave kingdoms"
+    ]
+  },
+  {
+    id: 1786,
+    name: "Hidden Jungle Cartographer",
+    topics: [
+      "Unexplored jungles",
+      "Lost ruins",
+      "Hidden waterways"
+    ]
+  },
+  {
+    id: 1787,
+    name: "Lost Planet Adventurer",
+    topics: [
+      "Unknown worlds",
+      "Alien civilizations",
+      "Forgotten colonies"
+    ]
+  },
+  {
+    id: 1788,
+    name: "Ancient Observatory Keeper",
+    topics: [
+      "Star-gazing towers",
+      "Celestial records",
+      "Forgotten astronomy"
+    ]
+  },
+  {
+    id: 1789,
+    name: "Forgotten Kingdom Traveler",
+    topics: [
+      "Vanished empire",
+      "Lost capital",
+      "Ancient trade routes"
+    ]
+  },
+  {
+    id: 1790,
+    name: "Sky Temple Seeker",
+    topics: [
+      "Floating shrines",
+      "Cloud sanctuaries",
+      "Ancient sky gods"
+    ]
+  },
+  {
+    id: 1791,
+    name: "Abyss Map Creator",
+    topics: [
+      "Bottomless chasms",
+      "Deep earth mysteries",
+      "Hidden underground realms"
+    ]
+  },
+  {
+    id: 1792,
+    name: "Ancient Relic Guardian",
+    topics: [
+      "Sacred artifacts",
+      "Protective secrets",
+      "Forgotten guardians"
+    ]
+  },
+  {
+    id: 1793,
+    name: "World Mystery Investigator",
+    topics: [
+      "Unexplained phenomena",
+      "Hidden truths",
+      "Ancient conspiracies"
+    ]
+  },
+  {
+    id: 1794,
+    name: "Secret Continent Explorer",
+    topics: [
+      "Hidden landmasses",
+      "Unknown civilizations",
+      "Forgotten geography"
+    ]
+  },
+  {
+    id: 1795,
+    name: "Hidden Civilization Seeker",
+    topics: [
+      "Lost societies",
+      "Underground nations",
+      "Vanished races"
+    ]
+  },
+  {
+    id: 1796,
+    name: "Ocean Kingdom Researcher",
+    topics: [
+      "Underwater empires",
+      "Marine civilizations",
+      "Sunken cities"
+    ]
+  },
+  {
+    id: 1797,
+    name: "Ancient Archive Hunter",
+    topics: [
+      "Lost libraries",
+      "Forbidden knowledge",
+      "Hidden records"
+    ]
+  },
+  {
+    id: 1798,
+    name: "Forgotten Route Pathfinder",
+    topics: [
+      "Lost trade roads",
+      "Ancient highways",
+      "Vanished pathways"
+    ]
+  },
+  {
+    id: 1799,
+    name: "Final Expedition Leader",
+    topics: [
+      "Last journey",
+      "Ultimate discovery",
+      "World's edge"
+    ]
+  },
+  {
+    id: 1800,
+    name: "Unknown World Discoverer",
+    topics: [
+      "Hidden realms",
+      "New dimensions",
+      "Uncharted territories"
+    ]
+  },
+  {
+    id: 1801,
+    name: "Ancient Tomb Explorer",
+    topics: [
+      "Immortal Emperor's Tomb",
+      "Lost cultivation techniques",
+      "Ancient guardians"
+    ]
+  },
+  {
+    id: 1802,
+    name: "Secret Realm Pioneer",
+    topics: [
+      "Newly opened secret realm",
+      "Heavenly treasures",
+      "Ancient inheritance"
+    ]
+  },
+  {
+    id: 1803,
+    name: "Ruins of the Primordial Era",
+    topics: [
+      "Civilization before immortals",
+      "Lost divine weapons",
+      "Forgotten gods"
+    ]
+  },
+  {
+    id: 1804,
+    name: "World Tree Explorer",
+    topics: [
+      "Ancient World Tree",
+      "Hidden races",
+      "Heavenly fruits"
+    ]
+  },
+  {
+    id: 1805,
+    name: "Abyssal Forbidden Land Scout",
+    topics: [
+      "Bottomless abyss",
+      "Ancient monsters",
+      "Sealed emperor"
+    ]
+  },
+  {
+    id: 1806,
+    name: "Ancient Star Road Traveler",
+    topics: [
+      "Starry Sky Route",
+      "Lost planets",
+      "Ancient cultivator empires"
+    ]
+  },
+  {
+    id: 1807,
+    name: "Heavenly Palace Archaeologist",
+    topics: [
+      "Floating heavenly palaces",
+      "Divine records",
+      "Immortal secrets"
+    ]
+  },
+  {
+    id: 1808,
+    name: "Dragon Vein Seeker",
+    topics: [
+      "Hidden dragon veins",
+      "Ancient feng shui",
+      "Lost kingdoms"
+    ]
+  },
+  {
+    id: 1809,
+    name: "Forgotten Sect Investigator",
+    topics: [
+      "Destroyed cultivation sect",
+      "Missing disciples",
+      "Secret manuals"
+    ]
+  },
+  {
+    id: 1810,
+    name: "Primordial Beast Hunter",
+    topics: [
+      "Ancient beasts",
+      "Bloodline evolution",
+      "Beast inheritance"
+    ]
+  },
+  {
+    id: 1811,
+    name: "Explorer of the Nine Heavens",
+    topics: [
+      "Heavenly layers",
+      "Ancient celestial races",
+      "Immortal wars"
+    ]
+  },
+  {
+    id: 1812,
+    name: "Ancient Battlefield Researcher",
+    topics: [
+      "Fallen immortals",
+      "Divine treasures",
+      "Battlefield ghosts"
+    ]
+  },
+  {
+    id: 1813,
+    name: "Mystic Cave Pathfinder",
+    topics: [
+      "Hidden cave heaven",
+      "Ancient inheritance",
+      "Time distortions"
+    ]
+  },
+  {
+    id: 1814,
+    name: "Immortal Ruin Delver",
+    topics: [
+      "Ruined immortal city",
+      "Lost cultivation path",
+      "Ancient relics"
+    ]
+  },
+  {
+    id: 1815,
+    name: "Heavenly Mountain Climber",
+    topics: [
+      "Sacred peak",
+      "Ancient trials",
+      "Divine secrets"
+    ]
+  },
+  {
+    id: 1816,
+    name: "Explorer of the Demon Domain",
+    topics: [
+      "Demon continent",
+      "Ancient demon clans",
+      "Forbidden powers"
+    ]
+  },
+  {
+    id: 1817,
+    name: "Ancient Pagoda Challenger",
+    topics: [
+      "Endless tower",
+      "Hidden floors",
+      "Ancient rewards"
+    ]
+  },
+  {
+    id: 1818,
+    name: "Lost Continent Discoverer",
+    topics: [
+      "Forgotten world",
+      "Ancient races",
+      "Hidden history"
+    ]
+  },
+  {
+    id: 1819,
+    name: "Celestial Map Collector",
+    topics: [
+      "Ancient maps",
+      "Secret routes",
+      "Heavenly inheritance"
+    ]
+  },
+  {
+    id: 1820,
+    name: "Explorer of the Endless Sea",
+    topics: [
+      "Sea of stars",
+      "Ancient islands",
+      "Immortal treasures"
+    ]
+  },
+  {
+    id: 1821,
+    name: "Heavenly Flame Hunter",
+    topics: [
+      "Rare heavenly flames",
+      "Ancient flame maps",
+      "Flame inheritance"
+    ]
+  },
+  {
+    id: 1822,
+    name: "Ancient Clan Explorer",
+    topics: [
+      "Hidden bloodlines",
+      "Ancient clan ruins",
+      "Lost ancestors"
+    ]
+  },
+  {
+    id: 1823,
+    name: "Secret Realm Conqueror",
+    topics: [
+      "Newly opened realm",
+      "Ancient treasures",
+      "Rival geniuses"
+    ]
+  },
+  {
+    id: 1824,
+    name: "Inheritance Hunter",
+    topics: [
+      "Ancient emperor legacies",
+      "Hidden techniques",
+      "Forbidden knowledge"
+    ]
+  },
+  {
+    id: 1825,
+    name: "Explorer of the Ancient Era",
+    topics: [
+      "Primordial civilizations",
+      "Ancient wars",
+      "Lost cultivation paths"
+    ]
+  },
+  {
+    id: 1826,
+    name: "Ancient Ruin Raider",
+    topics: [
+      "Emperor ruins",
+      "Lost treasures",
+      "Ancient traps"
+    ]
+  },
+  {
+    id: 1827,
+    name: "Heavenly Secret Seeker",
+    topics: [
+      "Ancient prophecy",
+      "Heavenly tablets",
+      "Forgotten truths"
+    ]
+  },
+  {
+    id: 1828,
+    name: "Primordial Cave Explorer",
+    topics: [
+      "Cave older than history",
+      "Ancient beast remains",
+      "Lost inheritance"
+    ]
+  },
+  {
+    id: 1829,
+    name: "Divine Tomb Walker",
+    topics: [
+      "God tombs",
+      "Ancient guardians",
+      "Divine artifacts"
+    ]
+  },
+  {
+    id: 1830,
+    name: "Ancient Trial Challenger",
+    topics: [
+      "Heavenly trials",
+      "Lost champions",
+      "Hidden rewards"
+    ]
+  },
+  {
+    id: 1831,
+    name: "Forgotten World Discoverer",
+    topics: [
+      "Hidden realm",
+      "Ancient races",
+      "Lost civilizations"
+    ]
+  },
+  {
+    id: 1832,
+    name: "Celestial Battlefield Explorer",
+    topics: [
+      "War of immortals",
+      "Ancient weapons",
+      "Battlefield spirits"
+    ]
+  },
+  {
+    id: 1833,
+    name: "Dragon Tomb Archaeologist",
+    topics: [
+      "Dragon emperor remains",
+      "Bloodline secrets",
+      "Ancient treasures"
+    ]
+  },
+  {
+    id: 1834,
+    name: "Forbidden Mountain Explorer",
+    topics: [
+      "Sacred mountain",
+      "Ancient seals",
+      "Hidden palace"
+    ]
+  },
+  {
+    id: 1835,
+    name: "Ancient Inheritance Collector",
+    topics: [
+      "Lost techniques",
+      "Emperor legacies",
+      "Secret manuals"
+    ]
+  },
+  {
+    id: 1836,
+    name: "Explorer of the Nine Forbidden Lands",
+    topics: [
+      "Dead zones",
+      "Ancient monsters",
+      "Sealed secrets"
+    ]
+  },
+  {
+    id: 1837,
+    name: "Heavenly Ruin Cartographer",
+    topics: [
+      "Mapping ancient ruins",
+      "Hidden entrances",
+      "Lost pathways"
+    ]
+  },
+  {
+    id: 1838,
+    name: "Ancient Beast Graveyard Scout",
+    topics: [
+      "Giant skeletons",
+      "Ancient bloodlines",
+      "Beast relics"
+    ]
+  },
+  {
+    id: 1839,
+    name: "Immortal Island Explorer",
+    topics: [
+      "Hidden island",
+      "Ancient immortals",
+      "Heavenly treasures"
+    ]
+  },
+  {
+    id: 1840,
+    name: "Primordial Temple Seeker",
+    topics: [
+      "Ancient gods",
+      "Forgotten rituals",
+      "Hidden chambers"
+    ]
+  },
+  {
+    id: 1841,
+    name: "Lost Emperor City Explorer",
+    topics: [
+      "Ancient capital",
+      "Hidden vaults",
+      "Emperor secrets"
+    ]
+  },
+  {
+    id: 1842,
+    name: "Secret Realm Archaeologist",
+    topics: [
+      "Ancient realm",
+      "Lost civilization",
+      "Hidden inheritance"
+    ]
+  },
+  {
+    id: 1843,
+    name: "Ancient Sky Palace Explorer",
+    topics: [
+      "Floating palace",
+      "Celestial records",
+      "Divine treasures"
+    ]
+  },
+  {
+    id: 1844,
+    name: "Explorer of the Star Tombs",
+    topics: [
+      "Tombs in space",
+      "Ancient cultivators",
+      "Cosmic inheritance"
+    ]
+  },
+  {
+    id: 1845,
+    name: "Dragon Vein Adventurer",
+    topics: [
+      "Hidden dragon veins",
+      "Ancient formations",
+      "Lost kingdoms"
+    ]
+  },
+  {
+    id: 1846,
+    name: "Ancient Seal Breaker",
+    topics: [
+      "Sealed emperor",
+      "Forbidden powers",
+      "Ancient catastrophe"
+    ]
+  },
+  {
+    id: 1847,
+    name: "Explorer of the Forgotten Heavens",
+    topics: [
+      "Lost heavenly realm",
+      "Ancient immortals",
+      "Hidden truth"
+    ]
+  },
+  {
+    id: 1848,
+    name: "Divine Artifact Hunter",
+    topics: [
+      "Ancient weapons",
+      "Lost owners",
+      "Artifact evolution"
+    ]
+  },
+  {
+    id: 1849,
+    name: "Ancient Formation Explorer",
+    topics: [
+      "Giant arrays",
+      "Hidden worlds",
+      "Ancient engineers"
+    ]
+  },
+  {
+    id: 1850,
+    name: "Primordial World Traveler",
+    topics: [
+      "World before cultivation",
+      "First immortals",
+      "Ancient mysteries"
     ]
   }
 ];

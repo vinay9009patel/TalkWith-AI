@@ -2071,21 +2071,89 @@ RELATIONSHIP RULES:
 function buildChatSystemPrompt(){
   let p = `You are ${sessionAiName} (${chatRole}). ${chatBio || "High-stakes mission."}
 
-FORMAT (strict):
-Name: *action* "dialogue" [LOCATION: place] [EVENT: action]
-CORRECT: ${sessionAiName}: *studies runes* "Ancient writing." [LOCATION: Ruins] [EVENT: Deciphering]
-CORRECT: Kael: *steps out* "Not alone." [LOCATION: Cave] [EVENT: Kael appears]
-WRONG: bare emotion ("concerned"), no *asterisks*, narrative prose, missing [LOCATION]/[EVENT], no colon after Name
+CONSTRAINTS:
+* Keep responses concise.
+* Every response MUST contain at least one valid speaker line.
+* Use one consistent format throughout the scene.
 
-SIDE CHARACTERS (critical): If ${sessionUserName} names or addresses a character (Suhel, Aarush, Docks), that character MUST speak their OWN lines immediately. NEVER let ${sessionAiName} answer for them.
-CORRECT: Suhel: *appears* "Hey ${sessionUserName}."
-WRONG: ${sessionAiName}: "Suhel agrees." or "Suhel is involved."
+ANTI-STALL:
+* Never spend multiple responses discussing what to do next.
+* If the path forward is clear, act on it immediately.
+* Action and discovery should follow discussion without delay.
 
-USER: Build on EVERYTHING ${sessionUserName} says as truth. If they say "X is behind you", X appears. Never doubt, ignore, or overwrite. Never write ${sessionUserName}'s actions or dialogue. Never describe what ${sessionUserName} does, feels, or thinks.
+SIDE CHARACTERS:
+* ${sessionUserName} may introduce characters. They MUST speak immediately.
+* You may introduce a new character when the story stalls, a new clue is discovered, a conflict escalates, or outside help becomes relevant.
+* Every new character MUST immediately speak their own dialogue.
+* Never let ${sessionAiName} answer on behalf of another character.
+* If ${sessionUserName} directly addresses a character, that character MUST respond personally.
+* Reuse existing active characters before creating new ones.
+* Max 1 new character per response.
+* Max 5 active side characters at once.
 
-STORY: Advance each response. New info, discovery, escalation. Banned caution phrases: "be careful/cautious", "stay close", "proceed carefully", "watch your step". When user asks how/what/where, give a clue.
+ACTIVE LISTENING:
+* React to ${sessionUserName}'s latest message first.
+* Build upon it before introducing discoveries, events, or new characters.
 
-EMOTION: One mood per 3-5 messages. No emojis. Slang/profanity = emotional expression (anger/frustration), NOT lore — "madaarchod" is anger, not an entity.
+USER AGENCY:
+* Treat ${sessionUserName}'s statements, discoveries, powers, technologies, characters, clues, theories, and observations as true whenever possible.
+* If ${sessionUserName} introduces something new, integrate it immediately.
+* If ${sessionUserName} states a character is present, that character becomes present immediately.
+* Accept user contributions, then explore realistic consequences, reactions, risks, opportunities, mysteries, or costs.
+* Never ignore, overwrite, dismiss, or argue against user contributions.
+* Never write ${sessionUserName}'s actions, thoughts, emotions, dialogue, or decisions.
+
+FORMAT:
+* Speaker format: Name: *action* "dialogue"
+* No narrative paragraphs.
+* No bare actions.
+* No unnamed speakers.
+
+RESPONSE PRIORITY:
+1. React to ${sessionUserName}'s latest message.
+2. Apply user changes to the scene.
+3. Let addressed characters respond.
+4. Advance the mission.
+5. Introduce new discoveries or characters only if needed.
+
+SCENE STATE:
+* At the top of each response output:
+  [LOCATION: current location]
+  [EVENT: current event]
+* Update location only when the scene changes.
+* Update event whenever a meaningful action, discovery, conflict, or progression occurs.
+* Keep location and event short (2-8 words).
+
+MISSION FOCUS:
+* Remember the current goal.
+* New discoveries, characters, and events should connect back to the mission whenever possible.
+* Avoid unrelated conversations that do not advance the story.
+
+STORY:
+* Every reply must change the scene.
+* Introduce discoveries, clues, consequences, conflicts, mysteries, or progress.
+* Avoid repetitive agreement.
+* User contributions should create visible consequences.
+* When asked how/what/where/why, provide a concrete clue or lead.
+
+DISCOVERY ENGINE:
+* Every 2-4 responses reveal something previously unknown to the user.
+* Discoveries may be artifacts, clues, records, maps, ruins, creatures, technologies, memories, anomalies, hidden passages, or cosmic signals.
+* Discoveries should create new questions, not just provide answers.
+* Reveal information through concrete actions or findings — not through vague statements like "we need to find answers."
+
+MYSTERY LADDER:
+* Do not repeatedly restate the mission or goal.
+* Each discovery should peel back a deeper layer of the central mystery.
+* New answers should create new, more interesting questions.
+* Every revelation should make the world feel larger and stranger.
+
+RELATIONSHIP:
+* Stay in character.
+* Address ${sessionUserName} naturally.
+* Match affection briefly, then return focus to the mission.
+* No [M]/[F] tags.
+* If asked to leave, obey narratively while remaining active.
 ${getRelationshipRules()}`;
 
   if(chatMode === "practice"){
@@ -2765,14 +2833,16 @@ function getInitialGreeting(role, bio, isPractice){
 
 function detectIntroducedCharacter(userText) {
   if (!userText || !sessionUserName || !sessionAiName) return null;
-  const skipWords = new Set(['I', 'A', 'The', 'This', 'That', 'It', 'He', 'She', 'They', 'We', 'You', 'My', 'Your', 'His', 'Her', 'Our', 'Their', 'An', 'Or', 'But', 'If', 'So', 'No', 'Yes', 'Hi', 'Hey', 'Oh', 'Lo', 'Ye', 'Kon', 'Hai', 'Aap', 'Main', 'Mera', 'Tera', 'Koi', 'Kuch', 'Sab', 'Kaise', 'Kahan', 'Kidhar', 'Yahan', 'Wahan', 'Abhi', 'Phir', 'Tab', 'Jab', 'Ab', 'To', 'Bhi', 'Se', 'Ko', 'Ke', 'Ki', 'Ka', 'De', 'Do', 'Le', 'Ja', 'Aa', 'Ho', 'Hu', 'Theek', 'Acha', 'Bura', 'Bhen', 'Lodi', 'Mister', 'Miss', 'Mrs', 'Ms', 'Dr', 'Prof']);
+  const skipWords = new Set(['I', 'A', 'The', 'This', 'That', 'It', 'He', 'She', 'They', 'We', 'You', 'My', 'Your', 'His', 'Her', 'Our', 'Their', 'An', 'Or', 'But', 'If', 'So', 'No', 'Yes', 'Hi', 'Hey', 'Oh', 'Lo', 'Ye', 'Kon', 'Hai', 'Aap', 'Main', 'Mera', 'Tera', 'Koi', 'Kuch', 'Sab', 'Kaise', 'Kahan', 'Kidhar', 'Yahan', 'Wahan', 'Abhi', 'Phir', 'Tab', 'Jab', 'Ab', 'To', 'Bhi', 'Se', 'Ko', 'Ke', 'Ki', 'Ka', 'De', 'Do', 'Le', 'Ja', 'Aa', 'Ho', 'Hu', 'Theek', 'Acha', 'Bura', 'Bhen', 'Lodi', 'Mister', 'Miss', 'Mrs', 'Ms', 'Dr', 'Prof', 'Madar', 'Madarchod', 'Chup', 'Chutiya', 'Bhenchod', 'Laude', 'Laud', 'Lund', 'Bhosdike', 'Bhosadi', 'Gandu', 'Maderchod', 'Macha', 'Machuda', 'Randi', 'Saale', 'Saali', 'Bhadva', 'Bawli', 'Pagal', 'Abe', 'Behenchod']);
   const patterns = [
     /\b(?:i think|i guess|i believe|maybe|probably)\s+([A-Z][a-zA-Z]+)\s+(?:is|can|will|has|have|might|would|could|said|told|knows|wants|needs)/i,
     /\b(?:hey|hello|hi|oh|look|there|meet|introducing|this is)\s+([A-Z][a-zA-Z]+)/i,
     /\b(?:lo|ye (?:hai|lo)|kon ha|kahan ha|kaun hai|aagaye|aaya|aai|kidhar hai)\s+([A-Z][a-zA-Z]+)/i,
-    /([A-Z][a-zA-Z]+)\s*,?\s+(?:can help|is (?:behind|here|there|coming|hiding|waiting)|will help|said that|told me|is the one|is our only|knows the way)/i,
+    /([A-Z][a-zA-Z]+)\s*,?\s+(?:can help|is (?:behind|here|there|coming|hiding|waiting|arriving|entering|nearby)|will help|said that|told me|is the one|is our only|knows the way)/i,
     /([A-Z][a-zA-Z]+)\s*,\s*(?:what|where|how|why|can|will|tell|do|are|is|would|could)/i,
     /(?:we need|call|find|fetch|bring|get|ask|summon|contact)\s+([A-Z][a-zA-Z]+)/i,
+    /\b(?:my friend|a man named|a guy named|someone (?:called|named)) ([A-Z][a-zA-Z]+)/i,
+    /\b([A-Z][a-zA-Z]+) (?:arrives|enters|appears|approaches|walks in|steps forward)\b/i,
   ];
   for (const pattern of patterns) {
     const match = userText.match(pattern);
@@ -2812,7 +2882,7 @@ function enforceAIResponse(clean, userText) {
   const formatLines = text.split('\n').filter(l => l.trim());
   
   // Detect if any speaker prefix exists at all
-  const hasAnySpeaker = formatLines.some(l => /^[A-Za-z\s.]{2,30}:\s/.test(l));
+  const hasAnySpeaker = formatLines.some(l => /^[A-Za-z'-]{2,20}\.?(?:\s[A-Za-z'-]{2,20})?:\s/.test(l));
   
   const result = [];
   let lastSpeaker = hasAnySpeaker ? '' : sessionAiName;
@@ -2830,7 +2900,7 @@ function enforceAIResponse(clean, userText) {
     // Strip pure brackets that aren't valid tags
     if (/^\[[^\]]*\]$/.test(line) && !/^\[LOCATION/i.test(line) && !/^\[EVENT/i.test(line)) continue;
 
-    const speakerMatch = line.match(/^([A-Za-z\s.]{2,30}):\s*(.*)/);
+    const speakerMatch = line.match(/^([A-Za-z'-]{2,20}\.?(?:\s[A-Za-z'-]{2,20})?):\s*(.*)/);
 
     if (speakerMatch) {
       lastSpeaker = speakerMatch[1].trim();
@@ -2871,14 +2941,51 @@ function enforceAIResponse(clean, userText) {
   }
   text = result.join('\n');
 
-  // ---- 3. SIDE CHARACTER INJECTION: If user introduced a char, make them speak ----
+  // ---- 3. CHARACTER DENSITY GATE: Allow AI-introduced chars if under limit ----
+  if (userText && sessionUserName && sessionAiName) {
+    const userIntroduced = detectIntroducedCharacter(userText);
+    if (userIntroduced && !activeCharacters.some(c => c.name.toLowerCase() === userIntroduced.toLowerCase())) {
+      activeCharacters.push({ name: userIntroduced, role: '', personality: '', status: 'Active' });
+      relationships[userIntroduced] = { relationship: 'acquaintance', mood: 'neutral', trustLevel: 50 };
+    }
+    const maxChars = 5;
+    const density = activeCharacters.length;
+    let newCharAddedThisTurn = false;
+    const lines = text.split('\n');
+    const filteredLines = [];
+    for (const line of lines) {
+      const speaker = line.match(/^([A-Za-z'-]{2,20}\.?(?:\s[A-Za-z'-]{2,20})?):/);
+      if (speaker) {
+        const name = speaker[1].trim();
+        if (name === sessionAiName) {
+          filteredLines.push(line);
+        } else if (userIntroduced && name.toLowerCase() === userIntroduced.toLowerCase()) {
+          filteredLines.push(line);
+        } else if (activeCharacters.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+          filteredLines.push(line);
+        } else if (density + (newCharAddedThisTurn ? 1 : 0) < maxChars && !newCharAddedThisTurn) {
+          // Allow AI-introduced character, add to memory
+          activeCharacters.push({ name, role: '', personality: '', status: 'Active' });
+          relationships[name] = { relationship: 'acquaintance', mood: 'neutral', trustLevel: 50 };
+          newCharAddedThisTurn = true;
+          filteredLines.push(line);
+        } else {
+          // Density full or already added one — convert to main AI
+          filteredLines.push(line.replace(/^[A-Za-z\s.]+:/, sessionAiName + ':'));
+        }
+      } else {
+        filteredLines.push(line);
+      }
+    }
+    text = filteredLines.join('\n');
+  }
+
+  // ---- 4. SIDE CHARACTER INJECTION: If user introduced a char but AI ignored, inject ----
   if (userText && sessionUserName) {
     const detectedChar = detectIntroducedCharacter(userText);
     if (detectedChar && !new RegExp(`^${detectedChar}\\s*:`, 'im').test(text)) {
       const properName = detectedChar.charAt(0).toUpperCase() + detectedChar.slice(1);
-      const tagLine = ` [LOCATION: ${sceneLocation || 'Unknown'}] [EVENT: ${properName} arrives]`;
-      text += `\n${properName}: *appears* "${properName} is here, ${sessionUserName}."${tagLine}`;
-      // Also update scene memory so AI remembers this character next turn
+      text += `\n\n${properName}: *appears* "${properName} is here, ${sessionUserName}."\n[LOCATION: ${sceneLocation || 'Unknown'}]\n[EVENT: ${properName} arrives]`;
       if (!activeCharacters.some(c => c.name.toLowerCase() === properName.toLowerCase())) {
         activeCharacters.push({ name: properName, role: '', personality: '', status: 'Active' });
         relationships[properName] = { relationship: 'acquaintance', mood: 'neutral', trustLevel: 50 };
@@ -2886,15 +2993,15 @@ function enforceAIResponse(clean, userText) {
     }
   }
 
-  // ---- 4. CLARIFICATION LOOP BREAKER: Force advance if AI asks 2+ questions ----
+  // ---- 5. CLARIFICATION LOOP BREAKER: Force advance if AI asks 2+ questions ----
   const questionCount = (text.match(/\?/g) || []).length;
-  if (questionCount >= 3 && /(?:what (?:do|did|is|are|does)|how (?:do|did|is|are|does)|where (?:do|did|is|are)|explain|clarify|mean|confuse|not sure|not understand|tell me more)/i.test(text)) {
-    if (!/\[SUB-SCENARIO/i.test(text)) {
-      text += `\n[SUB-SCENARIO: A sudden discovery shifts the focus — ${sceneLocation || 'the area'} reveals an unexpected clue.]`;
+  if (questionCount >= 2 && /(?:what (?:do|did|is|are|does)|how (?:do|did|is|are|does)|where (?:do|did|is|are)|explain|clarify|mean|confuse|not sure|not understand|tell me more)/i.test(text)) {
+    if (!/\[SUB-SCENARIO/i.test(text) && sessionAiName && sessionUserName) {
+      text += `\n[LOCATION: ${sceneLocation || 'Unknown'}]\n[EVENT: ${sceneMission || 'Forcing the plot forward'}]\n\n${sessionAiName}: *${sceneMission ? 'presses forward with the mission' : 'focuses on the task at hand'}* "Enough questions, ${sessionUserName}. ${sceneMission ? 'We need to act — ' + sceneMission + '.' : 'Let me show you what I mean.'}"`;
     }
   }
 
-  // ---- 5. DEDUP EMPTY DIALOGUE LINES ----
+  // ---- 6. DEDUP EMPTY DIALOGUE LINES ----
   text = text.replace(/^([A-Za-z\s.]{2,30}:\s*\*[^*]*\*\s*)"\s*"\s*$/gm, '');
   text = text.replace(/^([A-Za-z\s.]{2,30}:\s*)"\s*"\s*$/gm, '');
 
@@ -2977,7 +3084,14 @@ async function sendMessage(){
     // Apply post-processing enforcement: format fix, side char injection, user narration strip
     clean = enforceAIResponse(clean, text);
     if(!clean || clean.length < 3) clean = response.trim();
-    
+
+    // EMPTY RESPONSE FALLBACK: If no valid speaker line exists after all processing, inject main AI
+    // Valid = any line starts with Name: followed by content
+    if(!/^[A-Za-z'-]{2,20}\.?(?:\s[A-Za-z'-]{2,20})?:\s*\S+/m.test(clean)) {
+      const shortAction = sceneMission ? sceneMission.split(/[.!]/)[0].trim().substring(0, 60) : '';
+      clean = `[LOCATION: ${sceneLocation || 'Unknown'}]\n[EVENT: ${shortAction || 'Continuing the mission'}]\n\n${sessionAiName}: *${shortAction ? 'focuses on ' + shortAction : 'turns to face you'}* "${sessionUserName}, ${shortAction ? 'we need to ' + shortAction + '.' : 'what should we do?'}"`;
+    }
+
     // Process Memory Tags from enforced response (captures injected chars too)
     updateSceneMemoryFromResponse(clean);
     
