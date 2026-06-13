@@ -6754,7 +6754,7 @@ const ROLES_DATA = [
   },
   {
     id: 741,
-    name: "**Forgotten Ocean Current Historian**",
+    name: "Forgotten Ocean Current Historian",
     topics: [
       "Discovering ocean currents that no longer exist",
       "Recovering civilizations built around vanished water routes",
@@ -6763,7 +6763,7 @@ const ROLES_DATA = [
   },
   {
     id: 742,
-    name: "**Sunset Collector**",
+    name: "Sunset Collector",
     topics: [
       "Preserving unique sunsets before they disappear forever",
       "Discovering regions where sunsets behave differently",
@@ -6772,7 +6772,7 @@ const ROLES_DATA = [
   },
   {
     id: 743,
-    name: "**Sky Scar Researcher**",
+    name: "Sky Scar Researcher",
     topics: [
       "Studying permanent marks left in the sky",
       "Recovering evidence of ancient atmospheric events",
@@ -6781,7 +6781,7 @@ const ROLES_DATA = [
   },
   {
     id: 744,
-    name: "**Dream Weather Forecaster**",
+    name: "Dream Weather Forecaster",
     topics: [
       "Predicting storms born from collective human emotions",
       "Discovering climates influenced by imagination",
@@ -6790,7 +6790,7 @@ const ROLES_DATA = [
   },
   {
     id: 745,
-    name: "**Lost Horizon Cartographer**",
+    name: "Lost Horizon Cartographer",
     topics: [
       "Mapping horizons that vanished from existence",
       "Recovering routes to forgotten edges of the world",
@@ -6799,7 +6799,7 @@ const ROLES_DATA = [
   },
   {
     id: 746,
-    name: "**Memory Forest Ecologist**",
+    name: "Memory Forest Ecologist",
     topics: [
       "Studying forests that store memories instead of seeds",
       "Recovering historical events from tree networks",
@@ -6808,7 +6808,7 @@ const ROLES_DATA = [
   },
   {
     id: 747,
-    name: "**Silence Archaeologist**",
+    name: "Silence Archaeologist",
     topics: [
       "Excavating ancient places where sound never existed",
       "Recovering lost silent civilizations",
@@ -6817,7 +6817,7 @@ const ROLES_DATA = [
   },
   {
     id: 748,
-    name: "**Moon Shadow Tracker**",
+    name: "Moon Shadow Tracker",
     topics: [
       "Following shadows cast by moons no longer present",
       "Recovering evidence of vanished celestial bodies",
@@ -6826,7 +6826,7 @@ const ROLES_DATA = [
   },
   {
     id: 749,
-    name: "**World Skin Surveyor**",
+    name: "World Skin Surveyor",
     topics: [
       "Studying the outer \"skin\" of continents",
       "Discovering layers of forgotten landscapes beneath reality",
@@ -6835,7 +6835,7 @@ const ROLES_DATA = [
   },
   {
     id: 750,
-    name: "**Storm Language Translator**",
+    name: "Storm Language Translator",
     topics: [
       "Decoding messages hidden in thunder patterns",
       "Recovering ancient communication methods using weather",
@@ -6844,7 +6844,7 @@ const ROLES_DATA = [
   },
   {
     id: 751,
-    name: "**Ancient Pathway Listener**",
+    name: "Ancient Pathway Listener",
     topics: [
       "Hearing echoes from roads thousands of years old",
       "Recovering histories stored in travel routes",
@@ -6853,7 +6853,7 @@ const ROLES_DATA = [
   },
   {
     id: 752,
-    name: "**Color Migration Observer**",
+    name: "Color Migration Observer",
     topics: [
       "Tracking movement of rare colors across regions",
       "Recovering extinct shades from isolated cultures",
@@ -6862,7 +6862,7 @@ const ROLES_DATA = [
   },
   {
     id: 753,
-    name: "**Cloud Memory Diver**",
+    name: "Cloud Memory Diver",
     topics: [
       "Exploring memories trapped inside clouds",
       "Recovering historical events preserved in weather systems",
@@ -6871,7 +6871,7 @@ const ROLES_DATA = [
   },
   {
     id: 754,
-    name: "**Planetary Dream Interpreter**",
+    name: "Planetary Dream Interpreter",
     topics: [
       "Translating dreams experienced by landscapes",
       "Discovering continents that communicate through symbols",
@@ -6880,7 +6880,7 @@ const ROLES_DATA = [
   },
   {
     id: 755,
-    name: "**Forgotten Sound Collector**",
+    name: "Forgotten Sound Collector",
     topics: [
       "Recovering noises that vanished from the world",
       "Preserving extinct languages through sound fragments",
@@ -6889,7 +6889,7 @@ const ROLES_DATA = [
   },
   {
     id: 756,
-    name: "**Earth Pulse Cartographer**",
+    name: "Earth Pulse Cartographer",
     topics: [
       "Mapping invisible rhythms moving through continents",
       "Discovering pulse networks beneath civilizations",
@@ -6898,7 +6898,7 @@ const ROLES_DATA = [
   },
   {
     id: 757,
-    name: "**Shadow Geography Researcher**",
+    name: "Shadow Geography Researcher",
     topics: [
       "Mapping lands visible only through shadows",
       "Recovering hidden territories",
@@ -6907,7 +6907,7 @@ const ROLES_DATA = [
   },
   {
     id: 758,
-    name: "**Ancient Wind Keeper**",
+    name: "Ancient Wind Keeper",
     topics: [
       "Preserving winds that once shaped civilizations",
       "Recovering routes traveled by forgotten air currents",
@@ -6916,7 +6916,7 @@ const ROLES_DATA = [
   },
   {
     id: 759,
-    name: "**Night Ecology Scientist**",
+    name: "Night Ecology Scientist",
     topics: [
       "Studying ecosystems active only during darkness",
       "Recovering species tied to specific phases of night",
@@ -6925,7 +6925,7 @@ const ROLES_DATA = [
   },
   {
     id: 760,
-    name: "**Reality Weather Observer**",
+    name: "Reality Weather Observer",
     topics: [
       "Tracking changes in the structure of everyday reality",
       "Discovering environmental shifts no one notices",
@@ -6934,7 +6934,7 @@ const ROLES_DATA = [
   },
   {
     id: 761,
-    name: "**Lost Direction Navigator**",
+    name: "Lost Direction Navigator",
     topics: [
       "Traveling using forgotten directions",
       "Recovering ancient navigation systems",
@@ -6943,7 +6943,7 @@ const ROLES_DATA = [
   },
   {
     id: 762,
-    name: "**Mountain Dream Archivist**",
+    name: "Mountain Dream Archivist",
     topics: [
       "Recording dreams experienced by mountain ranges",
       "Recovering geological memories",
@@ -6952,7 +6952,7 @@ const ROLES_DATA = [
   },
   {
     id: 763,
-    name: "**Ocean Silence Diver**",
+    name: "Ocean Silence Diver",
     topics: [
       "Exploring silent zones beneath the sea",
       "Recovering evidence of forgotten marine cultures",
@@ -6961,7 +6961,7 @@ const ROLES_DATA = [
   },
   {
     id: 764,
-    name: "**Sky Root Botanist**",
+    name: "Sky Root Botanist",
     topics: [
       "Studying roots hanging from the upper atmosphere",
       "Recovering evidence of upside-down ecosystems",
@@ -6970,7 +6970,7 @@ const ROLES_DATA = [
   },
   {
     id: 765,
-    name: "**Ancient Fog Historian**",
+    name: "Ancient Fog Historian",
     topics: [
       "Researching legendary fogs that altered civilizations",
       "Recovering lost settlements hidden by mist",
@@ -6979,7 +6979,7 @@ const ROLES_DATA = [
   },
   {
     id: 766,
-    name: "**Rain Language Scholar**",
+    name: "Rain Language Scholar",
     topics: [
       "Decoding patterns hidden in rainfall",
       "Recovering weather-based writing systems",
@@ -6988,7 +6988,7 @@ const ROLES_DATA = [
   },
   {
     id: 767,
-    name: "**Memory River Pilot**",
+    name: "Memory River Pilot",
     topics: [
       "Navigating rivers carrying historical memories",
       "Recovering forgotten events from water currents",
@@ -6997,7 +6997,7 @@ const ROLES_DATA = [
   },
   {
     id: 768,
-    name: "**Forgotten Dawn Researcher**",
+    name: "Forgotten Dawn Researcher",
     topics: [
       "Studying sunrises that disappeared from the world",
       "Recovering records of ancient skies",
@@ -7006,7 +7006,7 @@ const ROLES_DATA = [
   },
   {
     id: 769,
-    name: "**Cave Sky Astronomer**",
+    name: "Cave Sky Astronomer",
     topics: [
       "Observing underground skies",
       "Recovering hidden constellations",
@@ -7015,7 +7015,7 @@ const ROLES_DATA = [
   },
   {
     id: 770,
-    name: "**World Reflection Cartographer**",
+    name: "World Reflection Cartographer",
     topics: [
       "Mapping reflected versions of landscapes",
       "Recovering hidden geographic information",
@@ -7024,7 +7024,7 @@ const ROLES_DATA = [
   },
   {
     id: 771,
-    name: "**Ancient Horizon Keeper**",
+    name: "Ancient Horizon Keeper",
     topics: [
       "Protecting boundaries known only to old cultures",
       "Recovering forgotten frontier systems",
@@ -7033,7 +7033,7 @@ const ROLES_DATA = [
   },
   {
     id: 772,
-    name: "**Cloud Fossil Hunter**",
+    name: "Cloud Fossil Hunter",
     topics: [
       "Discovering fossils preserved in atmospheric layers",
       "Recovering evidence of extinct sky life",
@@ -7042,7 +7042,7 @@ const ROLES_DATA = [
   },
   {
     id: 773,
-    name: "**Silence Merchant**",
+    name: "Silence Merchant",
     topics: [
       "Trading rare forms of silence",
       "Recovering silent zones from lost cultures",
@@ -7051,7 +7051,7 @@ const ROLES_DATA = [
   },
   {
     id: 774,
-    name: "**Season Archaeologist**",
+    name: "Season Archaeologist",
     topics: [
       "Excavating evidence of forgotten seasons",
       "Recovering records of extinct climate cycles",
@@ -7060,7 +7060,7 @@ const ROLES_DATA = [
   },
   {
     id: 775,
-    name: "**World Breath Listener**",
+    name: "World Breath Listener",
     topics: [
       "Monitoring the breathing patterns of the planet",
       "Recovering ancient environmental rhythms",
@@ -7069,7 +7069,7 @@ const ROLES_DATA = [
   },
   {
     id: 776,
-    name: "**Ancient Echo Cartographer**",
+    name: "Ancient Echo Cartographer",
     topics: [
       "Mapping historical echoes across landscapes",
       "Recovering events preserved in natural acoustics",
@@ -7078,7 +7078,7 @@ const ROLES_DATA = [
   },
   {
     id: 777,
-    name: "**Ocean Dream Collector**",
+    name: "Ocean Dream Collector",
     topics: [
       "Gathering dreams generated by the sea",
       "Recovering forgotten myths from tides",
@@ -7087,7 +7087,7 @@ const ROLES_DATA = [
   },
   {
     id: 778,
-    name: "**Sky Boundary Surveyor**",
+    name: "Sky Boundary Surveyor",
     topics: [
       "Exploring limits of the atmosphere",
       "Recovering evidence of hidden upper worlds",
@@ -7096,7 +7096,7 @@ const ROLES_DATA = [
   },
   {
     id: 779,
-    name: "**Mountain Shadow Keeper**",
+    name: "Mountain Shadow Keeper",
     topics: [
       "Protecting ancient shadow formations",
       "Recovering historical information encoded in them",
@@ -7105,7 +7105,7 @@ const ROLES_DATA = [
   },
   {
     id: 780,
-    name: "**Reality Root Explorer**",
+    name: "Reality Root Explorer",
     topics: [
       "Discovering foundations beneath existence",
       "Recovering evidence of deeper world structures",
@@ -10724,12 +10724,12 @@ const ROLES_DATA = [
       "Ancient ruins suggest others arrived before them",
       "Nobody ever returned",
       "These have more of a:",
-      "**Humans vs AI**",
-      "**Humans vs Aliens**",
-      "**Survival Island**",
-      "**War between civilizations**",
-      "**Superpower conflicts**",
-      "**Mystery expedition**",
+      "**Humans vs AI",
+      "**Humans vs Aliens",
+      "**Survival Island",
+      "**War between civilizations",
+      "**Superpower conflicts",
+      "**Mystery expedition",
       "**End-of-world politics**"
     ]
   },
@@ -12071,13 +12071,13 @@ const ROLES_DATA = [
       "Entire civilizations vanish from history",
       "Time travelers hunt it before it erases humanity",
       "**Loop stories** (Groundhog Day style)",
-      "**Time War**",
-      "**Alternate Timelines**",
-      "**Future Invasion**",
-      "**Historical Adventure**",
-      "**Time Survival**",
-      "**Temporal Horror**",
-      "**Time Prison**",
+      "**Time War",
+      "**Alternate Timelines",
+      "**Future Invasion",
+      "**Historical Adventure",
+      "**Time Survival",
+      "**Temporal Horror",
+      "**Time Prison",
       "**Time Economy** (years as currency)",
       "**Time Mystery** (missing centuries, hidden timelines)"
     ]
