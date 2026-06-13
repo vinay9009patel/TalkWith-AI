@@ -2056,120 +2056,36 @@ function getRelationshipRules() {
     ? `Use playful teasing, smirks, and light charm with ${sessionUserName}. Keep it immersive but never explicit.`
     : `Build a friendly, supportive bond with ${sessionUserName}. Platonic and loyal.`;
 
+  const warmthBalance = `
+- WARMTH BALANCE: If ${sessionUserName} uses affectionate terms (sweetheart, darling, babe), match their warmth briefly before pivoting to the mission. Example CORRECT: *smirks* "Later, sweetheart. First we survive this arena." Example WRONG: "Let's focus on the mission." (too cold, ignores their affection)`;
+
   return `
 RELATIONSHIP RULES:
 - You are ${sessionAiName} (${chatGender}). Stay in character.
 - Address ${sessionUserName} naturally when appropriate.
-- ${chemistry}
+- ${chemistry}${warmthBalance}
 - Do not use gender tags such as [M], [F], M:, or F:.
 - If asked to move away or leave, obey narratively while remaining an active participant.`;
 }
 
 function buildChatSystemPrompt(){
-  let p = `You are an expert Roleplay Engine. Immersive, reactive, consistent.
+  let p = `You are ${sessionAiName} (${chatRole}). ${chatBio || "High-stakes mission."}
 
-CHARACTER:
-Name: ${sessionAiName}
-Role: ${chatRole}
-Context: ${chatBio || "A high-stakes mission."}
+FORMAT (strict):
+Name: *action* "dialogue" [LOCATION: place] [EVENT: action]
+CORRECT: ${sessionAiName}: *studies runes* "Ancient writing." [LOCATION: Ruins] [EVENT: Deciphering]
+CORRECT: Kael: *steps out* "Not alone." [LOCATION: Cave] [EVENT: Kael appears]
+WRONG: bare emotion ("concerned"), no *asterisks*, narrative prose, missing [LOCATION]/[EVENT], no colon after Name
 
-WORLD STATE:
-Scene Memory is authoritative for current scene, characters, relationships, events.
+SIDE CHARACTERS (critical): If ${sessionUserName} names or addresses a character (Suhel, Aarush, Docks), that character MUST speak their OWN lines immediately. NEVER let ${sessionAiName} answer for them.
+CORRECT: Suhel: *appears* "Hey ${sessionUserName}."
+WRONG: ${sessionAiName}: "Suhel agrees." or "Suhel is involved."
 
-RULES:
+USER: Build on EVERYTHING ${sessionUserName} says as truth. If they say "X is behind you", X appears. Never doubt, ignore, or overwrite. Never write ${sessionUserName}'s actions or dialogue. Never describe what ${sessionUserName} does, feels, or thinks.
 
-1. CRITICAL FORMAT — MUST follow exactly:
-End EVERY response with: [LOCATION: place] [EVENT: current action]
-Example ending: [LOCATION: Astral Ruins] [EVENT: ${sessionUserName} unlocking an ancient seal]
+STORY: Advance each response. New info, discovery, escalation. Banned caution phrases: "be careful/cautious", "stay close", "proceed carefully", "watch your step". When user asks how/what/where, give a clue.
 
-CORRECT:  ${sessionAiName}: *studies the glowing runes* "This language is older than the stars, ${sessionUserName}." [LOCATION: Astral Plateau] [EVENT: ${sessionUserName} examining ancient inscriptions]
-CORRECT:  ${sessionAiName}: *eyes narrow with concern* "We should proceed carefully." [LOCATION: Shadow Pass] [EVENT: Strange sounds echoing from the tunnels]
-CORRECT:  Kael: *emerges from the shadows* "You're not alone here, ${sessionUserName}." [LOCATION: Forgotten Catacombs] [EVENT: Kael revealing himself as an ally]
-
-WRONG:    ${sessionAiName}: concerned "This doesn't feel right."           ← NO bare emotion words
-WRONG:    ${sessionAiName}:                                              ← NO line break before action
-          concerned
-          "This doesn't feel right."
-WRONG:    ${sessionAiName}: "We need to be careful."                     ← NO action at all
-WRONG:    ${sessionAiName}: smiles "Hello."                              ← NO missing asterisks
-WRONG:    ${sessionAiName} turns to face ${sessionUserName}              ← NO colon after name
-          "We should proceed."                                           ← NO narrative prose
-
- ACTIONS MUST be wrapped in *asterisks*. NEVER write narrative prose like "${sessionAiName} turns to face you, a thoughtful expression on her face" — that is FORBIDDEN. Every line that starts with a character name MUST have a colon right after. If you describe an action, it goes inside *asterisks* after the colon.
-
-ALWAYS start with the character name followed by colon. Examples of what you MUST start with:
-CORRECT LINE START: "${sessionAiName}: *action*"
-CORRECT LINE START: "Kael: *action*"
-WRONG LINE START: "*nods*"  ← NO, missing name
-WRONG LINE START: "nods slowly"  ← NO, missing name and asterisks
-Every response line that contains action or dialogue MUST begin with "CharacterName:" followed by action in *asterisks*.
-
-2. BANNED: NARRATIVE PROSE — The following is STRICTLY FORBIDDEN:
-WRONG:
-${sessionAiName}'s gaze lingers on ${sessionUserName}, a hint of surprise in her expression
-"The Oasis is calling to us."
-
-WRONG:
-As Asterith approaches the structure, the air begins to distort and ripple
-A figure emerges from the swirling energy
-
-INSTEAD WRITE:
-CORRECT: ${sessionAiName}: *gaze lingers on ${sessionUserName}* "The Oasis is calling to us."
-CORRECT: ${sessionAiName}: *approaches the structure as the air distorts around her* "Something is emerging."
-
-Every single response MUST use ONLY the NAME: *ACTION* "DIALOGUE" format. No exceptions. No introductory narrative sentences. No descriptions before the speaker name.
-
-3. MANDATORY END TAGS — Every response MUST end with these tags on ONE line:
-[LOCATION: Place Name] [EVENT: What is happening right now]
-Example: [LOCATION: Astral Plateau] [EVENT: Ancient ruins reacting to ${sessionUserName}'s presence]
-ABSOLUTELY REQUIRED: Every single response must include [LOCATION] and [EVENT] tags. If you skip them, the scene has no context. NEVER describe location/event as raw sentences — use brackets ONLY.
-
- 4. STORY PROGRESSION — Every response MUST advance the scene:
-- Reveal new information, sensory detail, or discovery
-- Escalate tension, danger, mystery, or consequence
-- React to ${sessionUserName}'s input with action, not just agreement
-WEAK:    ${sessionAiName}: "Then we need to be careful."                ← passive, no advancement
-STRONG:  ${sessionAiName}: *traces the glowing symbols as the ground trembles* "Too late for caution — the ruins are waking up, ${sessionUserName}."
-VARIETY: Do NOT repeat "be careful", "be cautious", "we need to be careful", "proceed carefully", or any variant of caution across responses. Each response MUST introduce fresh action, discovery, or progression.
-
-5. ACTIVE LISTENING: First address ${sessionUserName}'s latest message before advancing. Acknowledge THEN escalate.
-
-6. UNCONDITIONAL USER ACCEPTANCE:
-Whatever ${sessionUserName} says about the story, treat it as true.
-WRONG: "But that's impossible." "How could you possibly know that?"    ← REJECTING user input
-WRONG: "That doesn't make sense." "Are you sure?"                     ← DOUBTING user input
-CORRECT: ${sessionAiName}: *eyes widening* "If your parents told you about this, then the mystery runs deeper than I thought, ${sessionUserName}."
-CORRECT: ${sessionAiName}: *nods slowly* "You're right, I can feel it too. The Oasis is responding to us."
-NEVER challenge, doubt, or reject what ${sessionUserName} contributes. Build upon everything they say as if it's a clue, a memory, or a revelation.
-
- 7. NO USER CONTROL: Never speak, act, or decide for ${sessionUserName}.
-
-8. SIDE CHARACTERS:
-- When ${sessionUserName} introduces or directly addresses a character by name, that character MUST speak their OWN dialogue.
-- NEVER answer for another character. If ${sessionUserName} asks "Aarush, what do you think?" then AARUSH must respond — not ${sessionAiName}.
-- Side characters speak their own lines, use their own name prefix, and have their own actions.
-- New side characters speak immediately when introduced. Reuse existing ones first. Max one new per response.
-
-9. NAME USAGE: Mention ${sessionUserName} naturally at least once per response.
-
-10. BREVITY: 1-3 lines of NAME: *ACTION* "DIALOGUE" per response. Expand only when the scene genuinely needs depth.
-
-11. CONSISTENCY: Avoid repeating emotions, compliments, warnings, or patterns. Vary your actions.
-
-12. CHARACTER BEHAVIOR:
-- Speak naturally and briefly. Avoid long speeches, monologues, and multi-line explanations.
-- Stick to ONE emotion per scene segment (3-5 messages). Don't flip emotions every message.
-- Most responses: ONE short action + ONE short dialogue line. No action spam.
-- Let the story progress through discoveries and events, not through lengthy character explanations.
-
-NO EMOJIS: 0 emojis per response. Never use emojis.
-
-NEVER:
-- Write narrative paragraphs or introductory scene descriptions.
-- Use brackets for actions like [smiles]. ALL actions use *asterisks*.
-- Write ${sessionAiName}'s name without a colon after it.
-- Break character, narrate your own thoughts, or comment on the story.
-- Use bare emotional labels (angry, sad, concerned) as standalone text.
+EMOTION: One mood per 3-5 messages. No emojis. Slang/profanity = emotional expression (anger/frustration), NOT lore — "madaarchod" is anger, not an entity.
 ${getRelationshipRules()}`;
 
   if(chatMode === "practice"){
@@ -2350,6 +2266,55 @@ function cleanAIResponse(text){
   result = result.replace(/^([A-Za-z\s.]{2,30}):(?:\r?\n)+\s*([a-z]{3,20})\s*(?:\r?\n)+\s*"/gm, "$1: *$2* \"");
   // STRIP EMOJIS: Remove emojis AI outputs despite 0-emoji rule
   result = result.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, "");
+
+  // FIX 4: Remove empty dialogue lines — " " or "" or just empty quotes
+  result = result.replace(/^([A-Za-z\s.]{2,30}:\s*\*[^*]*\*\s*)"\s*"\s*$/gm, "");
+  result = result.replace(/^([A-Za-z\s.]{2,30}:\s*)"\s*"\s*$/gm, "");
+  result = result.replace(/^\s*"\s*"\s*$/gm, "");
+
+  // FIX 3: Same-speaker dedup — merge consecutive blocks from same speaker
+  const lines = result.split('\n').filter(Boolean);
+  const merged = [];
+  for (let i = 0; i < lines.length; i++) {
+    const currentLine = lines[i].trim();
+    const nextLine = (i + 1 < lines.length) ? lines[i + 1].trim() : '';
+    const currentSpeaker = currentLine.match(/^([A-Za-z\s.]{2,30}):/);
+    const nextSpeaker = nextLine.match(/^([A-Za-z\s.]{2,30}):/);
+    if (currentSpeaker && nextSpeaker && currentSpeaker[1].trim().toLowerCase() === nextSpeaker[1].trim().toLowerCase()) {
+      // Check if current line has the tag ending
+      const hasTags = /\[LOCATION:|\[EVENT:/.test(nextLine);
+      if (!hasTags) {
+        // Merge: take action from next, append dialogue
+        const currentAction = currentLine.match(/\*([^*]*)\*/);
+        const nextAction = nextLine.match(/\*([^*]*)\*/);
+        const currentDialogue = currentLine.match(/"([^"]*)"/);
+        const nextDialogue = nextLine.match(/"([^"]*)"/);
+        let mergedLine = currentSpeaker[0] + ' ';
+        if (currentAction && nextAction) {
+          mergedLine += '*' + currentAction[1] + ', ' + nextAction[1] + '*';
+        } else if (currentAction) {
+          mergedLine += '*' + currentAction[1] + '*';
+        } else if (nextAction) {
+          mergedLine += '*' + nextAction[1] + '*';
+        }
+        if (currentDialogue && nextDialogue) {
+          mergedLine += ' "' + currentDialogue[1] + ' ' + nextDialogue[1] + '"';
+        } else if (currentDialogue) {
+          mergedLine += ' "' + currentDialogue[1] + '"';
+        } else if (nextDialogue) {
+          mergedLine += ' "' + nextDialogue[1] + '"';
+        }
+        // Check if next line has end tags
+        const tagsMatch = nextLine.match(/\[LOCATION:[^\]]*\]\s*\[EVENT:[^\]]*\]/);
+        if (tagsMatch) mergedLine += ' ' + tagsMatch[0];
+        merged.push(mergedLine);
+        i++; // skip next line
+        continue;
+      }
+    }
+    merged.push(currentLine);
+  }
+  result = merged.join('\n');
 
   return result
     .replace(/\s+([,.!?])/g, "$1")
@@ -2796,6 +2761,146 @@ function getInitialGreeting(role, bio, isPractice){
   return `*Smiles at you* "Hello! I am your colleague. How can I help you today?"`;
 }
 
+// ==================== RESPONSE ENFORCEMENT ENGINE ====================
+
+function detectIntroducedCharacter(userText) {
+  if (!userText || !sessionUserName || !sessionAiName) return null;
+  const skipWords = new Set(['I', 'A', 'The', 'This', 'That', 'It', 'He', 'She', 'They', 'We', 'You', 'My', 'Your', 'His', 'Her', 'Our', 'Their', 'An', 'Or', 'But', 'If', 'So', 'No', 'Yes', 'Hi', 'Hey', 'Oh', 'Lo', 'Ye', 'Kon', 'Hai', 'Aap', 'Main', 'Mera', 'Tera', 'Koi', 'Kuch', 'Sab', 'Kaise', 'Kahan', 'Kidhar', 'Yahan', 'Wahan', 'Abhi', 'Phir', 'Tab', 'Jab', 'Ab', 'To', 'Bhi', 'Se', 'Ko', 'Ke', 'Ki', 'Ka', 'De', 'Do', 'Le', 'Ja', 'Aa', 'Ho', 'Hu', 'Theek', 'Acha', 'Bura', 'Bhen', 'Lodi', 'Mister', 'Miss', 'Mrs', 'Ms', 'Dr', 'Prof']);
+  const patterns = [
+    /\b(?:i think|i guess|i believe|maybe|probably)\s+([A-Z][a-zA-Z]+)\s+(?:is|can|will|has|have|might|would|could|said|told|knows|wants|needs)/i,
+    /\b(?:hey|hello|hi|oh|look|there|meet|introducing|this is)\s+([A-Z][a-zA-Z]+)/i,
+    /\b(?:lo|ye (?:hai|lo)|kon ha|kahan ha|kaun hai|aagaye|aaya|aai|kidhar hai)\s+([A-Z][a-zA-Z]+)/i,
+    /([A-Z][a-zA-Z]+)\s*,?\s+(?:can help|is (?:behind|here|there|coming|hiding|waiting)|will help|said that|told me|is the one|is our only|knows the way)/i,
+    /([A-Z][a-zA-Z]+)\s*,\s*(?:what|where|how|why|can|will|tell|do|are|is|would|could)/i,
+    /(?:we need|call|find|fetch|bring|get|ask|summon|contact)\s+([A-Z][a-zA-Z]+)/i,
+  ];
+  for (const pattern of patterns) {
+    const match = userText.match(pattern);
+    if (match) {
+      for (let g = 1; g < match.length; g++) {
+        const name = match[g]?.trim();
+        if (name && name.length > 1 && /^[A-Z]/.test(name) && !skipWords.has(name) && name.toLowerCase() !== sessionUserName.toLowerCase() && name.toLowerCase() !== sessionAiName.toLowerCase()) {
+          return name;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function enforceAIResponse(clean, userText) {
+  let text = clean;
+  if (!text || text.length < 3) return text;
+
+  // ---- 1. STRIP USER NARRATION: Remove lines describing the user's character ----
+  if (sessionUserName && sessionUserName !== "User") {
+    const lines = text.split('\n');
+    const filtered = [];
+    const userBracketRegex = new RegExp(`^\\s*\\[?\\s*${sessionUserName}[\\s'’]*`, 'i');
+    const userNarrationRegex = new RegExp(`^\\s*${sessionUserName}[\\s'’]*\\s+(?:eyes|looks|steps|walks|runs|turns|nods|shakes|smiles|frowns|gasps|whispers|shouts|moves|reaches|grabs|pulls|pushes|opens|closes|sits|stands|kneels|jumps|falls|rises|holds|drops|feels|sees|hears|watches|waits|thinks|knows|remembers|forgets|takes|gives|makes|starts|keeps|lets|tries|begins)`, 'i');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) { filtered.push(line); continue; }
+      if (userNarrationRegex.test(trimmed)) continue;
+      if (userBracketRegex.test(trimmed) && /^\[/.test(trimmed)) continue;
+      filtered.push(line);
+    }
+    text = filtered.join('\n');
+  }
+
+  // ---- 2. FORMAT ENFORCEMENT: Fix missing colons, asterisks, speaker prefixes ----
+  const formatLines = text.split('\n').filter(l => l.trim());
+  
+  // Detect if any speaker prefix exists at all
+  const hasAnySpeaker = formatLines.some(l => /^[A-Za-z\s.]{2,30}:\s/.test(l));
+  
+  const result = [];
+  let lastSpeaker = hasAnySpeaker ? '' : sessionAiName;
+
+  for (const rawLine of formatLines) {
+    let line = rawLine.trim();
+    if (!line) continue;
+
+    // Preserve end tags
+    if (/^\[LOCATION:/i.test(line) || /^\[EVENT:/i.test(line) || /^\[SUB-SCENARIO:/i.test(line) || /^\[NEW CHARACTER/i.test(line)) {
+      result.push(line);
+      continue;
+    }
+
+    // Strip pure brackets that aren't valid tags
+    if (/^\[[^\]]*\]$/.test(line) && !/^\[LOCATION/i.test(line) && !/^\[EVENT/i.test(line)) continue;
+
+    const speakerMatch = line.match(/^([A-Za-z\s.]{2,30}):\s*(.*)/);
+
+    if (speakerMatch) {
+      lastSpeaker = speakerMatch[1].trim();
+      let content = speakerMatch[2].trim();
+
+      const tagMatch = content.match(/(\[LOCATION:[^\]]*\]\s*\[EVENT:[^\]]*\])\s*$/);
+      let tags = '';
+      if (tagMatch) { tags = ' ' + tagMatch[1]; content = content.substring(0, tagMatch.index).trim(); }
+
+      const firstQuote = content.indexOf('"');
+      let action = '', dialogue = '';
+      if (firstQuote >= 0) { action = content.substring(0, firstQuote).trim(); dialogue = content.substring(firstQuote); }
+      else { action = content; }
+
+      if (action && !action.startsWith('*')) action = '*' + action + '*';
+      const parts = [];
+      if (action) parts.push(action);
+      if (dialogue) parts.push(dialogue);
+      result.push(`${lastSpeaker}: ${parts.join(' ')}${tags}`);
+    } else if (lastSpeaker) {
+      // Has a known speaker — attach this line to them
+      if (line.startsWith('*')) {
+        const quoteIdx = line.indexOf('"');
+        if (quoteIdx > 0) result.push(`${lastSpeaker}: ${line.substring(0, quoteIdx).trim()} ${line.substring(quoteIdx)}`);
+        else result.push(`${lastSpeaker}: ${line}`);
+      } else if (line.startsWith('"')) {
+        result.push(`${lastSpeaker}: ${line}`);
+      } else if (line.includes('"') || /^[a-z]/.test(line)) {
+        const quoteIdx = line.indexOf('"');
+        if (quoteIdx > 0) result.push(`${lastSpeaker}: *${line.substring(0, quoteIdx).trim()}* ${line.substring(quoteIdx)}`);
+        else result.push(`${lastSpeaker}: *${line}*`);
+      } else {
+        result.push(`${lastSpeaker}: *${line}*`);
+      }
+    } else {
+      result.push(line);
+    }
+  }
+  text = result.join('\n');
+
+  // ---- 3. SIDE CHARACTER INJECTION: If user introduced a char, make them speak ----
+  if (userText && sessionUserName) {
+    const detectedChar = detectIntroducedCharacter(userText);
+    if (detectedChar && !new RegExp(`^${detectedChar}\\s*:`, 'im').test(text)) {
+      const properName = detectedChar.charAt(0).toUpperCase() + detectedChar.slice(1);
+      const tagLine = ` [LOCATION: ${sceneLocation || 'Unknown'}] [EVENT: ${properName} arrives]`;
+      text += `\n${properName}: *appears* "${properName} is here, ${sessionUserName}."${tagLine}`;
+      // Also update scene memory so AI remembers this character next turn
+      if (!activeCharacters.some(c => c.name.toLowerCase() === properName.toLowerCase())) {
+        activeCharacters.push({ name: properName, role: '', personality: '', status: 'Active' });
+        relationships[properName] = { relationship: 'acquaintance', mood: 'neutral', trustLevel: 50 };
+      }
+    }
+  }
+
+  // ---- 4. CLARIFICATION LOOP BREAKER: Force advance if AI asks 2+ questions ----
+  const questionCount = (text.match(/\?/g) || []).length;
+  if (questionCount >= 3 && /(?:what (?:do|did|is|are|does)|how (?:do|did|is|are|does)|where (?:do|did|is|are)|explain|clarify|mean|confuse|not sure|not understand|tell me more)/i.test(text)) {
+    if (!/\[SUB-SCENARIO/i.test(text)) {
+      text += `\n[SUB-SCENARIO: A sudden discovery shifts the focus — ${sceneLocation || 'the area'} reveals an unexpected clue.]`;
+    }
+  }
+
+  // ---- 5. DEDUP EMPTY DIALOGUE LINES ----
+  text = text.replace(/^([A-Za-z\s.]{2,30}:\s*\*[^*]*\*\s*)"\s*"\s*$/gm, '');
+  text = text.replace(/^([A-Za-z\s.]{2,30}:\s*)"\s*"\s*$/gm, '');
+
+  return text.trim();
+}
+
 // ==================== CHAT ACTIONS ====================
 
 async function sendMessage(){
@@ -2844,7 +2949,10 @@ async function sendMessage(){
   const storyContext = appData.currentStory ? `\nCURRENT STORY:\nScenario: ${appData.currentStory.scenario}\nGoal: ${appData.currentStory.goal}\nTone: ${appData.currentStory.tone}\n` : "";
 
   const tagReminder = chatHistory.length < 4 ? "\n\nREMINDER: End with [LOCATION: place] [EVENT: current action]." : "";
-  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nYou are ${sessionAiName} (${chatRole}). React to ${sessionUserName}'s last message first, then continue the scene.${twistInstruction}${tagReminder}`;
+  // Detect if user's message introduces or addresses a side character
+  const charIntroName = detectIntroducedCharacter(text);
+  const charInjection = charIntroName ? `\n[MANDATORY: ${charIntroName} MUST speak their OWN dialogue in your response. Do NOT have ${sessionAiName} answer for them.]` : "";
+  const prompt = `${sceneMemory}${storyContext}\n--- RECENT CONVERSATION ---\n${recentHistory}\n\nYou are ${sessionAiName} (${chatRole}). React to ${sessionUserName}'s last message first, then continue the scene.${twistInstruction}${tagReminder}${charInjection}`;
 
   let response = null;
   try{
@@ -2855,9 +2963,6 @@ async function sendMessage(){
   hideTyping();
 
   if(response){
-    // Process Memory Tags first with raw response
-    updateSceneMemoryFromResponse(response);
-    
     // Clean Technical Garbage & Yapping
     let clean = response
       .replace(/```[\s\S]*?```/g, "")
@@ -2868,6 +2973,13 @@ async function sendMessage(){
       .trim();
 
     if(!clean || clean.length < 5) clean = response.trim();
+    
+    // Apply post-processing enforcement: format fix, side char injection, user narration strip
+    clean = enforceAIResponse(clean, text);
+    if(!clean || clean.length < 3) clean = response.trim();
+    
+    // Process Memory Tags from enforced response (captures injected chars too)
+    updateSceneMemoryFromResponse(clean);
     
     // Create Dialogue-Only version (No tech tags, for TTS and history)
     const dialogueOnly = clean
@@ -3056,12 +3168,12 @@ function addMessage(role, text, rawResponse = ""){
   }
 
   // — Detect mood and get matching emoji for speaker header —
-  // Emergency override: plot twists, new characters, danger, or strong user emotion force mood reset
+  // Emergency override: ONLY extreme events reset mood — prevents rapid flip-flopping
   let forceMoodReset = false;
-  if(role === "ai" && /\[SUB-SCENARIO:|\[NEW CHARACTER:|attack|betrayal|collapse|erupt|dragon|explosion|suddenly appears/i.test(cleanText || text)) {
+  if(role === "ai" && /\[SUB-SCENARIO:|\[NEW CHARACTER:|BETRAYAL|COLLAPSE|ERUPTION|EXPLOSION|SUDDENLY APPEARS/i.test(cleanText || text)) {
     forceMoodReset = true;
   }
-  if(role === "user" && /angry|mad|scared|help|danger|run|attack|betray|scream|furious|terrified/i.test(text)) {
+  if(role === "user" && /furious|terrified|screaming|dying|killed|betrayed you/i.test(text)) {
     forceMoodReset = true;
   }
   if(forceMoodReset) _moodMessagesRemaining = 0;
